@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kopia-backup
+spec:
+  schedule: "0 9 * * 0"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+          - name: data
+            nfs:
+              path: /srv/share/backed/
+              server: mario.local.ongy.net
+              readOnly: true
+          - name: config
+            nfs:
+              path: /srv/share/backed/appdata/kopia/config
+              server: mario.local.ongy.net
+              readOnly: false
+          containers:
+          - image: kopia/kopia
+            name: backup
+            command: ["kopia"]
+            args:
+            - snapshot
+            - create
+            - /data/repositories
+            - /data/documents
+            - /data/appdata/homeassistant
+            - /data/appdata/paperless
+            - /data/appdata/zigbee2mqtt
+            volumeMounts:
+              - mountPath: "/data"
+                name: data
+              - mountPath: "/app/config"
+                name: config
+            env:
+            - name: MODE
+              value: standalone
+            - name: KOPIA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kopia-secret
+                  key: password
+          restartPolicy: Never
