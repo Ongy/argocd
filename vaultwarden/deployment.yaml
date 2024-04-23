@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vaultwarden
+  name: vaultwarden
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vaultwarden
+  template:
+    metadata:
+      labels:
+        app: vaultwarden
+    spec:
+      containers:
+      - name: vaultwarden
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: [ALL]
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+#          runAsNonRoot: true
+#          runAsUser: 10001
+#          runAsGroup: 10001
+          privileged: false
+        image: vaultwarden/server:latest
+        workingDir: /
+
