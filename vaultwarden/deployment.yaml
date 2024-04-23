@@ -78,19 +78,19 @@ spec:
     - destination:
         host: vaultwarden.experiments.svc.cluster.local
 ---
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: vaultwarden-confine
-spec:
-  podSelector:
-    matchLabels:
-      app: vaultwarden
-  policyTypes:
-  - Ingress
-  - Egress
-  ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          kubeernetes.io/metadata.name: istio-system
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: vaultwarden-confine
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app: vaultwarden
+#   policyTypes:
+#   - Ingress
+#   - Egress
+#   ingress:
+#   - from:
+#     - namespaceSelector:
+#         matchLabels:
+#           kubeernetes.io/metadata.name: istio-system
