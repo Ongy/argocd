@@ -14,23 +14,27 @@ spec:
       labels:
         app: vaultwarden
     spec:
+      securityContext:
+        sysctls:
+        - name: "net.ipv4.ip_unprivileged_port_start"
+          value: "80"
       containers:
       - name: vaultwarden
         resources:
-          request:
+          requests:
             memory: "25Mi"
           limits:
             memory: "25Mi"
         securityContext:
           seccompProfile:
             type: RuntimeDefault
-#          capabilities:
-#            drop: [ALL]
+          capabilities:
+            drop: [ALL]
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
-#          runAsNonRoot: true
-#          runAsUser: 10001
-#          runAsGroup: 10001
+          runAsNonRoot: true
+          runAsUser: 10001
+          runAsGroup: 10001
           privileged: false
         image: vaultwarden/server:latest
         workingDir: /
