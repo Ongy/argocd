@@ -16,6 +16,11 @@ spec:
     spec:
       containers:
       - name: vaultwarden
+        resources:
+          request:
+            memory: "25Mi"
+          limits:
+            memory: "25Mi"
         securityContext:
           seccompProfile:
             type: RuntimeDefault
