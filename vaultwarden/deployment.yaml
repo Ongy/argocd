@@ -32,6 +32,7 @@ spec:
           protocol: 80
         volumeMounts:
         - name: data
+          readOnly: false
           mountPath: "/data"
         resources:
           requests:
@@ -65,7 +66,7 @@ spec:
     targetport: http
     name: http
 ---
-apiVersion: network.istio.io/v1beta1
+apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: bitwarden-vaultwarden
