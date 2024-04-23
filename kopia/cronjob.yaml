@@ -42,6 +42,6 @@ spec:
             - name: KOPIA_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: kopia-secret
+                  name: kopia-password
                   key: password
           restartPolicy: Never
