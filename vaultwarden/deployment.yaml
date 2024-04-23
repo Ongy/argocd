@@ -18,8 +18,17 @@ spec:
         sysctls:
         - name: "net.ipv4.ip_unprivileged_port_start"
           value: "80"
+      volumes:
+      - name: data
+        nfs:
+          path: /srv/share/backed/appdata/vaultwarden
+          server: mario.local.ongy.net
+          readOnly: false
       containers:
       - name: vaultwarden
+        volumeMounts:
+        - name: data
+          mountPath: "/data"
         resources:
           requests:
             memory: "25Mi"
