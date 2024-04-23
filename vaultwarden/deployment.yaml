@@ -26,6 +26,10 @@ spec:
           readOnly: false
       containers:
       - name: vaultwarden
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: 80
         volumeMounts:
         - name: data
           mountPath: "/data"
@@ -47,4 +51,46 @@ spec:
           privileged: false
         image: vaultwarden/server:latest
         workingDir: /
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vaultwarden
+spec:
+  selector:
+    app: vaultwarden
+  ports:
+  - protocol: TCP
+    port: 80
+    targetport: http
+    name: http
+---
+apiVersion: network.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: bitwarden-vaultwarden
+  namespace: default
+spec:
+  gateways: [istio-system/gateway]
+  hosts: [bitwarden.local.ongy.net]
+  http:
+  - route:
+    - destination:
+        host: vaultwarden.experiments.svc.cluster.local
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: vaultwarden-confine
+spec:
+  podSelector:
+    matchLabels:
+      app: vaultwarden
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubeernetes.io/metadata.name: istio-system
