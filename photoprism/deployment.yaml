@@ -19,6 +19,10 @@ spec:
         - name: photoprism-config
           persistentVolumeClaim:
             claimName: photoprism-config-pvc
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 150Mi
       containers:
         - image: photoprism/photoprism:240420
           securityContext:
@@ -50,3 +54,5 @@ spec:
           volumeMounts:
             - mountPath: "/photoprism"
               name: photoprism-config
+            - mountPath: "/tmp"
+              name: tmp
