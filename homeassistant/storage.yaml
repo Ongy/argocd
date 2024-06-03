@@ -17,7 +17,7 @@ spec:
     - hard
     - nfsvers=4.1
   nfs:
-    path: /srv/share/backed/appdata/homeassistant
+    path: /srv/share/backed/appdata/homeassistant/config
     server: mario.local.ongy.net
 ---
 apiVersion: v1
