@@ -6,7 +6,7 @@ metadata:
   annotations:
     argocd-image-updater.argoproj.io/image-list: photoprism=photoprism/photoprism
     argocd-image-updater.argoproj.io/photoprism.update-strategy: newest-build
-    argocd-image-updater.argoproj.io/photoprism.allow-tags: '24[0-1][0-9][0-3][0-9]'
+    argocd-image-updater.argoproj.io/photoprism.allow-tags: 'regexp:24[0-1][0-9][0-3][0-9]'
 spec:
   project: default
   source:
