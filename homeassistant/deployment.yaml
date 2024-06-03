@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: homeassistant
+  name: homeassistant
+  namespace: homeassistant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: homeassistant
+  template:
+    metadata:
+      labels:
+        app: homeassistant
+    spec:
+      automountServiceAccountToken: false
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: homeassistant-config-pvc
+        - name: psql-tls-secrets
+          secret:
+            defaultMode: 416
+            optional: true
+            secretName: psql-client-secret
+      containers:
+        - image: homeassistant/home-assistant
+          readinessProbe:
+            httpGet:
+              path: /manifest.json
+              port: 8123
+          name: homeassistant
+          volumeMounts:
+            - mountPath: "/config"
+              name: config
+            - mountPath: "/psql-tls-secrets"
+              name: psql-tls-secrets

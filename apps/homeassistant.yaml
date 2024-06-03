@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homeassistant
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: ha=homeassistant/home-assistant
+    argocd-image-updater.argoproj.io/ha.update-strategy: latest
+    argocd-image-updater.argoproj.io/ha.allow-tags: 'regexp:2024\.5.*'
+spec:
+  project: default
+  source:
+    repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: homeassistant
+    targetRevision: HEAD
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: smarthome
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
