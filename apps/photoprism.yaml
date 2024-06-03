@@ -5,8 +5,8 @@ metadata:
   namespace: argocd
   annotations:
     argocd-image-updater.argoproj.io/image-list: photoprism=photoprism/photoprism
-    argocd-image-updater.argoproj.io/photoprism.update-strategy: latest
-    argocd-image-updater.argoproj.io/photoprism.allow-tags: '24\d{4}'
+    argocd-image-updater.argoproj.io/photoprism.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/photoprism.allow-tags: '24\d\d\d\d'
 spec:
   project: default
   source:
