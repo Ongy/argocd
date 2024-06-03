@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: photoprism
+  name: photoprism
+  namespace: mediaserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: photoprism
+  template:
+    metadata:
+      labels:
+        app: photoprism
+    spec:
+      volumes:
+        - name: photoprism-config
+          persistentVolumeClaim:
+            claimName: photoprism-config-pvc
+      containers:
+        - image: photoprism/photoprism:240420
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+              add: ['NET_BIND_SERVICE']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            privileged: false
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 2342
+          env:
+            - name: PHOTOPRISM_UPLOAD_NSFW
+              value: "true"
+            - name: PHOTOPRISM_ADMIN_PASSWORD
+              value: "insecure"
+            - name: PHOTOPRISM_SPONSOR
+              value: "true"
+            - name: PHOTOPRISM_ORIGINALS_LIMIT
+              value: "-1"
+          name: photoprism
+          volumeMounts:
+            - mountPath: "/photoprism"
+              name: photoprism-config
