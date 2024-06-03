@@ -7,6 +7,7 @@ metadata:
     argocd-image-updater.argoproj.io/image-list: ha=ghcr.io/home-assistant/home-assistant
     argocd-image-updater.argoproj.io/ha.update-strategy: newest-build
     argocd-image-updater.argoproj.io/ha.allow-tags: 'regexp:2024\.5(\.[0-9])?'
+    argocd-image-updater.argoproj.io/ha.platforms: linux/amd64
 spec:
   project: default
   source:
