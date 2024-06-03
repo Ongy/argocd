@@ -3,6 +3,10 @@ kind: Application
 metadata:
   name: photoprism
   namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: photoprism/photoprism
+    argocd-image-updater.argoproj.io/photoprism/photoprism.update-strategy: latest
+    argocd-image-updater.argoproj.io/<image_name>.allow-tags: '24\d{4}'
 spec:
   project: default
   source:
