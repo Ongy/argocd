@@ -4,10 +4,11 @@ metadata:
   name: jellyfin
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: jellyfin=jellyfin/jellyfin
+    argocd-image-updater.argoproj.io/image-list: jellyfin=jellyfin/jellyfin,shim=cr.local.ongy.net/jellyfin-mpv-shim
     argocd-image-updater.argoproj.io/jellyfin.update-strategy: semver
     argocd-image-updater.argoproj.io/jellyfin.platforms: linux/amd64
     argocd-image-updater.argoproj.io/jellyfin.allow-tags: 'regexp:10\.9\.4'
+    argocd-image-updater.argoproj.io/shim.update-strategy: newest-build
 spec:
   project: default
   source:
