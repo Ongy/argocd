@@ -101,7 +101,7 @@ spec:
           configMap:
             name: kube-root-ca.crt
       containers:
-        - image: cr.local.ongy.net/jellyfin-mpv-shim:latest # {"$imagepolicy": "flux-system:jellyfin-mpv"}
+        - image: cr.local.ongy.net/jellyfin-mpv-shim:20240606
           env:
             - name: XDG_RUNTIME_DIR
               value: "/run/user/1000/"
