@@ -145,9 +145,9 @@ spec:
 #                 - sh
 #                 - -e
 #                 - -c
-#                 - "curl --cacert /etc/kube-ca.crt -s https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/namespaces/${KUBERNETES_NAMESPACE}/pods/${KUBERNETES_POD}/log?sinceSeconds=60 -H \"Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)\" | grep -q -e KeepAlive -e /Sessions/Playing/Progress"
-#             timeoutSeconds: 5
-#             initialDelaySeconds: 15
+#                 - "curl --cacert /etc/kube-ca.crt -s https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/namespaces/${KUBERNETES_NAMESPACE}/pods/${KUBERNETES_POD}/log?sinceSeconds=360 -H \"Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)\" | grep -q -e "Performing client health check..."
+#             timeoutSeconds: 300
+#             initialDelaySeconds: 360
 #             failureThreshold: 2
-#             periodSeconds: 15
+#             periodSeconds: 60
 # 
