@@ -139,14 +139,15 @@ spec:
             - mountPath: "/etc/kube-ca.crt"
               name: kube-root-ca
               subPath: ca.crt
-          livenessProbe:
-            exec:
-              command:
-                - sh
-                - -e
-                - -c
-                - "curl --cacert /etc/kube-ca.crt -s https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/namespaces/${KUBERNETES_NAMESPACE}/pods/${KUBERNETES_POD}/log?sinceSeconds=60 -H \"Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)\" | grep -q -e KeepAlive -e /Sessions/Playing/Progress"
-            timeoutSeconds: 5
-            initialDelaySeconds: 15
-            failureThreshold: 2
-            periodSeconds: 15
+#           livenessProbe:
+#             exec:
+#               command:
+#                 - sh
+#                 - -e
+#                 - -c
+#                 - "curl --cacert /etc/kube-ca.crt -s https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/namespaces/${KUBERNETES_NAMESPACE}/pods/${KUBERNETES_POD}/log?sinceSeconds=60 -H \"Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)\" | grep -q -e KeepAlive -e /Sessions/Playing/Progress"
+#             timeoutSeconds: 5
+#             initialDelaySeconds: 15
+#             failureThreshold: 2
+#             periodSeconds: 15
+# 
