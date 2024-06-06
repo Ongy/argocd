@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jellyfin
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: jellyfin=jellyfin/jellyfin
+    argocd-image-updater.argoproj.io/jellyfin.update-strategy: semver
+    argocd-image-updater.argoproj.io/jellyfin.platforms: linux/amd64
+spec:
+  project: default
+  source:
+    repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: jellyfin
+    targetRevision: HEAD
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: mediaserver
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
