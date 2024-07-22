@@ -41,7 +41,7 @@ data:
     else
       type=$(jq -r '.[0].type' ${BINDING_CONTEXT_PATH})
       if [[ $type == "Synchronization" ]] ; then
-        jq  '.[0].objects' "${BINDING_CONTEXT_PATH}"
+        jq -r '.[0].objects[]|.object.metadata.name' "${BINDING_CONTEXT_PATH}"
       else
         if [[ "$(jq -r '.[0].watchEvent' "${BINDING_CONTEXT_PATH}")" = "Added" ]]; then
           ensure_db '.[0].object.metadata.name'
