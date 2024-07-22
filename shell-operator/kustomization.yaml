@@ -6,3 +6,4 @@ resources:
 - deployment.yaml
 - psql.secret.yaml
 - hooks.yaml
+- serviceaccount.yaml
