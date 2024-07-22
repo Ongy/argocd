@@ -21,6 +21,10 @@ spec:
             defaultMode: 416
             optional: true
             secretName: psql-client-secret
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 150Mi
       containers:
         - image: ghcr.io/flant/shell-operator
           securityContext:
@@ -38,4 +42,6 @@ spec:
           volumeMounts:
             - mountPath: "/psql-tls-secrets"
               name: psql-tls-secrets
+            - mountPath: "/tmp"
+              name: tmp
 ---
