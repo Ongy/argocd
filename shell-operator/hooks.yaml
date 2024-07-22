@@ -9,6 +9,11 @@ data:
 
     set -euo pipefail
 
+    function ensure_db() {
+      NAME="${1}"
+      echo "Ensuring db ${NAME} exists"
+    }
+
     if [[ ${1:-""} == "--config" ]] ; then
       cat <<EOF
     {
@@ -38,6 +43,8 @@ data:
       if [[ $type == "Synchronization" ]] ; then
         jq  '.[0].objects' "${BINDING_CONTEXT_PATH}"
       else
-        cat "${BINDING_CONTEXT_PATH}"
+        if [[ "$(jq -r '.[0].watchEvent' "${BINDING_CONTEXT_PATH}")" = "Added" ]]; then
+          ensure_db '.[0].object.metadata.name'
+        fi
       fi
     fi
