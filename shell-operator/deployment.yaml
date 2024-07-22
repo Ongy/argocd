@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: shell-operator
+  name: shell-operator
+  namespace: shell-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shell-operator
+  template:
+    metadata:
+      labels:
+        app: shell-operator
+    spec:
+      volumes:
+        - name: psql-tls-secrets
+          secret:
+            defaultMode: 416
+            optional: true
+            secretName: psql-client-secret
+      containers:
+        - image: ghcr.io/flant/shell-operator
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            privileged: false
+          name: shell-operator
+          volumeMounts:
+            - mountPath: "/psql-tls-secrets"
+              name: psql-tls-secrets
+---
