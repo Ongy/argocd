@@ -20,11 +20,6 @@ spec:
           configMap:
             defaultMode: 0555
             name: hooks
-        - name: psql-tls-secrets
-          secret:
-            defaultMode: 416
-            optional: true
-            secretName: psql-client-secret
         - name: tmp
           emptyDir:
             medium: Memory
@@ -48,8 +43,6 @@ spec:
             privileged: false
           name: shell-operator
           volumeMounts:
-            - mountPath: "/psql-tls-secrets"
-              name: psql-tls-secrets
             - mountPath: "/tmp"
               name: tmp
             - mountPath: "/var/run"
@@ -57,5 +50,4 @@ spec:
             - mountPath: "/hooks/psql.sh"
               name: hooks
               subPath: psql.sh
-
 ---

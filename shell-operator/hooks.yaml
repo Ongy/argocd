@@ -11,9 +11,11 @@ data:
 
     function ensure_db() {
       NAME="${1}"
-      echo "Ensuring db ${NAME} exists"
+      echo "Ensuring db '${NAME}' exists"
 
+      kubectl exec -it -n psql psql-0 -- psql -U postgres -P pager=off -nlqt | cut -d '|' -f 1 | grep -o -E \\S+ | grep -q -E "^${NAME}$" && return
 
+      echo "DB '${NAME}' does not exist. creating."
     }
 
     if [[ ${1:-""} == "--config" ]] ; then

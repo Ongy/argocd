@@ -4,6 +4,5 @@ kind: Kustomization
 resources:
 - namespace.yaml
 - deployment.yaml
-- psql.secret.yaml
 - hooks.yaml
 - serviceaccount.yaml
