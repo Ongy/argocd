@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
 - namespace.yaml
-# - deployment.yaml
+- deployment.yaml
 - psql.secret.yaml
 - db.spec.yaml
 # - serviceaccount.yaml
