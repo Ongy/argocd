@@ -12,6 +12,8 @@ data:
     function ensure_db() {
       NAME="${1}"
       echo "Ensuring db ${NAME} exists"
+
+
     }
 
     if [[ ${1:-""} == "--config" ]] ; then
@@ -41,7 +43,9 @@ data:
     else
       type=$(jq -r '.[0].type' ${BINDING_CONTEXT_PATH})
       if [[ $type == "Synchronization" ]] ; then
-        jq -r '.[0].objects[]|.object.metadata.name' "${BINDING_CONTEXT_PATH}"
+        for db in $(jq -r '.[0].objects[]|.object.metadata.name' "${BINDING_CONTEXT_PATH}"); do
+          ensure_db "${db}"
+        done
       else
         if [[ "$(jq -r '.[0].watchEvent' "${BINDING_CONTEXT_PATH}")" = "Added" ]]; then
           ensure_db '.[0].object.metadata.name'
