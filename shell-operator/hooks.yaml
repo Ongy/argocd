@@ -31,6 +31,6 @@ data:
     else
       type=$(jq -r '.[0].type' ${BINDING_CONTEXT_PATH})
       if [[ $type == "Synchronization" ]] ; then
-        jq  '.[0].objects' "${BINDING_CONTEXT_PATH}""
+        jq  '.[0].objects' "${BINDING_CONTEXT_PATH}"
       fi
     fi
