@@ -53,6 +53,14 @@ spec:
               value: "1"
             - name: TZ
               value: Europe/Berlin
+            - name: OIDC_AUTH_ENABLED
+              value: "true"
+            - name: OIDC_CONFIGURATION_URL
+              value: https://authentik.local.ongy.net/application/o/mealie/.well-known/openid-configuration
+            - name: OIDC_CLIENT_ID
+              value: icbvC5xOb2vAHycXo9Eo7HhhRBdrkvbxuNsQK64q
+            - name: OIDC_REMEMBER_ME
+              value: "true"
           volumeMounts:
             - mountPath: "/psql-tls-secrets"
               name: psql-tls-secrets
