@@ -2,60 +2,56 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: shell-operator
-  name: shell-operator
-  namespace: shell-operator
+    app: mealie
+  name: mealie
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: shell-operator
+      app: mealie
   template:
     metadata:
       labels:
-        app: shell-operator
+        app: mealie
     spec:
+      resources:
+        limits:
+          memory: "1024Mi"
       volumes:
-        - name: hooks
-          configMap:
-            defaultMode: 0555
-            name: hooks
         - name: psql-tls-secrets
           secret:
             defaultMode: 416
             optional: true
             secretName: psql-client-secret
-        - name: tmp
-          emptyDir:
-            medium: Memory
-            sizeLimit: 150Mi
-        - name: var-run
-          emptyDir:
-            medium: Memory
-            sizeLimit: 150Mi
       containers:
-        - image: ghcr.io/flant/shell-operator
+        - image: ghcr.io/mealie-recipes/mealie:v1.10.2
           securityContext:
             seccompProfile:
               type: RuntimeDefault
             capabilities:
-              drop: ['ALL']
+              drop: ["ALL"]
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             runAsNonRoot: true
-            runAsUser: 1001
-            runAsGroup: 1001
+            runAsUser: 1003
+            runAsGroup: 1003
             privileged: false
           name: shell-operator
+          env:
+            - name: DB_ENGINE
+              value: postgres
+            - name: POSTGRES_URL_OVERRIDE
+              value: postgresql://mealie@psql.psql/mealie?sslmode=verify-full&sslcert=%2Fpsql-tls-secrets%2Ftls.crt&sslkey=%2Fpsql-tls-secrets%2Ftls.key&sslrootcert=%2Fpsql-tls-secrets%2Fca.crt
+            - name: BASE_URL
+              value: https://mealie.local.ongy.net
+            - name: MAX_WORKERS
+              value: "1"
+            - name: WEB_CONCURRENCY
+              value: "1"
+            - name: TZ
+              value: Europe/Berlin
           volumeMounts:
             - mountPath: "/psql-tls-secrets"
               name: psql-tls-secrets
-            - mountPath: "/tmp"
-              name: tmp
-            - mountPath: "/var/run"
-              name: var-run
-            - mountPath: "/hooks/psql.sh"
-              name: hooks
-              subPath: psql.sh
-
 ---
+
