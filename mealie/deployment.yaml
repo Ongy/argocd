@@ -41,7 +41,7 @@ spec:
             - name: DB_ENGINE
               value: postgres
             - name: POSTGRES_URL_OVERRIDE
-              value: postgresql://mealie@psql.psql/mealie?sslmode=verify-full&sslcert=%2Fpsql-tls-secrets%2Ftls.crt&sslkey=%2Fpsql-tls-secrets%2Ftls.key&sslrootcert=%2Fpsql-tls-secrets%2Fca.crt
+              value: postgresql://mealie:@psql.psql/mealie?sslmode=verify-full&sslcert=%2Fpsql-tls-secrets%2Ftls.crt&sslkey=%2Fpsql-tls-secrets%2Ftls.key&sslrootcert=%2Fpsql-tls-secrets%2Fca.crt
             - name: BASE_URL
               value: https://mealie.local.ongy.net
             - name: MAX_WORKERS
