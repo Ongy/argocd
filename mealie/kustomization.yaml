@@ -6,4 +6,4 @@ resources:
 - deployment.yaml
 - psql.secret.yaml
 - db.spec.yaml
-# - serviceaccount.yaml
+- storage.yaml
