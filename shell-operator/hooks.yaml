@@ -9,7 +9,7 @@ data:
 
     set -euo pipefail
 
-    if [[ $1 == "--config" ]] ; then
+    if [[ ${1:-""} == "--config" ]] ; then
       cat <<EOF
     {
       "configVersion":"v1",
