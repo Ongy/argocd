@@ -17,6 +17,9 @@ spec:
       resources:
         limits:
           memory: "1024Mi"
+      securityContext:
+        fsGroup: 1003
+        fsGroupChangePolicy: "OnRootMismatch"
       volumes:
         - name: psql-tls-secrets
           secret:
