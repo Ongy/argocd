@@ -16,6 +16,10 @@ spec:
         app: shell-operator
     spec:
       volumes:
+        - name: hooks
+          configMap:
+            defaultMode: 411
+            name: hooks
         - name: psql-tls-secrets
           secret:
             defaultMode: 416
@@ -50,4 +54,8 @@ spec:
               name: tmp
             - mountPath: "/var/run"
               name: var-run
+            - mountPath: "/hooks"
+              name: hooks
+              subPath: psql.sh
+
 ---

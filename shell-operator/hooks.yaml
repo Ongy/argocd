@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hooks
+  namespace: shell-operator
+data:
+  psql.sh: |
+    #!/bin/bash -x
+
+    set -euo pipefail
+
+    if [[ $1 == "--config" ]] ; then
+      cat <<EOF
+    {
+      "configVersion":"v1",
+      "kubernetes":[
+        {
+          "apiVersion": "v1",
+          "kind": "ConfigMap",
+
+          "namespace": {
+            "nameSelector": {
+              "matchNames": ["psql"]
+            }
+          },
+          "executeHookOnEvent": ["Added"]
+        }
+      ]
+    }
+    EOF
+    else
+      type=$(jq -r '.[0].type' ${BINDING_CONTEXT_PATH})
+      if [[ $type == "Synchronization" ]] ; then
+        jq  '.[0].objects' ${BINDING_CONTEXT_PATH})
+      fi
+    fi
