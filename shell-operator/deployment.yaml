@@ -18,7 +18,7 @@ spec:
       volumes:
         - name: hooks
           configMap:
-            defaultMode: 411
+            defaultMode: 555
             name: hooks
         - name: psql-tls-secrets
           secret:
