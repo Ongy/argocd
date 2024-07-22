@@ -5,7 +5,7 @@ metadata:
   namespace: shell-operator
 data:
   psql.sh: |
-    #!/bin/bash -x
+    #!/usr/bin/bash -x
 
     set -euo pipefail
 
