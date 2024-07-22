@@ -54,7 +54,7 @@ spec:
               name: tmp
             - mountPath: "/var/run"
               name: var-run
-            - mountPath: "/hooks"
+            - mountPath: "/hooks/psql.sh"
               name: hooks
               subPath: psql.sh
 
