@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: mealie-spec
+  name: mealie
   namespace: psql
   labels:
     ongy.net/psql-db: "true"
