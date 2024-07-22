@@ -25,6 +25,10 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 150Mi
+        - name: var-run
+          emptyDir:
+            medium: Memory
+            sizeLimit: 150Mi
       containers:
         - image: ghcr.io/flant/shell-operator
           securityContext:
@@ -44,4 +48,6 @@ spec:
               name: psql-tls-secrets
             - mountPath: "/tmp"
               name: tmp
+            - mountPath: "/var/run"
+              name: var-run
 ---
