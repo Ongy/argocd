@@ -14,9 +14,6 @@ spec:
       labels:
         app: mealie
     spec:
-      resources:
-        limits:
-          memory: "1024Mi"
       securityContext:
         fsGroup: 1003
         fsGroupChangePolicy: "OnRootMismatch"
@@ -61,5 +58,8 @@ spec:
               name: psql-tls-secrets
             - mountPath: "/app/data"
               name: data
+          resources:
+            limits:
+              memory: "1024Mi"
 ---
 
