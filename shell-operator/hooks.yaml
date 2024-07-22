@@ -23,6 +23,11 @@ data:
               "matchNames": ["psql"]
             }
           },
+          "labelSelector": {
+            "matchLabels":{
+              "ongy.net/psql-db": "true"
+            }
+          },
           "executeHookOnEvent": ["Added"]
         }
       ]
@@ -32,5 +37,7 @@ data:
       type=$(jq -r '.[0].type' ${BINDING_CONTEXT_PATH})
       if [[ $type == "Synchronization" ]] ; then
         jq  '.[0].objects' "${BINDING_CONTEXT_PATH}"
+      else
+        cat "${BINDING_CONTEXT_PATH}"
       fi
     fi
