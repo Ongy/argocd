@@ -36,5 +36,4 @@ spec:
         - --source=istio-gateway
         - --source=istio-virtualservice
         - --domain-filter=local.ongy.net
-        - --log-level=debug
         - --default-targets=mario.local.ongy.net
