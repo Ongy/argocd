@@ -16,10 +16,10 @@ rules:
   - watch
   - list
 - apiGroups:
-  - extensions
-  - networking.k8s.io
+  - networking.istio.io
   resources:
-  - ingresses
+  - virtualservices
+  - gateways
   verbs:
   - get
   - list
