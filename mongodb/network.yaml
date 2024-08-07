@@ -8,5 +8,5 @@ spec:
     app: mongodb
   ports:
     - protocol: TCP
-      port: 21217
+      port: 21017
       name: mongodb

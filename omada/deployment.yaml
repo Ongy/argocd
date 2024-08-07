@@ -34,7 +34,7 @@ spec:
             - name: MONGO_EXTERNAL
               value: "true"
             - name: EAP_MONGOD_URI
-              value: mongodb://mongodb.database.svc.cluster.local:27217/omada
+              value: mongodb://mongodb.database.svc.cluster.local:27017/omada
           resources:
             limits:
               memory: "1024Mi"
