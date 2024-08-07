@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: omada
+  name: omada
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: omada
+  template:
+    metadata:
+      labels:
+        app: omada
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - image: mbentley/omada-controller:5.14
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1005
+            runAsGroup: 1005
+            privileged: false
+          name: omada-controller
+          env:
+            - name: MONGO_EXTERNAL
+              value: "true"
+            - name: EAP_MONGOD_URI
+              value: mongodb-0.database.svc.cluster:27217/omada
+          resources:
+            limits:
+              memory: "1024Mi"
+---
+
