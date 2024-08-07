@@ -27,7 +27,7 @@ spec:
         fsGroup: 70
         fsGroupChangePolicy: "OnRootMismatch"
       containers:
-        - image: mongodb:7-jammy
+        - image: mongo:7-jammy
           name: mongodb
           volumeMounts:
           - name: data
