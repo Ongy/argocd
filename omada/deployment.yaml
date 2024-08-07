@@ -16,6 +16,12 @@ spec:
     spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      volumes:
+      - name: data
+        nfs:
+          path: /srv/share/backed/appdata/omada
+          server: mario.local.ongy.net
+          readOnly: false
       containers:
         - image: mbentley/omada-controller:5.14
           securityContext:
@@ -38,5 +44,8 @@ spec:
           resources:
             limits:
               memory: "1024Mi"
+          volumeMounts:
+          - name: data
+            mountPath: "/opt/tplink/EAPController/data"
 ---
 
