@@ -45,7 +45,7 @@ spec:
               value: mongodb://mongodb.database.svc.cluster.local:27017/omada
           resources:
             limits:
-              memory: "1024Mi"
+              memory: "2048Mi"
           volumeMounts:
           - name: data
             mountPath: "/opt/tplink/EAPController/data"
