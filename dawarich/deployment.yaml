@@ -46,6 +46,8 @@ spec:
           env:
             - name: DATABASE_URL
               value: postgresql://dawarich:@psql.psql/dawarich?sslmode=verify-full&sslcert=%2Fpsql-tls-secrets%2Ftls.crt&sslkey=%2Fpsql-tls-secrets%2Ftls.key&sslrootcert=%2Fpsql-tls-secrets%2Fca.crt
+            - name: DATABASE_HOST
+              value: psql.psql
             - name: TIME_ZONE
               value: Europe/Berlin
             - name: REDIS_URL
