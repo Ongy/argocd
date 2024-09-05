@@ -28,8 +28,9 @@ spec:
             claimName: dawarich-data-pvc
       containers:
         - image: freikin/dawarich:latest
-          args:
-            - bin/dev
+          command:
+          - /dev-entrypoint.sh
+          - bin/dev
           securityContext:
             seccompProfile:
               type: RuntimeDefault
