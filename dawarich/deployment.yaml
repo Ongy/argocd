@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dawarich
+  name: dawarich
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dawarich
+  template:
+    metadata:
+      labels:
+        app: dawarich
+    spec:
+      securityContext:
+        fsGroup: 1003
+        fsGroupChangePolicy: "OnRootMismatch"
+      volumes:
+        - name: psql-tls-secrets
+          secret:
+            defaultMode: 416
+            optional: true
+            secretName: psql-client-secret
+        - name: data
+          persistentVolumeClaim:
+            claimName: dawarich-data-pvc
+      containers:
+        - image: freikin/dawarich:latest
+          args:
+            - bin/dev
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1003
+            runAsGroup: 1003
+            privileged: false
+          name: main
+          env:
+            - name: DATABASE_URL
+              value: postgresql://dawarich:@psql.psql/dawarich?sslmode=verify-full&sslcert=%2Fpsql-tls-secrets%2Ftls.crt&sslkey=%2Fpsql-tls-secrets%2Ftls.key&sslrootcert=%2Fpsql-tls-secrets%2Fca.crt
+            - name: TIME_ZONE
+              value: Europe/Berlin
+            - name: REDIS_URL
+              value: redis://dawarich_redis:6379/0
+          volumeMounts:
+            - mountPath: "/psql-tls-secrets"
+              name: psql-tls-secrets
+            - mountPath: "/usr/local/bundle/gems"
+              name: data
+              subPath: gems
+            - mountPath: "/var/app/public"
+              name: data
+              subPath: public
+          resources:
+            limits:
+              memory: "1024Mi"
+        - image: freikin/dawarich:latest
+          args:
+            - sidekiq
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1003
+            runAsGroup: 1003
+            privileged: false
+          name: sidekiq
+          env:
+            - name: DATABASE_URL
+              value: postgresql://dawarich:@psql.psql/dawarich?sslmode=verify-full&sslcert=%2Fpsql-tls-secrets%2Ftls.crt&sslkey=%2Fpsql-tls-secrets%2Ftls.key&sslrootcert=%2Fpsql-tls-secrets%2Fca.crt
+            - name: TIME_ZONE
+              value: Europe/Berlin
+            - name: REDIS_URL
+              value: redis://dawarich_redis:6379/0
+          volumeMounts:
+            - mountPath: "/psql-tls-secrets"
+              name: psql-tls-secrets
+            - mountPath: "/usr/local/bundle/gems"
+              name: data
+              subPath: gems
+            - mountPath: "/var/app/public"
+              name: data
+              subPath: public
+          resources:
+            limits:
+              memory: "1024Mi"
+---
+
