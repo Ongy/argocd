@@ -37,10 +37,7 @@ spec:
             capabilities:
               drop: ["ALL"]
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 1003
-            runAsGroup: 1003
+            readOnlyRootFilesystem: false
             privileged: false
           name: main
           env:
