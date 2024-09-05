@@ -50,6 +50,8 @@ spec:
               value: Europe/Berlin
             - name: REDIS_URL
               value: redis://dawarich_redis:6379/0
+            - name: RAILS_ENV
+              value: production
           volumeMounts:
             - mountPath: "/psql-tls-secrets"
               name: psql-tls-secrets
