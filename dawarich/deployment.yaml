@@ -29,7 +29,7 @@ spec:
       containers:
         - image: freikin/dawarich:latest
           command:
-          - /dev-entrypoint.sh
+          - /usr/local/bin/dev-entrypoint.sh
           - bin/dev
           securityContext:
             seccompProfile:
