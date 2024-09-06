@@ -52,9 +52,9 @@ spec:
             - name: TIME_ZONE
               value: Europe/Berlin
             - name: REDIS_URL
-              value: redis://dawarich_redis:6379/0
+              value: redis://dawarich-redis:6379/0
             - name: RAILS_ENV
-              value: production
+              value: test
           volumeMounts:
             - mountPath: "/psql-tls-secrets"
               name: psql-tls-secrets
