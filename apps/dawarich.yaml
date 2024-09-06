@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: dawarich
   namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
 #  annotations:
 #    argocd-image-updater.argoproj.io/image-list: jellyfin=jellyfin/jellyfin,shim=cr.local.ongy.net/jellyfin-mpv-shim
 #    argocd-image-updater.argoproj.io/jellyfin.update-strategy: semver
