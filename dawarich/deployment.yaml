@@ -27,7 +27,7 @@ spec:
           persistentVolumeClaim:
             claimName: dawarich-data-pvc
       containers:
-        - image: freikin/dawarich:latest
+        - image: freikin/dawarich:0.13.2
           command:
           - /usr/local/bin/dev-entrypoint.sh
           - bin/dev
