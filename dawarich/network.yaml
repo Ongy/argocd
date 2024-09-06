@@ -1,26 +1,38 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: mealie
-  namespace: mealie
+  name: dawarich-redis
 spec:
   selector:
-    app: mealie
+    app: dawarich-redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+      name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dawarich
+spec:
+  selector:
+    app: dawarich
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 9000
+      targetPort: 3000
       name: http
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: mealie
+  name: dawarich
   namespace: default
 spec:
   gateways: [istio-system/gateway]
-  hosts: [mealie.local.ongy.net]
+  hosts: [dawarich.local.ongy.net]
   http:
   - route:
     - destination:
-        host: mealie.mealie.svc.cluster.local
+        host: dawarich.experiments.svc.cluster.local

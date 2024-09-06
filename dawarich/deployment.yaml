@@ -102,4 +102,43 @@ spec:
 #             limits:
 #               memory: "1024Mi"
 ---
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dawarich-redis
+  name: dawarich-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dawarich-redis
+  template:
+    metadata:
+      labels:
+        app: dawarich-redis
+    spec:
+      volumes:
+        - name: redis-data
+          nfs:
+            path: /srv/share/backed/appdata/dawarich
+            server: mario.local.ongy.net
+            readOnly: false
+      containers:
+        - image: docker.io/library/redis:7
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 1000
+            privileged: false
+          name: paperless-broker
+          volumeMounts:
+            - mountPath: "/data"
+              name: redis-data
+              subPath: redis

@@ -7,4 +7,4 @@ resources:
 - psql.secret.yaml
 - db.spec.yaml
 - storage.yaml
-# - network.yaml
+- network.yaml
