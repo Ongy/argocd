@@ -53,7 +53,7 @@ data:
         done
       else
         if [[ "$(jq -r '.[0].watchEvent' "${BINDING_CONTEXT_PATH}")" = "Added" ]]; then
-          ensure_db '.[0].object.metadata.name'
+          ensure_db $(jq -r '.[0].object.metadata.name' "${BINDING_CONTEXT_PATH}")
         fi
       fi
     fi
