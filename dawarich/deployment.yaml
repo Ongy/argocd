@@ -72,11 +72,13 @@ spec:
             capabilities:
               drop: ["ALL"]
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1003
+            runAsGroup: 1003
+            privileged: false
           name: sidekiq
           env:
-            - name: DATABASE_HOST
-              value: psql.psql
             - name: DATABASE_URL
               value: postgresql://dawarich:@psql.psql/dawarich?sslmode=verify-full&sslcert=%2Fpsql-tls-secrets%2Ftls.crt&sslkey=%2Fpsql-tls-secrets%2Ftls.key&sslrootcert=%2Fpsql-tls-secrets%2Fca.crt
             - name: TIME_ZONE
