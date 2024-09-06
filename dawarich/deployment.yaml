@@ -29,8 +29,10 @@ spec:
       containers:
         - image: freikin/dawarich:0.13.2
           command:
-          - /usr/local/bin/dev-entrypoint.sh
-          - bin/dev
+          - sleep
+          - infinity
+          #- /usr/local/bin/dev-entrypoint.sh
+          #- bin/dev
           securityContext:
             seccompProfile:
               type: RuntimeDefault
