@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: dawarich
-  namespace: psql
-  labels:
-    ongy.net/psql-db: "true"
