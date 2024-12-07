@@ -37,4 +37,6 @@ spec:
         - --source=istio-virtualservice
         - --domain-filter=local.ongy.net
         - --default-targets=mario.local.ongy.net
+        - --source=service
+        - --publish-internal-services
 #        - --source=gateway-httproute
