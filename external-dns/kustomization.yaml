@@ -4,3 +4,18 @@ kind: Kustomization
 resources:
 - deployment.yaml
 - rbac.yaml
+
+patches:
+  - patch: |-
+      kind: not-important
+      metadata:
+        name: not-important
+      spec:
+        template:
+          spec:
+            tolerations:
+            - key: "node-role.kubernetes.io/control-plane"
+              operator: "Exists"
+              effect: "NoSchedule"
+    target:
+      kind: (StatefulSet|Deployment|Job)
