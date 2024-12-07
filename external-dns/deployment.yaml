@@ -35,6 +35,6 @@ spec:
         - --rfc2136-tsig-axfr
         - --source=istio-gateway
         - --source=istio-virtualservice
-        - --source=gateway-httproute
         - --domain-filter=local.ongy.net
         - --default-targets=mario.local.ongy.net
+#        - --source=gateway-httproute
