@@ -10,16 +10,16 @@ spec:
     # Five mons must be created for stretch mode
     count: 3
     allowMultiplePerNode: false
-    stretchCluster:
-      # The ceph failure domain will be extracted from the label, which by default is the zone. The nodes running OSDs must have
-      # this label in order for the OSDs to be configured in the correct topology. For topology labels, see
-      # https://rook.io/docs/rook/latest/CRDs/ceph-cluster-crd/#osd-topology.
-      failureDomainLabel: topology.kubernetes.io/zone
-      zones:
-        - name: etcd-worker
-          arbiter: true
-        - name: odroidm1-1
-        - name: odroidm1-2
+#    stretchCluster:
+#      # The ceph failure domain will be extracted from the label, which by default is the zone. The nodes running OSDs must have
+#      # this label in order for the OSDs to be configured in the correct topology. For topology labels, see
+#      # https://rook.io/docs/rook/latest/CRDs/ceph-cluster-crd/#osd-topology.
+#      failureDomainLabel: topology.kubernetes.io/zone
+#      zones:
+#        - name: etcd-worker
+#          arbiter: true
+#        - name: odroidm1-1
+#        - name: odroidm1-2
   mgr:
     count: 2
   cephVersion:
@@ -57,6 +57,17 @@ spec:
                   values:
                     - toad
                     - toadette
+    mon:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/hostname
+                  operator: In
+                  values:
+                    - toad
+                    - toadette
+                    - bowser
     osd:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
