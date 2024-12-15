@@ -5,11 +5,13 @@ metadata:
 spec:
   metadataPool:
     replicated:
+      replicasPerFailureDomain: 2
       size: 4
   dataPools:
-    - name: mirror
-      replicated:
-        size: 4
+  - name: mirror
+    replicated:
+      replicasPerFailureDomain: 2
+      size: 4
   preserveFilesystemOnDelete: true
   metadataServer:
     activeCount: 1
