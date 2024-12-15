@@ -48,6 +48,13 @@ spec:
           operator: Exists
           effect: NoSchedule
     osd:
+      tolerations:
+        # kubernetes v1.24 clusters would need the taint `node-role.kubernetes.io/control-plane`
+        # configuration. For earlier versions you may use `node-role.kubernetes.io/master` if
+        # available in your cluster.
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
