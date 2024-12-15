@@ -1,0 +1,22 @@
+apiVersion: ceph.rook.io/v1
+kind: CephFilesystem
+metadata:
+  name: myfs
+spec:
+  metadataPool:
+    replicated:
+      size: 2
+  dataPools:
+    - name: mirror
+      replicated:
+        size: 2
+  preserveFilesystemOnDelete: true
+  metadataServer:
+    activeCount: 1
+    activeStandby: true
+    placement:
+      tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+
