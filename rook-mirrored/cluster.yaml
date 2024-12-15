@@ -1,0 +1,65 @@
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  namespace: rook-ceph # namespace:cluster
+spec:
+  # If there are multiple clusters, the directory must be unique for each cluster.
+  dataDirHostPath: /var/lib/rook-mirrored
+  mon:
+    # Five mons must be created for stretch mode
+    count: 3
+    allowMultiplePerNode: false
+    stretchCluster:
+      # The ceph failure domain will be extracted from the label, which by default is the zone. The nodes running OSDs must have
+      # this label in order for the OSDs to be configured in the correct topology. For topology labels, see
+      # https://rook.io/docs/rook/latest/CRDs/ceph-cluster-crd/#osd-topology.
+      failureDomainLabel: host
+      zones:
+        - name: bowser
+          arbiter: true
+        - name: toad
+        - name: toadette
+  mgr:
+    count: 2
+  cephVersion:
+    image: quay.io/ceph/ceph:v19.2.0
+    allowUnsupported: true
+  skipUpgradeChecks: false
+  continueUpgradeAfterChecksEvenIfNotHealthy: false
+  dashboard:
+    enabled: true
+    ssl: false
+  storage:
+    useAllNodes: true
+    useAllDevices: false
+    deviceFilterPath: "/dev/disk/by-id/wwn-0x5f8db4c392403007-part3"
+  # OSD placement is expected to include the non-arbiter zones
+  placement:
+    # The arbiter mon can have its own placement settings that will be different from the mons.
+    # If the arbiter section is not included in the placement, the arbiter will use the same placement
+    # settings as other mons. In this example, the arbiter has a toleration to run on a control-plane node.
+    arbiter:
+      tolerations:
+        # kubernetes v1.24 clusters would need the taint `node-role.kubernetes.io/control-plane`
+        # configuration. For earlier versions you may use `node-role.kubernetes.io/master` if
+        # available in your cluster.
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+    osd:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: topology.kubernetes.io/zone
+                  operator: In
+                  values:
+                    - toad
+                    - toadette
+  priorityClassNames:
+    mon: system-node-critical
+    osd: system-node-critical
+    mgr: system-cluster-critical
+  disruptionManagement:
+    managePodBudgets: true
