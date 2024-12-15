@@ -17,6 +17,4 @@ spec:
       prune: true
     syncOptions:
       - PruneLast=true
-  kustomize:
-    patches:
 
