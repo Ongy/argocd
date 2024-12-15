@@ -33,7 +33,7 @@ spec:
   storage:
     useAllNodes: true
     useAllDevices: false
-    deviceFilterPath: "/dev/disk/by-id/wwn-0x5f8db4c392403007-part3"
+    devicePathFilter: "/dev/disk/by-id/wwn-0x5f8db4c392403007-part3"
   # OSD placement is expected to include the non-arbiter zones
   placement:
     # The arbiter mon can have its own placement settings that will be different from the mons.
