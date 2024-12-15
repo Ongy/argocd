@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://git.local.ongy.net/ongy/argocd.git
     path: external-dns
-    targetRevision: HEAD
+    targetRevision: new-cluster
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: external-dns
@@ -17,3 +17,6 @@ spec:
       prune: true
     syncOptions:
       - PruneLast=true
+  kustomize:
+    patches:
+
