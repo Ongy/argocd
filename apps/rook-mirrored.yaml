@@ -17,4 +17,9 @@ spec:
       prune: true
     syncOptions:
       - PruneLast=true
-
+  helm:
+    valuesObject:
+      provisionerTolerations:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
