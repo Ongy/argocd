@@ -4,5 +4,5 @@ kind: Kustomization
 resources:
 - cluster.yaml
 - route.yaml
-- cepths.yaml
+- cephs.yaml
 - storage-class.yaml
