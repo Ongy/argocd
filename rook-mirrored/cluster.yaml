@@ -14,12 +14,12 @@ spec:
       # The ceph failure domain will be extracted from the label, which by default is the zone. The nodes running OSDs must have
       # this label in order for the OSDs to be configured in the correct topology. For topology labels, see
       # https://rook.io/docs/rook/latest/CRDs/ceph-cluster-crd/#osd-topology.
-      failureDomainLabel: topology.kubernetes.io/zone
+      failureDomainLabel: zone
       zones:
-        - name: bowser
+        - name: etcd-worker
           arbiter: true
-        - name: toad
-        - name: toadette
+        - name: odroidm1-1
+        - name: odroidm1-2
   mgr:
     count: 2
   cephVersion:
