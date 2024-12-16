@@ -3,4 +3,4 @@ kind: Kustomization
 
 resources:
 - route.yaml
-- https://raw.githubusercontent.com/keycloak/keycloak-quickstarts/latest/kubernetes/keycloak.yaml
+- https://raw.githubusercontent.com/keycloak/keycloak-quickstarts/refs/heads/main/kubernetes/keycloak.yaml
