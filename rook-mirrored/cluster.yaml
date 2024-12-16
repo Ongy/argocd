@@ -7,7 +7,6 @@ spec:
   # If there are multiple clusters, the directory must be unique for each cluster.
   dataDirHostPath: /var/lib/rook-mirrored
   mon:
-    # Five mons must be created for stretch mode
     count: 3
     allowMultiplePerNode: false
   mgr:
