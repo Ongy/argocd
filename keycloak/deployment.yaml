@@ -28,6 +28,11 @@ spec:
       labels:
         app: keycloak
     spec:
+      volumes:
+      - name: keycloak-data
+        persistentVolumeClaim:
+          claimName: keycloak-data
+          readOnly: false
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:26.0.7
@@ -48,6 +53,9 @@ spec:
               value: "admin"
             - name: KC_HEALTH_ENABLED
               value: "true"
+          volumeMounts:
+          - name: keycloak-data
+            mountPath: /opt/keycloak/data
           ports:
             - name: http
               containerPort: 8080

@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
 - route.yaml
 - deployment.yaml
+- storage.yaml
