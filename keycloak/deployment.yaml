@@ -28,6 +28,11 @@ spec:
       labels:
         app: keycloak
     spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
+
       volumes:
       - name: keycloak-data
         persistentVolumeClaim:
@@ -53,9 +58,9 @@ spec:
               value: "admin"
             - name: KC_HEALTH_ENABLED
               value: "true"
-#          volumeMounts:
-#          - name: keycloak-data
-#            mountPath: /opt/keycloak/data/h2
+          volumeMounts:
+          - name: keycloak-data
+            mountPath: /opt/keycloak/data
           ports:
             - name: http
               containerPort: 8080
