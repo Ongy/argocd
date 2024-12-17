@@ -55,7 +55,7 @@ spec:
               value: "true"
           volumeMounts:
           - name: keycloak-data
-            mountPath: /opt/keycloak/data
+            mountPath: /opt/keycloak/data/h2
           ports:
             - name: http
               containerPort: 8080
