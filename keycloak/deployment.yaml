@@ -55,3 +55,12 @@ spec:
             httpGet:
               path: /health/ready
               port: 9000
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            privileged: false
+            runAsNonRoot: false
