@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: psql
+  name: psql
+  namespace: psql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: psql
+  template:
+    metadata:
+      labels:
+        app: psql
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      volumes:
+        - name: psql-data
+          persistentVolumeClaim:
+            claimName: psql-data
+            readOnly: false
+        - name: psql-tls-secrets
+          secret:
+            secretName: psql-server-secret
+            optional: true
+            defaultMode: 0640
+      securityContext:
+        fsGroup: 70
+        fsGroupChangePolicy: "OnRootMismatch"
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - image: postgres:14-alpine
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+          env:
+          - name: POSTGRES_PASSWORD
+            value: password
+          name: psql
+          volumeMounts:
+            - mountPath: "/var/lib/postgresql/data"
+              subPath: data
+              name: psql-data
+            - mountPath: "/wal"
+              name: psql-wal
+              subPath: wal
+            - name: psql-tls-secrets
+              mountPath: "/tls-secrets"
+              readOnly: true

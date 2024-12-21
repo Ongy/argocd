@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: psql-server-secret
+  namespace: psql
+spec:
+  isCA: true
+  duration: 8760h # 1 years
+  commonName: psql.psql
+  dnsNames: ["psql.psql", "psql.psql.svc.cluster.local"]
+  secretName: psql-server-secret
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: psql-ca-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
