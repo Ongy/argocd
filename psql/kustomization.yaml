@@ -5,3 +5,4 @@ resources:
 - deployment.yaml
 - certificates.yaml
 - service.yaml
+- storage.yaml
