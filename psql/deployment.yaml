@@ -51,7 +51,7 @@ spec:
               subPath: data
               name: psql-data
             - mountPath: "/wal"
-              name: psql-wal
+              name: psql-data
               subPath: wal
             - name: psql-tls-secrets
               mountPath: "/tls-secrets"
