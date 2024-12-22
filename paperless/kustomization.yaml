@@ -7,3 +7,4 @@ resources:
 - deployments.yaml
 - network.yaml
 - storage.yaml
+- db.spec.yaml
