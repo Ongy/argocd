@@ -4,7 +4,6 @@ metadata:
   labels:
     app: librespeed
   name: librespeed
-  namespace: infrastructure
 spec:
   replicas: 1
   selector:
