@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: photoprism
-  namespace: mediaserver
 spec:
   selector:
     app: photoprism
@@ -15,7 +14,6 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: photoprism
-  namespace: mediaserver
 spec:
   podSelector:
     matchLabels:
@@ -50,3 +48,29 @@ spec:
           port: 80
         - protocol: TCP
           port: 443
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: photoprism
+spec:
+  hostnames:
+  - photoprism.local.ongy.net
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: gateway
+    namespace: kube-system
+    sectionName: https
+  rules:
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: photoprism
+      port: 80
+      weight: 1
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
+
