@@ -21,7 +21,7 @@ spec:
       volumes:
         - name: paperless-data
           persistentVolumeClaim:
-            claimName: psql-data
+            claimName: paperless-data
             readOnly: false
         - name: scan-data
           persistentVolumeClaim:
