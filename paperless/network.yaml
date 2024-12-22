@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: paperless-core
+  namespace: mediaserver
+spec:
+  selector:
+    app: paperless-core
+  ports:
+    - protocol: TCP
+      port: 8000
+      name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: paperless-broker
+  namespace: mediaserver
+spec:
+  selector:
+    app: paperless-broker
+  ports:
+    - protocol: TCP
+      port: 6379
+      name: http
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: paperless
+  namespace: default
+spec:
+  gateways: [istio-system/gateway]
+  hosts: [paperless.local.ongy.net]
+  http:
+  - route:
+    - destination:
+        host: paperless-core.mediaserver.svc.cluster.local
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: paperless-core
+  namespace: mediaserver
+spec:
+  podSelector:
+    matchLabels:
+      app: paperless-core
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: istio-system
+      ports:
+        - protocol: TCP
+          port: 8000
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: psql
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: mediaserver
+      ports:
+        - protocol: TCP
+          port: 6379
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+    - to:
+        # imap.fastmail.com resolved 2023-05-08
+        - ipBlock:
+            cidr: 103.168.172.58/32
+        - ipBlock:
+            cidr: 103.168.172.43/32
+      # - ipBlock:
+      #      cidr: 0.0.0.0/0
+      #      except:
+      #        - 10.0.0.0/8
+      #        - 192.168.0.0/16
+      ports:
+        - protocol: TCP
+          port: 993
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: paperless-broker
+  namespace: mediaserver
+spec:
+  podSelector:
+    matchLabels:
+      app: paperless-broker
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: mediaserver
+      ports:
+        - protocol: TCP
+          port: 6379
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: paperless
+  namespace: istio-system
+spec:
+  action: CUSTOM
+  provider:
+    # The provider name must match the extension provider defined in the mesh config.
+    # You can also replace this with sample-ext-authz-http to test the other external authorizer definition.
+    name: authentik-proxy
+  rules:
+  # The rules specify when to trigger the external authorizer.
+  - to:
+    - operation:
+        hosts:
+        - "paperless.local.ongy.net"

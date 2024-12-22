@@ -1,0 +1,213 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: paperless-core
+  name: paperless-core
+  namespace: mediaserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: paperless-core
+  template:
+    metadata:
+      labels:
+        app: paperless-core
+    spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
+      volumes:
+        - name: scan-data
+          persistentVolumeClaim:
+            claimName: paperless-printer-pvc
+        - name: supervisord-config
+          configMap:
+            name: supervisord-config
+        - name: tmp-dir
+          emptyDir:
+            medium: Memory
+            sizeLimit: 500Mi
+        - name: var-log
+          emptyDir:
+            medium: Memory
+            sizeLimit: 500Mi
+        - name: paperless-data
+          nfs:
+            path: /srv/share/backed/appdata/paperless/data
+            server: mario.local.ongy.net
+            readOnly: false
+        - name: paperless-media
+          nfs:
+            path: /srv/share/backed/appdata/paperless/media
+            server: mario.local.ongy.net
+            readOnly: false
+        - name: paperless-export
+          nfs:
+            path: /srv/share/backed/appdata/paperless/export
+            server: mario.local.ongy.net
+            readOnly: false
+        - name: paperless-consume
+          nfs:
+            path: /srv/share/backed/appdata/paperless/consume
+            server: mario.local.ongy.net
+            readOnly: false
+        - name: psql-tls-secrets
+          secret:
+            secretName: psql-client-secret
+            optional: false
+            defaultMode: 0640
+      containers:
+        - image: alpine:edge
+          imagePullPolicy: Always
+          name: consume-loop
+          command: [sh]
+          args:
+            - -eu
+            - -c
+            - |
+              DB="/data/.consumed.txt"
+              touch "${DB}"
+
+              consume() {
+                for file in `find /scans -type f -iname \*.pdf`; do
+                  if grep -q "${file}" "${DB}"; then continue; fi
+                  cp "${file}" /consume
+                  echo "${file}" >> "${DB}"
+                  echo Processed file "${file}"
+                done
+              }
+
+              consume
+              # Doing it like this makes it easier to stop the process via signal!
+              while sleep 1800 ; do
+                consume
+              done
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            privileged: false
+          volumeMounts:
+            - mountPath: "/consume"
+              name: paperless-consume
+              readOnly: false
+            - mountPath: "/scans"
+              name: scan-data
+              readOnly: true
+            - mountPath: "/data"
+              name: paperless-data
+        - image: ghcr.io/paperless-ngx/paperless-ngx:2.13.5 # {"$imagepolicy": "flux-system:paperless"}
+          command: ['/usr/local/bin/supervisord']
+          args:
+            - -c
+            - /etc/supervisord.conf
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            privileged: false
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+              httpHeaders:
+                - name: Host
+                  value: paperless.local.ongy.net
+          env:
+            - name: PAPERLESS_AUTO_LOGIN_USERNAME
+              value: admin
+            - name: PAPERLESS_DBHOST
+              value: "psql.psql"
+            - name: PAPERLESS_REDIS
+              value: "redis://paperless-broker:6379"
+            - name: PAPERLESS_DBSSLMODE
+              value: "verify-ca"
+            - name: PAPERLESS_DBSSLROOTCERT
+              value: "/psql-tls-secrets/..data/ca.crt"
+            - name: PAPERLESS_DBSSLCERT
+              value: "/psql-tls-secrets/..data/tls.crt"
+            - name: PAPERLESS_DBSSLKEY
+              value: "/psql-tls-secrets/..data/tls.key"
+            - name: PAPERLESS_TIME_ZONE
+              value: "Europe/Berlin"
+            - name: PAPERLESS_ADMIN_USER
+              value: "admin"
+            - name: PAPERLESS_ADMIN_PASSWORD
+              value: "password"
+            - name: PAPERLESS_URL
+              value: https://paperless.local.ongy.net
+          name: core
+          volumeMounts:
+            - mountPath: "/etc/supervisord.conf"
+              name: supervisord-config
+              subPath: supervisord.conf
+            - mountPath: "/tmp/"
+              name: tmp-dir
+            - mountPath: "/var/log/supervisord"
+              name: var-log
+            - mountPath: "/usr/src/paperless/data"
+              name: paperless-data
+            - mountPath: "/usr/src/paperless/media"
+              name: paperless-media
+            - mountPath: "/usr/src/paperless/export"
+              name: paperless-export
+            - mountPath: "/usr/src/paperless/consume"
+              name: paperless-consume
+            - name: psql-tls-secrets
+              mountPath: "/psql-tls-secrets"
+              readOnly: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: paperless-broker
+  name: paperless-broker
+  namespace: mediaserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: paperless-broker
+  template:
+    metadata:
+      labels:
+        app: paperless-broker
+    spec:
+      volumes:
+        - name: redis-data
+          nfs:
+            path: /srv/share/backed/appdata/paperless/redis
+            server: mario.local.ongy.net
+            readOnly: false
+      containers:
+        - image: docker.io/library/redis:7
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 1000
+            privileged: false
+          name: paperless-broker
+          volumeMounts:
+            - mountPath: "/data"
+              name: redis-data

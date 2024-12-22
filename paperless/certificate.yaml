@@ -1,0 +1,18 @@
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: psql-client-secret
+  namespace: mediaserver
+spec:
+  isCA: false
+  duration: 8760h # 1 years
+  commonName: paperless
+  secretName: psql-client-secret
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: psql-ca-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
