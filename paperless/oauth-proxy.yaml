@@ -48,7 +48,7 @@ metadata:
   namespace: mediaserver
 spec:
   selector:
-    app: paperless-oauth
+    app: paperless-proxy
   ports:
     - protocol: TCP
       port: 80
