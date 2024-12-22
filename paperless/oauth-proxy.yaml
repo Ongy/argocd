@@ -17,7 +17,7 @@ spec:
       containers:
         - image: quay.io/oauth2-proxy/oauth2-proxy
           args:
-          - --provider=keycloak
+          - --provider=keycloak-oidc
           - --client-id=paperless
           - --client-secret=tdhUCZ3hwutrmqcBQaSGMUSAg3jNXeh2
           - --redirect-url=https://paperless.local.ongy.net/oauth2/callback
