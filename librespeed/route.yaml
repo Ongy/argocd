@@ -4,7 +4,7 @@ metadata:
   name: librespeed
 spec:
   hostnames:
-  - librespeed.local.ongy.net
+  - speedtest.local.ongy.net
   parentRefs:
   - group: gateway.networking.k8s.io
     kind: Gateway
