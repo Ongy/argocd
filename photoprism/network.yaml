@@ -30,6 +30,8 @@ spec:
       ports:
         - protocol: TCP
           port: 2342
+        - protocol: TCP
+          port: 80
   egress:
     - to:
         - namespaceSelector:
