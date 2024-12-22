@@ -26,6 +26,7 @@ spec:
           - --reverse-proxy=true
           - --http-address=0.0.0.0:8080
           - --upstream=paperless-core
+          - --email-domain=*
           securityContext:
             seccompProfile:
               type: RuntimeDefault
