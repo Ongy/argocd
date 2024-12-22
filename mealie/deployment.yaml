@@ -39,7 +39,7 @@ spec:
             runAsUser: 1003
             runAsGroup: 1003
             privileged: false
-          name: shell-operator
+          name: mealie
           env:
             - name: DB_ENGINE
               value: postgres
