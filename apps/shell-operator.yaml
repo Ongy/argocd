@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shell-operator
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: ha=ghcr.io/flant/shell-operator
+    argocd-image-updater.argoproj.io/ha.update-strategy: newest-build
+    # argocd-image-updater.argoproj.io/ha.allow-tags: 'regexp:2024\.7\.[2-9]'
+    # argocd-image-updater.argoproj.io/ha.platforms: linux/amd64
+spec:
+  project: default
+  source:
+    repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: shell-operator
+    targetRevision: new-cluster
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: shell-operator
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
