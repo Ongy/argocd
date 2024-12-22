@@ -6,7 +6,7 @@ metadata:
   name: paperless-core
   namespace: mediaserver
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: paperless-core
@@ -19,6 +19,10 @@ spec:
         fsGroup: 1000
         fsGroupChangePolicy: "OnRootMismatch"
       volumes:
+        - name: paperless-data
+          persistentVolumeClaim:
+            claimName: psql-data
+            readOnly: false
         - name: scan-data
           persistentVolumeClaim:
             claimName: paperless-printer-pvc
@@ -33,16 +37,6 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 500Mi
-        - name: paperless-data
-          nfs:
-            path: /srv/share/backed/appdata/paperless/data
-            server: mario.local.ongy.net
-            readOnly: false
-        - name: paperless-media
-          nfs:
-            path: /srv/share/backed/appdata/paperless/media
-            server: mario.local.ongy.net
-            readOnly: false
         - name: paperless-export
           nfs:
             path: /srv/share/backed/appdata/paperless/export
@@ -59,51 +53,52 @@ spec:
             optional: false
             defaultMode: 0640
       containers:
-        - image: alpine:edge
-          imagePullPolicy: Always
-          name: consume-loop
-          command: [sh]
-          args:
-            - -eu
-            - -c
-            - |
-              DB="/data/.consumed.txt"
-              touch "${DB}"
-
-              consume() {
-                for file in `find /scans -type f -iname \*.pdf`; do
-                  if grep -q "${file}" "${DB}"; then continue; fi
-                  cp "${file}" /consume
-                  echo "${file}" >> "${DB}"
-                  echo Processed file "${file}"
-                done
-              }
-
-              consume
-              # Doing it like this makes it easier to stop the process via signal!
-              while sleep 1800 ; do
-                consume
-              done
-          securityContext:
-            seccompProfile:
-              type: RuntimeDefault
-            capabilities:
-              drop: ['ALL']
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            privileged: false
-          volumeMounts:
-            - mountPath: "/consume"
-              name: paperless-consume
-              readOnly: false
-            - mountPath: "/scans"
-              name: scan-data
-              readOnly: true
-            - mountPath: "/data"
-              name: paperless-data
+#        - image: alpine:edge
+#          imagePullPolicy: Always
+#          name: consume-loop
+#          command: [sh]
+#          args:
+#            - -eu
+#            - -c
+#            - |
+#              DB="/data/.consumed.txt"
+#              touch "${DB}"
+#
+#              consume() {
+#                for file in `find /scans -type f -iname \*.pdf`; do
+#                  if grep -q "${file}" "${DB}"; then continue; fi
+#                  cp "${file}" /consume
+#                  echo "${file}" >> "${DB}"
+#                  echo Processed file "${file}"
+#                done
+#              }
+#
+#              consume
+#              # Doing it like this makes it easier to stop the process via signal!
+#              while sleep 1800 ; do
+#                consume
+#              done
+#          securityContext:
+#            seccompProfile:
+#              type: RuntimeDefault
+#            capabilities:
+#              drop: ['ALL']
+#            allowPrivilegeEscalation: false
+#            readOnlyRootFilesystem: true
+#            runAsNonRoot: true
+#            runAsUser: 1000
+#            runAsGroup: 1000
+#            privileged: false
+#          volumeMounts:
+#            - mountPath: "/consume"
+#              name: paperless-consume
+#              readOnly: false
+#            - mountPath: "/scans"
+#              name: scan-data
+#              readOnly: true
+#            - mountPath: "/data"
+#              subPath: data
+#              name: paperless-data
         - image: ghcr.io/paperless-ngx/paperless-ngx:2.13.5 # {"$imagepolicy": "flux-system:paperless"}
           command: ['/usr/local/bin/supervisord']
           args:
@@ -161,8 +156,10 @@ spec:
               name: var-log
             - mountPath: "/usr/src/paperless/data"
               name: paperless-data
+              subPath: data
             - mountPath: "/usr/src/paperless/media"
               name: paperless-media
+              subPath: media
             - mountPath: "/usr/src/paperless/export"
               name: paperless-export
             - mountPath: "/usr/src/paperless/consume"
