@@ -56,9 +56,9 @@ spec:
             - name: OIDC_AUTH_ENABLED
               value: "true"
             - name: OIDC_CONFIGURATION_URL
-              value: https://authentik.local.ongy.net/application/o/mealie/.well-known/openid-configuration
+              value: https://keycloak.local.ongy.net/realms/local.ongy.net/.well-known/openid-configuration
             - name: OIDC_CLIENT_ID
-              value: icbvC5xOb2vAHycXo9Eo7HhhRBdrkvbxuNsQK64q
+              value: mealie
             - name: OIDC_REMEMBER_ME
               value: "true"
           volumeMounts:
