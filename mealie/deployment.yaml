@@ -27,7 +27,7 @@ spec:
           persistentVolumeClaim:
             claimName: mealie-data-pvc
       containers:
-        - image: ghcr.io/mealie-recipes/mealie:v1.10.2
+        - image: ghcr.io/mealie-recipes/mealie:v2.4.1
           securityContext:
             seccompProfile:
               type: RuntimeDefault
