@@ -24,19 +24,6 @@ spec:
       port: 6379
       name: http
 ---
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: paperless
-  namespace: default
-spec:
-  gateways: [istio-system/gateway]
-  hosts: [paperless.local.ongy.net]
-  http:
-  - route:
-    - destination:
-        host: paperless-core.mediaserver.svc.cluster.local
----
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -53,7 +40,7 @@ spec:
     - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: istio-system
+              kubernetes.io/metadata.name: kube-system
       ports:
         - protocol: TCP
           port: 8000
@@ -114,21 +101,3 @@ spec:
       ports:
         - protocol: TCP
           port: 6379
----
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
-metadata:
-  name: paperless
-  namespace: istio-system
-spec:
-  action: CUSTOM
-  provider:
-    # The provider name must match the extension provider defined in the mesh config.
-    # You can also replace this with sample-ext-authz-http to test the other external authorizer definition.
-    name: authentik-proxy
-  rules:
-  # The rules specify when to trigger the external authorizer.
-  - to:
-    - operation:
-        hosts:
-        - "paperless.local.ongy.net"
