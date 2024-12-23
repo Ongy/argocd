@@ -13,6 +13,7 @@ spec:
       releaseName: rook-ceph-cluster
       valuesObject:
         csi:
+          enableRbdDriver: false
           provisionerTolerations:
           - key: node-role.kubernetes.io/control-plane
             operator: Exists
