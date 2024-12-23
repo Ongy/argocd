@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ongy.net-device-plugin-daemonset
+spec:
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: ongy.net-dp-ds
+  template:
+    metadata:
+      labels:
+        name: ongy.net-dp-ds
+    spec:
+      containers:
+      - args:
+        - -logtostderr=true
+        - -stderrthreshold=INFO
+        - -v=5
+        command:
+        - ./k8s-device-plugin
+        image: cr.local.ongy.net/device-plugin:dev
+        imagePullPolicy: Always
+        name: ongy-net-dp-cntr-health
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          privileged: true
+        volumeMounts:
+        - mountPath: /var/lib/kubelet/device-plugins
+          name: dp
+        - mountPath: /sys
+          name: sys
+        - mountPath: /dev
+          name: dev
+        - mountPath: /config
+          name: config
+        workingDir: /root/
+      tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+      - key: CriticalAddonsOnly
+        operator: Exists
+      volumes:
+      - hostPath:
+          path: /var/lib/kubelet/device-plugins
+          type: ""
+        name: dp
+      - hostPath:
+          path: /sys
+          type: ""
+        name: sys
+      - hostPath:
+          path: /dev
+          type: ""
+        name: dev
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: config
+            path: config.yaml
+          name: ongy.net-device-plugin-config
+        name: config
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate

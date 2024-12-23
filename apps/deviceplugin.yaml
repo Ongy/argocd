@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ongy-device-plugin
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: deviceplugin
+    targetRevision: new-cluster
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true

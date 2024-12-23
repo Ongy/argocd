@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  config: |
+    devices:
+      zigbee:
+        hostPaths:
+        - /dev/serial/by-id/usb-Texas_Instruments_TI_CC2531_USB_CDC___0X00124B0018E27DB1-if00
+        - /dev/serial/by-id/usb-Texas_Instruments_TI_CC2531_USB_CDC___0X00124B001938A36E-if00
+        containerPath: /dev/ttyZ2M
+kind: ConfigMap
+metadata:
+  annotations:
+  name: ongy.net-device-plugin-config
