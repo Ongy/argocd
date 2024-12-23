@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: container-registry
+  name: container-registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: container-registry
+  template:
+    metadata:
+      labels:
+        app: container-registry
+    spec:
+      volumes:
+        - name: container-data
+          nfs:
+            path: /srv/share/backed/appdata/container-registry
+            server: mario.local.ongy.net
+            readOnly: false
+      containers:
+        - image: registry:2.8.3 # {"$imagepolicy": "flux-system:registry"}
+          #          readinessProbe:
+          #            httpGet:
+          #              path: /health
+          #              port: 5000
+          name: container-registry
+          volumeMounts:
+            - mountPath: "/var/lib/registry/"
+              name: container-data
