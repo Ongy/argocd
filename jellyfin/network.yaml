@@ -107,18 +107,18 @@ spec:
 # #        - protocol: TCP
 # #          port: 6443
 ---
-apiVersion: "cilium.io/v2"
-kind: CiliumNetworkPolicy
-metadata:
-  name: "jellyfin-mpv-to-apiserver"
-  namespace: jellyfin
-spec:
-  endpointSelector:
-    matchLabels:
-      app: jellyfin-mpv
-  egress:
-  - toEntities:
-    - kube-apiserver
+# apiVersion: "cilium.io/v2"
+# kind: CiliumNetworkPolicy
+# metadata:
+#   name: "jellyfin-mpv-to-apiserver"
+#   namespace: jellyfin
+# spec:
+#   endpointSelector:
+#     matchLabels:
+#       app: jellyfin-mpv
+#   egress:
+#   - toEntities:
+#     - kube-apiserver
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
