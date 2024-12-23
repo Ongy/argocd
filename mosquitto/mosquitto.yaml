@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mosquitto
+  name: mosquitto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mosquitto
+  template:
+    metadata:
+      labels:
+        app: mosquitto
+    spec:
+      volumes:
+        - name: mosquitto-config
+          configMap:
+            name: mosquitto-config-v2
+      containers:
+        - image: eclipse-mosquitto:latest
+          securityContext:
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1883
+            runAsGroup: 1883
+            privileged: false
+          name: mosquitto
+          volumeMounts:
+            - mountPath: "/mosquitto/config"
+              name: mosquitto-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mosquitto
+spec:
+  selector:
+    app: mosquitto
+  ports:
+    - protocol: TCP
+      port: 1883
+      name: mqtt
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: moquitto-proxy
+  name: moquitto-proxy
+spec:
+  selector:
+    matchLabels:
+      app: mosquitto-proxy
+  template:
+    metadata:
+      labels:
+        app: mosquitto-proxy
+    spec:
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
+      containers:
+        - image: alpine/socat
+          securityContext:
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 10100
+            runAsGroup: 10100
+            privileged: false
+          name: http-proxy
+          args:
+          - TCP6-LISTEN:1883,reuseaddr,fork
+          - TCP:mosquitto:1883
