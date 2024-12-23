@@ -44,24 +44,4 @@ spec:
       ports:
         - protocol: TCP
           port: 8080
----
-apiVersion: security.istio.io/v1beta1
-kind: AuthorizationPolicy
-metadata:
-  name: sonarr
-  namespace: istio-system
-spec:
-  selector:
-    matchLabels:
-      app: istio-gateway
-  action: CUSTOM
-  provider:
-    name: "authentik-proxy"
-  rules:
-    - to:
-        - operation:
-            hosts:
-              - "sonarr.local.ongy.net"
-            notPaths:
-              - /feed/calendar/Sonarr.ics
 
