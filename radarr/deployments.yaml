@@ -29,7 +29,7 @@ spec:
             server: mario.local.ongy.net
             readOnly: false
       containers:
-        - image: cr.hotio.dev/hotio/radarr:release-43557ef # {"$imagepolicy": "flux-system:radarr"}
+        - image: ghcr.io/hotio/radarr:release-a4a33f4 # {"$imagepolicy": "flux-system:radarr"}
           imagePullPolicy: IfNotPresent
           readinessProbe:
             httpGet:
