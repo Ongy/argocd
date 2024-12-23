@@ -15,8 +15,15 @@ spec:
       labels:
         app: homeassistant
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: mario
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/hostname
+                  operator: In
+                  values:
+                    - birdo
+                    - mario
       automountServiceAccountToken: false
       volumes:
         - name: config
