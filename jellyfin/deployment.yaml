@@ -17,17 +17,19 @@ spec:
       labels:
         app: jellyfin
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: mario
+#      nodeSelector:
+#        kubernetes.io/hostname: mario
       volumes:
         - name: jellyfin-config
-          hostPath:
-            path: "/srv/share/backed/appdata/jellyfin/"
-            type: Directory
+          nfs:
+            path: /srv/share/backed/appdata/jellyfin/
+            server: mario.local.ongy.net
+            readOnly: false
         - name: media-data
-          hostPath:
-            path: "/srv/share/media/"
-            type: Directory
+          nfs:
+            path: /srv/share/media/
+            server: mario.local.ongy.net
+            readOnly: false
       containers:
         - image: jellyfin/jellyfin:10.9.4 # {"$imagepolicy": "flux-system:jellyfin"}
           env:

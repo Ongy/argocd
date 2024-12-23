@@ -11,19 +11,6 @@ spec:
       port: 8096
       name: http
 ---
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: jellyfin
-  namespace: default
-spec:
-  gateways: [istio-system/gateway]
-  hosts: [jellyfin.local.ongy.net]
-  http:
-  - route:
-    - destination:
-        host: jellyfin.mediaserver.svc.cluster.local
----
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
