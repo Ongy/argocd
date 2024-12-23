@@ -39,7 +39,7 @@ spec:
             runAsUser: 999
             runAsGroup: 1000
             privileged: false
-          name: paperless-proxy
+          name: oauth-proxy
 ---
 apiVersion: v1
 kind: Service
@@ -71,7 +71,7 @@ spec:
   - backendRefs:
     - group: ""
       kind: Service
-      name: sonarr-oauth
+      name: sonarr-proxy
       port: 80
       weight: 1
     matches:
