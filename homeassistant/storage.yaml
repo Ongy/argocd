@@ -34,3 +34,14 @@ spec:
   storageClassName: "" # Empty string must be explicitly set otherwise default StorageClass will be set
   volumeName: homeassistant-config-pv
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: homeassistant-config
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: rook-cephfs
