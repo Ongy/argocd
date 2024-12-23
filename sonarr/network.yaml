@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarr
+spec:
+  selector:
+    app: sonarr
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8989
+      name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sonarr
+spec:
+  podSelector:
+    matchLabels:
+      app: sonarr
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: mediaretriever
+        - podSelector:
+            matchLabels:
+              app: sonarr-proxy
+      ports:
+        - protocol: TCP
+          port: 8989
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: mediaretriever
+        - podSelector:
+            matchLabels:
+              app: qbittorrent
+      ports:
+        - protocol: TCP
+          port: 8080
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: sonarr
+  namespace: istio-system
+spec:
+  selector:
+    matchLabels:
+      app: istio-gateway
+  action: CUSTOM
+  provider:
+    name: "authentik-proxy"
+  rules:
+    - to:
+        - operation:
+            hosts:
+              - "sonarr.local.ongy.net"
+            notPaths:
+              - /feed/calendar/Sonarr.ics
+

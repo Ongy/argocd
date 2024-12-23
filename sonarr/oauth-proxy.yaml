@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sonarr-proxy
+  name: sonarr-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarr-proxy
+  template:
+    metadata:
+      labels:
+        app: sonarr-proxy
+    spec:
+      containers:
+        - image: quay.io/oauth2-proxy/oauth2-proxy
+          args:
+          - --provider=keycloak-oidc
+          - --client-id=sonarr
+          - --client-secret=tNK2AWGZddUUa45EuI16v8fvcNyGoF6Q
+          - --redirect-url=https://paperless.local.ongy.net/oauth2/callback
+          - --oidc-issuer-url=https://keycloak.local.ongy.net/realms/local.ongy.net
+          - --code-challenge-method=S256
+          - --reverse-proxy=true
+          - --http-address=0.0.0.0:8080
+          - --upstream=http://sonarr
+          - --email-domain=*
+          - --cookie-secret=QjFoZ3QwN2JHQUtYeGs2S2hmQU9TbCtVUWh0NlJVWXc=
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 1000
+            privileged: false
+          name: paperless-proxy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarr-proxy
+spec:
+  selector:
+    app: sonarr-proxy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      name: http
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: sonarr
+spec:
+  hostnames:
+  - sonarr.local.ongy.net
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: gateway
+    namespace: kube-system
+    sectionName: https
+  rules:
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: sonarr-oauth
+      port: 80
+      weight: 1
+    matches:
+    - path:
+        type: PathPrefix
+        value: /

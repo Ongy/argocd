@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sonarr
+  name: sonarr
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarr
+  template:
+    metadata:
+      labels:
+        app: sonarr
+    spec:
+      volumes:
+        - name: sonarr-config
+          nfs:
+            path: /srv/share/backed/appdata/sonarr/
+            server: mario.local.ongy.net
+            readOnly: false
+        - name: media-data
+          nfs:
+            path: /srv/share/media
+            server: mario.local.ongy.net
+            readOnly: false
+      containers:
+        - image: ghcr.io/hotio/sonarr:release-4.0.3.1413 # {"$imagepolicy": "flux-system:sonarr"}
+          imagePullPolicy: IfNotPresent
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8989
+          env:
+            - name: PUID
+              value: "1003"
+            - name: GUID
+              value: "1004"
+            - name: UMASK
+              value: "002"
+          securityContext:
+            privileged: false
+          name: sonarr
+          volumeMounts:
+            - mountPath: "/config"
+              name: sonarr-config
+            - mountPath: "/data"
+              name: media-data
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: "100m"
+            limits:
+              memory: 512Mi
+              cpu: "500m"
