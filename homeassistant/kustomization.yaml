@@ -5,3 +5,4 @@ resources:
 - deployment.yaml
 - storage.yaml
 - network.yaml
+- db.spec.yaml
