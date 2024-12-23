@@ -6,7 +6,7 @@ metadata:
   name: homeassistant
   namespace: homeassistant
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: homeassistant
@@ -29,7 +29,7 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: homeassistant-config-pvc
+            claimName: homeassistant-config
         - name: psql-tls-secrets
           secret:
             defaultMode: 416
@@ -47,3 +47,30 @@ spec:
               name: config
             - mountPath: "/psql-tls-secrets"
               name: psql-tls-secrets
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pi
+spec:
+  template:
+    spec:
+      containers:
+      - name: copy
+        image: alpine
+        command:
+        - sleep
+        - infinity
+        volumeMounts:
+          - mountPath: "/nfs"
+            name: nfs
+          - mountPath: "/ceph"
+            name: ceph
+      volumes:
+        - name: nfs
+          persistentVolumeClaim:
+            claimName: homeassistant-config-pvc
+        - name: ceph
+          persistentVolumeClaim:
+            claimName: homeassistant-config
+      restartPolicy: Never
