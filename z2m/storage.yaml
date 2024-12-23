@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: zigbee-pv
+spec:
+  capacity:
+    storage: 1G
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  claimRef:
+    name: zigbee-pvc
+    namespace: smarthome
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  nfs:
+    path: /srv/share/backed/appdata/zigbee2mqtt
+    server: mario.local.ongy.net
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zigbee-pvc
+  namespace: smarthome
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: "" # Empty string must be explicitly set otherwise default StorageClass will be set
+  volumeName: zigbee-pv
