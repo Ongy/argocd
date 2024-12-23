@@ -14,10 +14,6 @@ spec:
       labels:
         app: mosquitto
     spec:
-      tolerations:
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
       volumes:
         - name: mosquitto-config
           configMap:
@@ -67,6 +63,10 @@ spec:
       labels:
         app: mosquitto-proxy
     spec:
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       containers:
