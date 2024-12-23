@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gogs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gogs
+  template:
+    metadata:
+      labels:
+        app: gogs
+    spec:
+      volumes:
+      - name: data
+        nfs:
+          path: /srv/share/backed/appdata/gogs/
+          server: mario.local.ongy.net
+          readOnly: false
+      containers:
+      - image: gogs/gogs
+        name: server
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        ports:
+        - name: http
+          protocol: TCP
+          containerPort: 3000
+        - name: ssh
+          protocol: TCP
+          containerPort: 7022
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          tcpsocket:
+            port: ssh
