@@ -5,3 +5,19 @@ metadata:
   namespace: psql
   labels:
     ongy.net/psql-db: "true"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: psql-client-secret
+spec:
+  duration: 8760h0m0s # 1 years
+  commonName: homeassistant
+  secretName: psql-client-secret
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: psql-ca-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
