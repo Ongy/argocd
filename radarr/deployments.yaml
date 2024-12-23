@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: radarr
+  name: radarr
+  namespace: mediaretriever
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: radarr
+  template:
+    metadata:
+      labels:
+        app: radarr
+    spec:
+      volumes:
+        - name: radarr-config
+          nfs:
+            path: /srv/share/backed/appdata/radarr/
+            server: mario.local.ongy.net
+            readOnly: false
+        - name: media-data
+          nfs:
+            path: /srv/share/media
+            server: mario.local.ongy.net
+            readOnly: false
+      containers:
+        - image: cr.hotio.dev/hotio/radarr:release-43557ef # {"$imagepolicy": "flux-system:radarr"}
+          imagePullPolicy: IfNotPresent
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 7878
+          env:
+            - name: PUID
+              value: "1005"
+            - name: GUID
+              value: "1004"
+            - name: UMASK
+              value: "002"
+          securityContext:
+            privileged: false
+          name: radarr
+          volumeMounts:
+            - mountPath: "/config"
+              name: radarr-config
+            - mountPath: "/data"
+              name: media-data
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: "100m"
+            limits:
+              memory: 512Mi
+              cpu: "500m"
