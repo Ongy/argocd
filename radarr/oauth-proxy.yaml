@@ -19,7 +19,7 @@ spec:
           args:
           - --provider=keycloak-oidc
           - --client-id=radarr
-          - --client-secret=tNK2AWGZddUUa45EuI16v8fvcNyGoF6Q
+          - --client-secret=YuzaBwUmdnF4GAjgsSQ0gTCL2OWlskgL
           - --redirect-url=https://radarr.local.ongy.net/oauth2/callback
           - --oidc-issuer-url=https://keycloak.local.ongy.net/realms/local.ongy.net
           - --code-challenge-method=S256
