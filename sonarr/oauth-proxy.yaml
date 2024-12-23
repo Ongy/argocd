@@ -20,7 +20,7 @@ spec:
           - --provider=keycloak-oidc
           - --client-id=sonarr
           - --client-secret=tNK2AWGZddUUa45EuI16v8fvcNyGoF6Q
-          - --redirect-url=https://paperless.local.ongy.net/oauth2/callback
+          - --redirect-url=https://sonarr.local.ongy.net/oauth2/callback
           - --oidc-issuer-url=https://keycloak.local.ongy.net/realms/local.ongy.net
           - --code-challenge-method=S256
           - --reverse-proxy=true
