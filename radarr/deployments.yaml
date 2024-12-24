@@ -71,7 +71,7 @@ spec:
         command:
         - sh
         - -c
-        - tar -cC /nfs --numeric-owner | tar -xC /ceph --numeric-owner
+        - tar -cC /nfs --numeric-owner . | tar -xC /ceph --numeric-owner
         volumeMounts:
           - mountPath: "/nfs"
             name: nfs
