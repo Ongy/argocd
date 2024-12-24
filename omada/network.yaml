@@ -10,16 +10,3 @@ spec:
       port: 80
       targetPort: 9000
       name: http
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: omada
-  namespace: default
-spec:
-  gateways: [istio-system/gateway]
-  hosts: [omada.local.ongy.net]
-  http:
-  - route:
-    - destination:
-        host: omada.omada.svc.cluster.local
