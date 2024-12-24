@@ -56,3 +56,33 @@ spec:
             limits:
               memory: 512Mi
               cpu: "500m"
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sonarr-storage-migration
+spec:
+  template:
+    spec:
+      containers:
+      - name: copy
+        image: alpine
+        command:
+        - sh
+        - -c
+        - tar -cC /nfs --numeric-owner . | tar -xC /ceph --numeric-owner
+        volumeMounts:
+          - mountPath: "/nfs"
+            name: nfs
+          - mountPath: "/ceph"
+            name: ceph
+      volumes:
+        - name: nfs
+          nfs:
+            path: /srv/share/backed/appdata/sonarr/
+            server: mario.local.ongy.net
+            readOnly: false
+        - name: ceph
+          persistentVolumeClaim:
+            claimName: sonarr-config
+      restartPolicy: Never
