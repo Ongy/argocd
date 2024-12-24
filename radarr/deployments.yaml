@@ -19,10 +19,8 @@ spec:
     spec:
       volumes:
         - name: radarr-config
-          nfs:
-            path: /srv/share/backed/appdata/radarr/
-            server: mario.local.ongy.net
-            readOnly: false
+          persistentVolumeClaim:
+            claimName: radarr-config
         - name: media-data
           nfs:
             path: /srv/share/media
