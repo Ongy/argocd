@@ -18,10 +18,8 @@ spec:
     spec:
       volumes:
         - name: sonarr-config
-          nfs:
-            path: /srv/share/backed/appdata/sonarr/
-            server: mario.local.ongy.net
-            readOnly: false
+          persistentVolumeClaim:
+            claimName: sonarr-config
         - name: media-data
           nfs:
             path: /srv/share/media
