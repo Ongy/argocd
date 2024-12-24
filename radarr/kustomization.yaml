@@ -5,3 +5,4 @@ resources:
 - deployments.yaml
 - network.yaml
 - oauth-proxy.yaml
+- storage.yaml
