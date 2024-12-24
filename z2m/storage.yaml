@@ -33,3 +33,16 @@ spec:
       storage: 1Gi
   storageClassName: "" # Empty string must be explicitly set otherwise default StorageClass will be set
   volumeName: zigbee-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zigbee2mqtt
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 512Mi
+  storageClassName: rook-cephfs
+

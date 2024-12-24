@@ -54,3 +54,33 @@ spec:
               memory: 256Mi
               cpu: "500m"
               ongy.net/zigbee: 1
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: z2m-storage-migration
+spec:
+  template:
+    spec:
+      containers:
+      - name: copy
+        image: alpine
+        command:
+        - sh
+        - -c
+        - tar -cC /nfs --numeric-owner . | tar -xC /ceph --numeric-owner
+        volumeMounts:
+          - mountPath: "/nfs"
+            name: nfs
+          - mountPath: "/ceph"
+            name: ceph
+      volumes:
+        - name: nfs
+          nfs:
+            path: /srv/share/backed/appdata/zigbee2mqtt/
+            server: mario.local.ongy.net
+            readOnly: false
+        - name: ceph
+          persistentVolumeClaim:
+            claimName: zigbee2mqtt
+      restartPolicy: Never
