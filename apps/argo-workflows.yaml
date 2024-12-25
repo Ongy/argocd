@@ -12,6 +12,8 @@ spec:
     helm:
       valuesObject:
         server:
+          authModes:
+          - sso
           sso:
             enabled: true
             issuer: https://keycloak.local.ongy.net/realms/local.ongy.net
