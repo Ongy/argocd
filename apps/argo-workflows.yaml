@@ -10,6 +10,11 @@ spec:
     repoURL: https://argoproj.github.io/argo-helm
     targetRevision: 0.45.2
     helm:
+      valuesObject:
+        server:
+          sso:
+            enabled: true
+            issuer: https://keycloak.local.ongy.net/realms/local.ongy.net
   destination:
     server: "https://kubernetes.default.svc"
     namespace: argo-workflows
