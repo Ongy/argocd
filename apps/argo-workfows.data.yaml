@@ -4,8 +4,8 @@ metadata:
   name: argo-server-sso
   namespace: argo-workflows
 data:
-  client-secret: SWxXOHI4Qkg4RXE1eDRMY0RqaWhjVGdyVlBtYlBVQVoK
-  client-id: YXJnby13b3JrZmxvd3MK
+  client-secret: SWxXOHI4Qkg4RXE1eDRMY0RqaWhjVGdyVlBtYlBVQVo=
+  client-id: YXJnby13b3JrZmxvd3M=
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
