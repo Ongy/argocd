@@ -18,6 +18,8 @@ spec:
             enabled: true
             issuer: https://keycloak.local.ongy.net/realms/local.ongy.net
             redirectUrl: https://argo-workflows.local.ongy.net/oauth2/callback
+            rbac:
+              enabled: false
   destination:
     server: "https://kubernetes.default.svc"
     namespace: argo-workflows
