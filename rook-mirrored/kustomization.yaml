@@ -6,3 +6,4 @@ resources:
 - route.yaml
 - cephfs.yaml
 - storage-class.yaml
+- objectstore.yaml
