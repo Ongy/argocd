@@ -64,4 +64,14 @@ spec:
     - path:
         type: PathPrefix
         value: /
+---
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: argo-artifacts
+  namespace: argo-workflows
+spec:
+  generateBucketName: argo-workflow-artifacts
+  storageClassName: rook-ceph-bucket
+
 
