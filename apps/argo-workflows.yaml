@@ -11,6 +11,17 @@ spec:
     targetRevision: 0.45.2
     helm:
       valuesObject:
+        artifactRepository:
+          s3:
+            accessKeySecret:
+              name: argo-artifacts
+              key: AWS_ACCESS_KEY_ID
+            secretKeySecret:
+              name: argo-artifacts
+              key: AWS_SECRET_ACCESS_KEY
+            insecure: true
+            bucket: argo-workflow-artifacts-307d87ae-0425-41d3-a389-fd9ec5ac8790
+            endpoint: rook-ceph-rgw-my-store.rook-ceph.svc:80
         server:
           authModes:
           - sso
