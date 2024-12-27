@@ -19,7 +19,7 @@ spec:
               arguments:
                 artifacts:
                   - name: image
-                    from: "{{tasks.cmbline.outputs.artifacts.container-image}}"
+                    from: "{{tasks.combine.outputs.artifacts.container-image}}"
 
             - name: combine
               template: combine-images
