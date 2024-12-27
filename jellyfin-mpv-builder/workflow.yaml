@@ -60,6 +60,7 @@ spec:
             - -eu
             - -c
             - |
+              sleep infinity
               IMAGE="$(buildah pull "oci-archive:/image" | tail -n 1)"
               TAG="cr.local.ongy.net/jellyfin-mpv-shim:$(date -u --rfc-3339=date)"
               buildah push "${TAG}" docker:"${TAG}"
