@@ -43,10 +43,6 @@ spec:
               path: /images/amd64
             - name: arm64-image
               path: /images/arm64
-        outputs:
-          artifacts:
-            - name: container-image
-              path: /out/image
         container:
           name: buildah
           image: quay.io/buildah/stable:latest
