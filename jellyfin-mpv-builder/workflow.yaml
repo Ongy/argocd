@@ -21,7 +21,7 @@ spec:
                   - name: amd64-image
                     from: "{{tasks.build-amd64.outputs.artifacts.container-image}}"
                   - name: arm64-image
-                    from: "{{tasks.build-amd64.outputs.artifacts.container-image}}"
+                    from: "{{tasks.build-arm64.outputs.artifacts.container-image}}"
 
             - name: build-arm64
               template: buildah-build
@@ -50,7 +50,7 @@ spec:
         container:
           name: buildah
           image: quay.io/buildah/stable:latest
-          workingDir: /images
+          workingDir: /
           securityContext:
             privileged: true # For fuse access
           command:
@@ -61,16 +61,14 @@ spec:
             - -c
             - |
               mkdir -p /out
-              sleep infinity
-              for arch in /images/*; do
-                buildah pull "oci-archive:${arch}"
-              done
               TAG="cr.local.ongy.net/jellyfin-mpv-shim:$(date -u --rfc-3339=date)"
               buildah manifest create "${TAG}"
 
               for arch in /images/*; do
-                buildah manifest add "${TAG}" "cr.local.ongy.net:jellyfin-mpv-$(basename "${arch}")"
+                IMAGE="$(buildah pull "oci-archive:${arch}" | tail -n 1)"
+                buildah manifest add "${TAG}" "${IMAGE}"
               done
+
               buildah manifest push "${TAG}" oci-archive:/out/image
 
       - name: buildah-build
