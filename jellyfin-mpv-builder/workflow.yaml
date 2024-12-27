@@ -10,96 +10,95 @@ spec:
     entrypoint: build-all
     serviceAccountName: argo-workflow
     templates:
-    - name: build-all
-      dag:
-        tasks:
-        - name: combine
-          template: combine-images
-          dependencies: [build-arm64, build-amd64]
-          arguments:
-            artifacts:
+      - name: build-all
+        dag:
+          tasks:
+            - name: combine
+              template: combine-images
+              dependencies: [build-arm64, build-amd64]
+              arguments:
+                artifacts:
+                  - name: amd64-image
+                    from: "{{tasks.build-amd64.outputs.artifacts.container-image}}"
+                  - name: arm64-image
+                    from: "{{tasks.build-amd64.outputs.artifacts.container-image}}"
+
+            - name: build-arm64
+              template: buildah-build
+              arguments:
+                parameters:
+                  - name: platform
+                    value: arm64
+            - name: build-amd64
+              template: buildah-build
+              arguments:
+                parameters:
+                  - name: platform
+                    value: amd64
+
+      - name: combine-images
+        inputs:
+          artifacts:
             - name: amd64-image
-              from: "{{tasks.build-amd64.outputs.artifacts.container-image}}"
+              path: /images/amd64
             - name: arm64-image
-              from: "{{tasks.build-amd64.outputs.artifacts.container-image}}"
+              path: /images/arm64
+        outputs:
+          artifacts:
+            - name: container-image
+              path: /out/image
+        container:
+          name: buildah
+          image: quay.io/buildah/stable:latest
+          workingDir: /images
+          securityContext:
+            privileged: true # For fuse access
+          command:
+            - sh
+          args:
+            - -x
+            - -eu
+            - -c
+            - |
+              mkdir -p /out
+              ls /images
 
-        - name: build-arm64
-          template: buildah-build
-          arguments:
-            parameters:
+      - name: buildah-build
+        inputs:
+          parameters:
             - name: platform
-              value: arm64
-        - name: build-amd64
-          template: buildah-build
-          arguments:
-            parameters:
-            - name: platform
-              value: amd64
-
-    - name: combine-images
-      inputs:
-        artifacts:
-        - name: amd64-image
-          path: /images/amd64
-        - name: arm64-image
-          path: /images/arm64
-      outputs:
-        artifacts:
-        - name: container-image
-          path: /out/image
-      container:
-        name: buildah
-        image: quay.io/buildah/stable:latest
-        workingDir: /images
-        securityContext:
-          privileged: true # For fuse access
-        command:
-        - sh
-        args:
-        - -x
-        - -eu
-        - -c
-        - |
-          mkdir -p /out
-          ls /images
-
-    - name: buildah-build
-      inputs:
-        parameters:
-        - name: platform
-        artifacts:
-        - name: source
-          path: /src
-          git:
-            repo: https://git.local.ongy.net/ongy/dockerfiles.git
-            revision: HEAD
-      outputs:
-        artifacts:
-        - name: container-image
-          path: /out/image
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/arch
-                operator: In
-                values:
-                - '{{ inputs.parameters.platform }}'
-      container:
-        name: buildah
-        image: quay.io/buildah/stable:latest
-        workingDir: /src
-        securityContext:
-          privileged: true # For fuse access
-        command:
-        - sh
-        args:
-        - -x
-        - -eu
-        - -c
-        - |
-          mkdir -p /out
-          buildah bud --platform linux/{{inputs.parameters.platform}} -f jellyfin-mpv/Dockerfile --tag cr.local.ongy.net:jellyfin-mpv jellyfin-mpv
-          buildah push cr.local.ongy.net:jellyfin-mpv oci-archive:/out/image
-
+          artifacts:
+            - name: source
+              path: /src
+              git:
+                repo: https://git.local.ongy.net/ongy/dockerfiles.git
+                revision: HEAD
+        outputs:
+          artifacts:
+            - name: container-image
+              path: /out/image
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: kubernetes.io/arch
+                      operator: In
+                      values:
+                        - "{{ inputs.parameters.platform }}"
+        container:
+          name: buildah
+          image: quay.io/buildah/stable:latest
+          workingDir: /src
+          securityContext:
+            privileged: true # For fuse access
+          command:
+            - sh
+          args:
+            - -x
+            - -eu
+            - -c
+            - |
+              mkdir -p /out
+              buildah bud --platform linux/{{inputs.parameters.platform}} -f jellyfin-mpv/Dockerfile --tag cr.local.ongy.net:jellyfin-mpv jellyfin-mpv
+              buildah push cr.local.ongy.net:jellyfin-mpv oci-archive:/out/image
