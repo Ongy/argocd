@@ -3,10 +3,15 @@ kind: Application
 metadata:
   name: photoprism
   namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/image-list: photoprism=photoprism/photoprism
+    argocd-image-updater.argoproj.io/photoprism.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/photoprism.allow-tags: regexp:^[0-9]+$
 spec:
   project: default
   source:
-    repoURL: https://git.local.ongy.net/ongy/argocd.git
+    repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: photoprism
     targetRevision: new-cluster
   destination:
