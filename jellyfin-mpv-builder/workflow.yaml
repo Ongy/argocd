@@ -33,6 +33,6 @@ spec:
         - -c
         - |
           mkdir -p /out
-          buildah bud -f jellyfin-mpv/Dockerfile --tag jellyfin-mpv jellyfin-mpv
-          buildah push jellyfin-mpv oci-archive:/out/image
+          buildah bud -f jellyfin-mpv/Dockerfile --tag cr.local.ongy.net:jellyfin-mpv jellyfin-mpv
+          buildah push cr.local.ongy.net:jellyfin-mpv oci-archive:/out/image
 
