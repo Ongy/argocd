@@ -71,7 +71,7 @@ spec:
     - to:
         - namespaceSelector:
             matchLabels:
-              project: mediaserver
+              kubernetes.io/metadata.name: mediaserver
           podSelector:
             matchLabels:
               app: jellyfin
