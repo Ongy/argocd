@@ -31,7 +31,7 @@ spec:
             server: mario.local.ongy.net
             readOnly: false
       containers:
-        - image: jellyfin/jellyfin:10.9.4 # {"$imagepolicy": "flux-system:jellyfin"}
+        - image: jellyfin/jellyfin:10.9.4
           env:
             - name: JELLYFIN_DATA_DIR
               value: /config/data
@@ -141,15 +141,3 @@ spec:
             - mountPath: "/etc/kube-ca.crt"
               name: kube-root-ca
               subPath: ca.crt
-#           livenessProbe:
-#             exec:
-#               command:
-#                 - sh
-#                 - -e
-#                 - -c
-#                 - "curl --cacert /etc/kube-ca.crt -s https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/namespaces/${KUBERNETES_NAMESPACE}/pods/${KUBERNETES_POD}/log?sinceSeconds=360 -H \"Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)\" | grep -q -e "Performing client health check..."
-#             timeoutSeconds: 300
-#             initialDelaySeconds: 360
-#             failureThreshold: 2
-#             periodSeconds: 60
-# 

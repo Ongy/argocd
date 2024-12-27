@@ -27,9 +27,6 @@ spec:
 #     - from:
 #         - namespaceSelector:
 #             matchLabels:
-#               kubernetes.io/metadata.name: istio-system
-#         - namespaceSelector:
-#             matchLabels:
 #               kubernetes.io/metadata.name: jellyfin
 #         - namespaceSelector:
 #             matchLabels:
@@ -58,67 +55,33 @@ spec:
 #         - protocol: TCP
 #           port: 443
 ---
-# apiVersion: networking.k8s.io/v1
-# kind: NetworkPolicy
-# metadata:
-#   name: jellyfin-mpv
-#   namespace: jellyfin
-# spec:
-#   podSelector:
-#     matchLabels:
-#       app: jellyfin-mpv
-#   policyTypes:
-#     - Ingress
-#     - Egress
-#   egress:
-#     - to:
-#         - namespaceSelector:
-#             matchLabels:
-#               kubernetes.io/metadata.name: mediaserver
-#               #        - podSelector:
-#               #            matchLabels:
-#               #              app: jellyfin
-#       ports:
-#         - protocol: TCP
-#           port: 8096
-#     - to:
-#         - namespaceSelector:
-#             matchLabels:
-#               kubernetes.io/metadata.name: kube-system
-#       ports:
-#         - protocol: UDP
-#           port: 53
-#           # Allow to contact the API-server for the liveness probe
-#           # There seems to be some bug in cilium that prevents these
-# #    - to:
-# #        - ipBlock:
-# #            cidr: 10.96.0.1/32
-# #      ports:
-# #        - protocol: TCP
-# #          port: 443
-# #        - protocol: TCP
-# #          port: 6443
-# #    - to:
-# #        - ipBlock:
-# #            cidr: 192.168.128.188/32
-# #      ports:
-# #        - protocol: TCP
-# #          port: 443
-# #        - protocol: TCP
-# #          port: 6443
----
-# apiVersion: "cilium.io/v2"
-# kind: CiliumNetworkPolicy
-# metadata:
-#   name: "jellyfin-mpv-to-apiserver"
-#   namespace: jellyfin
-# spec:
-#   endpointSelector:
-#     matchLabels:
-#       app: jellyfin-mpv
-#   egress:
-#   - toEntities:
-#     - kube-apiserver
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: jellyfin-mpv
+  namespace: jellyfin
+spec:
+  podSelector:
+    matchLabels:
+      app: jellyfin-mpv
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: jellyfin
+      ports:
+        - protocol: TCP
+          port: 8096
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -127,21 +90,21 @@ metadata:
   namespace: mediaserver
 spec:
   hostnames:
-  - jellyfin.local.ongy.net
+    - jellyfin.local.ongy.net
   parentRefs:
-  - group: gateway.networking.k8s.io
-    kind: Gateway
-    name: gateway
-    namespace: kube-system
-    sectionName: https
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: gateway
+      namespace: kube-system
+      sectionName: https
   rules:
-  - backendRefs:
-    - group: ""
-      kind: Service
-      name: jellyfin
-      port: 8096
-      weight: 1
-    matches:
-    - path:
-        type: PathPrefix
-        value: /
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: jellyfin
+          port: 8096
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
