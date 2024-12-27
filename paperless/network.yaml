@@ -39,16 +39,9 @@ spec:
     - Egress
   ingress:
     - from:
-        - namespaceSelector:
+        - podSelector:
             matchLabels:
-              kubernetes.io/metadata.name: kube-system
-      ports:
-        - protocol: TCP
-          port: 8000
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: mediaserver
+              app: paperless-proxy
       ports:
         - protocol: TCP
           port: 8000
@@ -61,9 +54,9 @@ spec:
         - protocol: TCP
           port: 5432
     - to:
-        - namespaceSelector:
+        - podSelector:
             matchLabels:
-              kubernetes.io/metadata.name: mediaserver
+              app: paperless-broker
       ports:
         - protocol: TCP
           port: 6379
