@@ -15,6 +15,7 @@ spec:
         tasks:
         - name: combine
           template: combine-images
+          dependencies: [build-arm64, build-amd64]
           arguments:
             artifacts:
             - name: amd64-image
