@@ -9,6 +9,7 @@ metadata:
     argocd-image-updater.argoproj.io/jellyfin.update-strategy: semver
     argocd-image-updater.argoproj.io/mpv-shim.update-strategy: newest-build
     argocd-image-updater.argoproj.io/mpv-shim.allow-tags: any
+    argocd-image-updater.argoproj.io/jellyfin.allow-tags: regexp:^[0-9]+\.[0-0]+\.[0-9]+$
 spec:
   project: default
   source:
