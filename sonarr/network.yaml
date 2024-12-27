@@ -24,9 +24,6 @@ spec:
     - Egress
   ingress:
     - from:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: mediaretriever
         - podSelector:
             matchLabels:
               app: sonarr-proxy
@@ -60,4 +57,3 @@ spec:
       ports:
         - protocol: UDP
           port: 53
-
