@@ -13,6 +13,15 @@ spec:
     - name: build-all
       dag:
         tasks:
+        - name: combine
+          template: combine-images
+          arguments:
+            artifacts:
+            - name: amd64-image
+              from: "{{tasks.build-amd64.outputs.artifacts.container-image}}"
+            - name: arm64-image
+              from: "{{tasks.build-amd64.outputs.artifacts.container-image}}"
+
         - name: build-arm64
           template: buildah-build
           arguments:
@@ -25,6 +34,33 @@ spec:
             parameters:
             - name: platform
               value: amd64
+
+    - name: combine-images
+      inputs:
+        artifacts:
+        - name: amd64-image
+          path: /images/amd64
+        - name: arm64-image
+          path: /images/arm64
+      outputs:
+        artifacts:
+        - name: container-image
+          path: /out/image
+      container:
+        name: buildah
+        image: quay.io/buildah/stable:latest
+        workingDir: /images
+        securityContext:
+          privileged: true # For fuse access
+        command:
+        - sh
+        args:
+        - -x
+        - -eu
+        - -c
+        - |
+          mkdir -p /out
+          ls /images
 
     - name: buildah-build
       inputs:
