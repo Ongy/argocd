@@ -44,7 +44,7 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchFields:
+            - matchExpressions:
               - key: kubernetes.io/arch
                 operator: In
                 values:
