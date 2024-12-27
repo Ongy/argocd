@@ -62,7 +62,7 @@ spec:
             - |
               mkdir -p /out
               for arch in /images/*; do
-                buildah pull "oci-archive:${arch}" --all-tags
+                buildah pull --all-tags "oci-archive:${arch}"
               done
               TAG="cr.local.ongy.net/jellyfin-mpv-shim:$(date -u --rfc-3339=date)"
               buildah manifest create "${TAG}"
