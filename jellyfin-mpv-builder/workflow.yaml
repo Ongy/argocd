@@ -17,6 +17,7 @@ spec:
             git:
               repo: https://git.local.ongy.net/ongy/dockerfiles.git
               revision: HEAD
+      workingDir: /src
       outputs:
         artifacts:
         - name: container-image
