@@ -55,17 +55,17 @@ spec:
 #         - protocol: TCP
 #           port: 443
 ---
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: jellyfin-mpv
-  namespace: jellyfin
-spec:
-  podSelector:
-    matchLabels:
-      app: jellyfin-mpv
-  policyTypes:
-    - Ingress
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: jellyfin-mpv
+#   namespace: jellyfin
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app: jellyfin-mpv
+#   policyTypes:
+#     - Ingress
 #    - Egress
 #  egress:
 #    - to:
