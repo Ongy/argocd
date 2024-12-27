@@ -1,0 +1,3 @@
+kustomize:
+  images:
+  - cr.local.ongy.net/jellyfin-mpv-shim:2024-12-27
