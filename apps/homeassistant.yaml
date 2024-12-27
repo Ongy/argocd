@@ -11,7 +11,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://git.local.ongy.net/ongy/argocd.git
+    repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: homeassistant
     targetRevision: new-cluster
   destination:
