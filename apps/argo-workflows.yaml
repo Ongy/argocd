@@ -11,6 +11,9 @@ spec:
     targetRevision: 0.45.2
     helm:
       valuesObject:
+        workflow:
+          serviceAccount:
+            create: true
         artifactRepository:
           s3:
             accessKeySecret:
