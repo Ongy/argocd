@@ -8,6 +8,7 @@ spec:
   startingDeadlineSeconds: 0
   workflowSpec:
     entrypoint: buildah-build
+    serviceAccountName: argo-workflows
     templates:
     - name: buildah-build
       inputs:
