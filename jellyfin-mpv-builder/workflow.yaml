@@ -13,14 +13,6 @@ spec:
       - name: build-all
         dag:
           tasks:
-            - name: push
-              template: push-final
-              dependencies: [combine]
-              arguments:
-                artifacts:
-                  - name: image
-                    from: "{{tasks.combine.outputs.artifacts.container-image}}"
-
             - name: combine
               template: combine-images
               dependencies: [build-arm64, build-amd64]
@@ -43,27 +35,6 @@ spec:
                 parameters:
                   - name: platform
                     value: amd64
-
-      - name: push-final
-        inputs:
-          artifacts:
-            - name: image
-              path: /image
-        container:
-          name: buildah
-          image: quay.io/buildah/stable:latest
-          workingDir: /
-          command:
-            - sh
-          args:
-            - -x
-            - -eu
-            - -c
-            - |
-              sleep infinity
-              IMAGE="$(buildah pull "oci-archive:/image" | tail -n 1)"
-              TAG="cr.local.ongy.net/jellyfin-mpv-shim:$(date -u --rfc-3339=date)"
-              buildah push "${TAG}" docker:"${TAG}"
 
       - name: combine-images
         inputs:
@@ -96,7 +67,7 @@ spec:
                 buildah manifest add "${TAG}" "${IMAGE}"
               done
 
-              buildah manifest push "${TAG}" oci-archive:/out/image
+              buildah manifest push "${TAG}" docker:${TAG} || sleep infinity
 
       - name: buildah-build
         inputs:
