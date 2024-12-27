@@ -8,13 +8,13 @@ metadata:
     argocd-image-updater.argoproj.io/image-list: mpv-shim=cr.local.ongy.net/jellyfin-mpv-shim
     argocd-image-updater.argoproj.io/mpv-shim.update-strategy: latest
     argocd-image-updater.argoproj.io/mpv-shim.allow-tags: any
-
 spec:
   project: default
   source:
     repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: jellyfin
     targetRevision: new-cluster
+    kustomize:
   destination:
     server: 'https://kubernetes.default.svc'
   syncPolicy:
