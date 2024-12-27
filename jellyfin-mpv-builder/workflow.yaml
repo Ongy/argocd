@@ -17,7 +17,6 @@ spec:
             git:
               repo: https://git.local.ongy.net/ongy/dockerfiles.git
               revision: HEAD
-      workingDir: /src
       outputs:
         artifacts:
         - name: container-image
@@ -25,6 +24,7 @@ spec:
       container:
         name: buildah
         image: quay.io/buildah/stable:latest
+        workingDir: /src
         command:
         - sh
         args:
