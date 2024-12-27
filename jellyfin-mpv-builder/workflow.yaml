@@ -48,7 +48,7 @@ spec:
               - key: beta.kubernetes.io/arch
                 operator: In
                 values:
-                - {{inputs.parameters.platform}}
+                - '{{ inputs.parameters.platform }}'
       container:
         name: buildah
         image: quay.io/buildah/stable:latest
