@@ -22,19 +22,22 @@ spec:
       app: jellyfin
   policyTypes:
     - Egress
-#     - Ingress
-#   ingress:
-#     - from:
-#         - namespaceSelector:
-#             matchLabels:
-#               kubernetes.io/metadata.name: jellyfin
-#         - namespaceSelector:
-#             matchLabels:
-#               kubernetes.io/metadata.name: homeassistant
-#       ports:
-#         - protocol: TCP
-#           port: 8096
-#   # Allow egress to outside (track etc.)
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchExpressions:
+            - key: namespace
+              operator: In
+              values: ["jellyfin", "homeassistant"]
+        - ipBlock:
+            cidr: 192.168.0.0/16
+        - ipBlock:
+            cidr: 10.0.0.0/8
+      ports:
+        - protocol: TCP
+          port: 8096
+  # Allow egress to outside (track etc.)
   egress:
     - to:
         - namespaceSelector:
