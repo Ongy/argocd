@@ -67,7 +67,7 @@ spec:
                 buildah manifest add "${TAG}" "${IMAGE}"
               done
 
-              buildah manifest push "${TAG}" docker:${TAG} || sleep infinity
+              buildah manifest push "${TAG}" docker://${TAG}
 
       - name: buildah-build
         inputs:
