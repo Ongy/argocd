@@ -7,21 +7,48 @@ spec:
   concurrencyPolicy: "Replace"
   startingDeadlineSeconds: 0
   workflowSpec:
-    entrypoint: buildah-build
+    entrypoint: build-all
     serviceAccountName: argo-workflow
     templates:
+    - name: build-all
+      dag:
+        tasks:
+        - name: build-arm64
+          template: buildah-build
+          arguments:
+            parameters:
+            - name: platform
+              value: arm64
+        - name: build-amd64
+          template: buildah-build
+          arguments:
+            parameters:
+            - name: platform
+              value: amd64
+
     - name: buildah-build
       inputs:
+        parameters:
+        - name: platform
         artifacts:
-          - name: source
-            path: /src
-            git:
-              repo: https://git.local.ongy.net/ongy/dockerfiles.git
-              revision: HEAD
+        - name: source
+          path: /src
+          git:
+            repo: https://git.local.ongy.net/ongy/dockerfiles.git
+            revision: HEAD
       outputs:
         artifacts:
         - name: container-image
           path: /out/image
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchFields:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - {{inputs.parameters.platform}}
       container:
         name: buildah
         image: quay.io/buildah/stable:latest
@@ -31,9 +58,11 @@ spec:
         command:
         - sh
         args:
+        - -x
+        - -eu
         - -c
         - |
           mkdir -p /out
-          buildah bud -f jellyfin-mpv/Dockerfile --tag cr.local.ongy.net:jellyfin-mpv jellyfin-mpv
+          buildah bud --platform linux/{{inputs.parameters.platform}} -f jellyfin-mpv/Dockerfile --tag cr.local.ongy.net:jellyfin-mpv jellyfin-mpv
           buildah push cr.local.ongy.net:jellyfin-mpv oci-archive:/out/image
 
