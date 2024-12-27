@@ -61,7 +61,16 @@ spec:
             - -c
             - |
               mkdir -p /out
-              ls /images
+              for arch in /images/*; do
+                buildah pull "oci-archive:${arch}" --all-tags
+              done
+              TAG="cr.local.ongy.net/jellyfin-mpv-shim:$(date -u --rfc-3339=date)"
+              buildah manifest create "${TAG}"
+
+              for arch in /images/*; do
+                buildah manifest add "${TAG}" "cr.local.ongy.net:jellyfin-mpv-$(basename "${arch}")"
+              done
+              buildah manifest push "${TAG}" oci-archive:/out/image
 
       - name: buildah-build
         inputs:
@@ -100,5 +109,5 @@ spec:
             - -c
             - |
               mkdir -p /out
-              buildah bud --platform linux/{{inputs.parameters.platform}} -f jellyfin-mpv/Dockerfile --tag cr.local.ongy.net:jellyfin-mpv jellyfin-mpv
-              buildah push cr.local.ongy.net:jellyfin-mpv oci-archive:/out/image
+              buildah bud --platform linux/{{inputs.parameters.platform}} -f jellyfin-mpv/Dockerfile --tag cr.local.ongy.net:jellyfin-mpv-{{inputs.parameters.platform}} jellyfin-mpv
+              buildah push cr.local.ongy.net:jellyfin-mpv-{{inputs.parameters.platform}} oci-archive:/out/image
