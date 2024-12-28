@@ -63,7 +63,7 @@ spec:
     - to:
         - podSelector:
             matchLabels:
-              app: paperless
+              app: paperless-core
       ports:
         - protocol: TCP
           port: 80
