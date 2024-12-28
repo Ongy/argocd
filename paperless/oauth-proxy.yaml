@@ -17,22 +17,22 @@ spec:
       containers:
         - image: quay.io/oauth2-proxy/oauth2-proxy
           args:
-          - --provider=keycloak-oidc
-          - --client-id=paperless
-          - --client-secret=tdhUCZ3hwutrmqcBQaSGMUSAg3jNXeh2
-          - --redirect-url=https://paperless.local.ongy.net/oauth2/callback
-          - --oidc-issuer-url=https://keycloak.local.ongy.net/realms/local.ongy.net
-          - --code-challenge-method=S256
-          - --reverse-proxy=true
-          - --http-address=0.0.0.0:8080
-          - --upstream=http://paperless-core
-          - --email-domain=*
-          - --cookie-secret=QjFoZ3QwN2JHQUtYeGs2S2hmQU9TbCtVUWh0NlJVWXc=
+            - --provider=keycloak-oidc
+            - --client-id=paperless
+            - --client-secret=tdhUCZ3hwutrmqcBQaSGMUSAg3jNXeh2
+            - --redirect-url=https://paperless.local.ongy.net/oauth2/callback
+            - --oidc-issuer-url=https://keycloak.local.ongy.net/realms/local.ongy.net
+            - --code-challenge-method=S256
+            - --reverse-proxy=true
+            - --http-address=0.0.0.0:8080
+            - --upstream=http://paperless-core
+            - --email-domain=*
+            - --cookie-secret=QjFoZ3QwN2JHQUtYeGs2S2hmQU9TbCtVUWh0NlJVWXc=
           securityContext:
             seccompProfile:
               type: RuntimeDefault
             capabilities:
-              drop: ['ALL']
+              drop: ["ALL"]
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             runAsNonRoot: true
@@ -40,6 +40,46 @@ spec:
             runAsGroup: 1000
             privileged: false
           name: paperless-proxy
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: paperless-proxy
+  namespace: mediaserver
+spec:
+  podSelector:
+    matchLabels:
+      app: paperless-proxy
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+    - to:
+        - podSelector:
+            matchLabels:
+              app: paperless
+      ports:
+        - protocol: TCP
+          port: 80
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: paperless-proxy
+  namespace: mediaserver
+spec:
+  endpointSelector:
+    matchLabels:
+      app: paperless-proxy
+  ingress:
+    - fromEntities:
+        - ingress
 ---
 apiVersion: v1
 kind: Service
@@ -61,21 +101,21 @@ metadata:
   name: paperless
 spec:
   hostnames:
-  - paperless.local.ongy.net
+    - paperless.local.ongy.net
   parentRefs:
-  - group: gateway.networking.k8s.io
-    kind: Gateway
-    name: gateway
-    namespace: kube-system
-    sectionName: https
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: gateway
+      namespace: kube-system
+      sectionName: https
   rules:
-  - backendRefs:
-    - group: ""
-      kind: Service
-      name: paperless-oauth
-      port: 80
-      weight: 1
-    matches:
-    - path:
-        type: PathPrefix
-        value: /
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: paperless-oauth
+          port: 80
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
