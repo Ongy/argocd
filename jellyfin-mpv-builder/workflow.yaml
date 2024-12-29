@@ -47,6 +47,8 @@ spec:
           name: buildah
           image: quay.io/buildah/stable:latest
           workingDir: /
+          securityContext:
+            privileged: true # For fuse access
           command:
             - sh
           args:
