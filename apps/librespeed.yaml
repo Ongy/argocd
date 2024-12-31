@@ -16,7 +16,6 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: librespeed
   syncPolicy:
-    preserveResourcesOnDeletion: false
     automated:
       prune: true
     syncOptions:
