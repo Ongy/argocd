@@ -45,17 +45,13 @@ spec:
               value: "true"
             - name: EAP_MONGOD_URI
               value: mongodb://mongodb.database.svc.cluster.local:27017/omada
-            - name: SSL_CERT_NAME
-              value: /tls-secrets/tls.crt
-            - name: SSL_KEY_NAME
-              value: /tls-secrets/tls.key
           resources:
             limits:
               memory: "2048Mi"
           volumeMounts:
           - name: data
             mountPath: "/opt/tplink/EAPController/data"
-          - mountPath: "/tls-secrets"
+          - mountPath: "/cert"
             name: tls-secrets
 ---
 
