@@ -2,7 +2,6 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: omada-cert
-  namespace: kube-system
 spec:
   commonName: 'omada.local.ongy.net'
   dnsNames:
