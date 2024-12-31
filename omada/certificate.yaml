@@ -9,4 +9,4 @@ spec:
   issuerRef:
     kind: ClusterIssuer
     name: luadns-lexicon
-  secretName: omdada-tls
+  secretName: omada-tls
