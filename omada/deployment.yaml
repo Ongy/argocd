@@ -29,8 +29,6 @@ spec:
           securityContext:
             seccompProfile:
               type: RuntimeDefault
-            #capabilities:
-              #drop: ["ALL"]
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             runAsNonRoot: false
