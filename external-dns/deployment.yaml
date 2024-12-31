@@ -36,3 +36,4 @@ spec:
         - --domain-filter=local.ongy.net
         - --default-targets=kubernetes.local.ongy.net
         - --source=gateway-httproute
+        - --source=gateway-tlsroute
