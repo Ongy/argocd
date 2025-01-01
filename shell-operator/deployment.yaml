@@ -28,6 +28,10 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 150Mi
+        - name: ansible
+          emptyDir:
+            medium: Memory
+            sizeLimit: 100Mi
       containers:
         - image: ghcr.io/flant/shell-operator
           securityContext:
@@ -43,6 +47,8 @@ spec:
             privileged: false
           name: shell-operator
           volumeMounts:
+            - mountPath: "/ansible"
+              name: ansible
             - mountPath: "/tmp"
               name: tmp
             - mountPath: "/var/run"
@@ -50,4 +56,26 @@ spec:
             - mountPath: "/hooks/psql.sh"
               name: hooks
               subPath: psql.sh
+        - image: alpine/ansible
+          command:
+          - sleep
+          args:
+          - infinity
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            privileged: false
+          name: ansible
+          volumeMounts:
+            - mountPath: "/ansible"
+              name: ansible
+            - mountPath: "/tmp"
+              name: tmp
 ---
