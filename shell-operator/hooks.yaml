@@ -145,8 +145,7 @@ data:
       EOF
       else
         type=$(jq -r '.[0].type' ${BINDING_CONTEXT_PATH})
-        echo "${BINDING_CONTEXT_PATH}"
-        cat "${BINDING_CONTEXT_PATH}"
+        cp "${BINDING_CONTEXT_PATH}" /tmp/values.backup
         if [[ $type == "Synchronization" ]] ; then
           for db in $(jq -r '.[0].objects[]|.object.metadata.name' "${BINDING_CONTEXT_PATH}"); do
             ensure_client "${db}" '???'
