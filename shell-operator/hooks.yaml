@@ -78,7 +78,7 @@ data:
 
             client_id: "{{ CLIENT_ID }}"
             consent_required: false
-            name: "{{ CLIENt_ID }}"
+            name: "{{ CLIENT_ID }}"
             direct_access_grants_enabled: false
             public_client: false
 
