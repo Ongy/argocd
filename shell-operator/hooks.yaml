@@ -130,7 +130,7 @@ data:
         "kubernetes":[
           {
             "apiVersion": "v1",
-            "kind": "Secret",
+            "kind": "ConfigMap",
 
             "labelSelector": {
               "matchLabels":{
