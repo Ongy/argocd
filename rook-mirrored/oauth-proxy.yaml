@@ -70,7 +70,7 @@ metadata:
   name: dashboard-proxy
 spec:
   selector:
-    app: dashboard-proxy
+    app: ceph-dashboard-proxy
   ports:
     - protocol: TCP
       port: 80
