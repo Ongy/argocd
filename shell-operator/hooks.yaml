@@ -119,7 +119,7 @@ data:
 
         </templates/keycloak-oauth-proxy sed -e "s/__CLIENT_ID__/${NAME}/" > "/ansible/${NAME}.playbook.yaml"
 
-        kubectl exec -i -n shell-operator deploy/shell-operator --container ansible \
+        kubectl exec -i -n shell-operator deploy/shell-operator --container ansible -- \
           ansible-playbook "/ansible/${NAME}.playbook.yaml"
       }
 
