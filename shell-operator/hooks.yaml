@@ -124,7 +124,7 @@ data:
           env HOME=/tmp/ ansible-playbook "/ansible/${NAME}.playbook.yaml"
 
         jq --null-input -r \
-          --arg name "${NAME}" \
+          --arg name keycloak-client-"${NAME}" \
           --arg namespace "${NAMESPACE}" \
           --arg client_id $(echo -n "${NAME}" | base64) \
           --arg client_secret $(</ansible/${NAME}.secret | base64) \
