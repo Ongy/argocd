@@ -148,7 +148,9 @@ data:
         cp "${BINDING_CONTEXT_PATH}" /tmp/values.backup
         if [[ $type == "Synchronization" ]] ; then
           for db in $(jq -r '.[0].objects[]|.object.metadata.name' "${BINDING_CONTEXT_PATH}"); do
-            ensure_client "${db}" '???'
+            local NS
+            NS=$(jq -r ".[0]|.objects[] | select(.object.metadata.name == \"${db}\")|.object.metadata.namespace" "${BINDING_CONTEXT_PATH}")
+            ensure_client "${db}" "${NS}"
           done
         else
           if [[ "$(jq -r '.[0].watchEvent' "${BINDING_CONTEXT_PATH}")" = "Added" ]]; then
