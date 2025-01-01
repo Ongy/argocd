@@ -7,4 +7,3 @@ resources:
 - cephfs.yaml
 - storage-class.yaml
 - objectstore.yaml
-- oauth-proxy.yaml
