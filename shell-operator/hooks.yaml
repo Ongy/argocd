@@ -59,8 +59,7 @@ data:
       fi
     fi
 
-  keycloak:
-    oauth-proxy: |
+  keycloak.oauth-proxy: |
       - name: Realm
         hosts: localhost
         gather_facts: false
@@ -109,7 +108,7 @@ data:
             dest: "{{ CLIENT_ID }}.secret"
             content: "{{ client_id.clientsecret_info.value }}"
 
-    script: |
+  keycloak.script: |
       #!/bin/bash
 
       set -euo pipefail

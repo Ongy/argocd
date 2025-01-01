@@ -58,10 +58,10 @@ spec:
               subPath: psql.sh
             - mountPath: "/hooks/keycloak.sh"
               name: hooks
-              subPath: keycloak/script
+              subPath: keycloak.script
             - mountPath: "/templates/keycloak-oauth-proxy"
               name: hooks
-              subPath: keycloak/oauth-proxy
+              subPath: keycloak.oauth-proxy
         - image: alpine/ansible
           command:
           - sleep
