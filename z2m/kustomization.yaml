@@ -6,4 +6,4 @@ resources:
 - deployment.yaml
 - network.yaml
 - route.yaml
-- oauthproxy.yaml
+- oauth-proxy.yaml
