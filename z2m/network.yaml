@@ -11,4 +11,42 @@ spec:
       targetPort: 8080
       name: http
 ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: zigbee2mqtt
+spec:
+  podSelector:
+    matchLabels:
+      app: zigbee2mqtt
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: zigbee2mqtt-proxy
+      ports:
+        - protocol: TCP
+          port: 8080
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: mosquitto
+          podSelector:
+            matchLabels:
+              app: mosquitto
+      ports:
+        - protocol: TCP
+          port: 1883
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+
 
