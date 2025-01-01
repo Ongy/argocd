@@ -1,3 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sonarr
+  labels:
+    ongy.net/keycloak-application: "true"
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,8 +25,6 @@ spec:
         - image: quay.io/oauth2-proxy/oauth2-proxy
           args:
           - --provider=keycloak-oidc
-          - --client-id=sonarr
-          - --client-secret=tNK2AWGZddUUa45EuI16v8fvcNyGoF6Q
           - --redirect-url=https://sonarr.local.ongy.net/oauth2/callback
           - --oidc-issuer-url=https://keycloak.local.ongy.net/realms/local.ongy.net
           - --code-challenge-method=S256
@@ -28,6 +33,19 @@ spec:
           - --upstream=http://sonarr
           - --email-domain=*
           - --cookie-secret=QjFoZ3QwN2JHQUtYeGs2S2hmQU9TbCtVUWh0NlJVWXc=
+
+          - --skip-provider-button=true
+          env:
+          - name: OAUTH2_PROXY_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: sonarr-client-ceph
+                key: client_id
+          - name: OAUTH2_PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: sonarr-client-ceph
+                key: client_secret
           securityContext:
             seccompProfile:
               type: RuntimeDefault
@@ -53,28 +71,3 @@ spec:
       port: 80
       targetPort: 8080
       name: http
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: sonarr
-spec:
-  hostnames:
-  - sonarr.local.ongy.net
-  parentRefs:
-  - group: gateway.networking.k8s.io
-    kind: Gateway
-    name: gateway
-    namespace: kube-system
-    sectionName: https
-  rules:
-  - backendRefs:
-    - group: ""
-      kind: Service
-      name: sonarr-proxy
-      port: 80
-      weight: 1
-    matches:
-    - path:
-        type: PathPrefix
-        value: /
