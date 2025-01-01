@@ -6,6 +6,11 @@ metadata:
   finalizers:
     # The default behaviour is foreground cascading deletion
     - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/image-list: z2m=koenkk/zigbee2mqtt
+    argocd-image-updater.argoproj.io/z2m.update-strategy: semver
+    argocd-image-updater.argoproj.io/z2m.allow-tags: regexp:^[0-9]+\.[0-9]+\.[1-9][0-9]*$
 spec:
   project: default
   source:
