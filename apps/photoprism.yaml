@@ -8,6 +8,9 @@ metadata:
     argocd-image-updater.argoproj.io/image-list: photoprism=photoprism/photoprism
     argocd-image-updater.argoproj.io/photoprism.update-strategy: newest-build
     argocd-image-updater.argoproj.io/photoprism.allow-tags: regexp:^[0-9]+$
+  finalizers:
+    # The default behaviour is foreground cascading deletion
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:

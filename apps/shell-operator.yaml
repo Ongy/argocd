@@ -8,6 +8,9 @@ metadata:
     argocd-image-updater.argoproj.io/ha.update-strategy: newest-build
     # argocd-image-updater.argoproj.io/ha.allow-tags: 'regexp:2024\.7\.[2-9]'
     # argocd-image-updater.argoproj.io/ha.platforms: linux/amd64
+  finalizers:
+    # The default behaviour is foreground cascading deletion
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
