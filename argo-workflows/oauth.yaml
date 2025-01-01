@@ -10,7 +10,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: sonarr
+  name: argo-workflows
   labels:
     ongy.net/keycloak-application-type: group
 #    ongy.net/keycloak-application: "true"
