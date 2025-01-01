@@ -32,6 +32,10 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 100Mi
+        - name: ansible-tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 150Mi
       containers:
         - image: ghcr.io/flant/shell-operator
           securityContext:
@@ -67,6 +71,7 @@ spec:
           - sleep
           args:
           - infinity
+          workingDir: /tmp
           securityContext:
             seccompProfile:
               type: RuntimeDefault
@@ -83,5 +88,5 @@ spec:
             - mountPath: "/ansible"
               name: ansible
             - mountPath: "/tmp"
-              name: tmp
+              name: ansible-tmp
 ---
