@@ -72,6 +72,9 @@ spec:
           args:
           - infinity
           workingDir: /tmp
+          env:
+          - name: HOME
+            value: /tmp/
           securityContext:
             seccompProfile:
               type: RuntimeDefault
