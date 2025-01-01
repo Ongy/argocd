@@ -59,6 +59,71 @@ data:
       fi
     fi
 
+  keycloak.groups: |
+    - name: Realm
+      hosts: localhost
+      gather_facts: false
+      vars:
+        KEYCLOAK_URL: http://keycloak.keycloak.svc.cluster.local
+        KEYCLOAK_REALM: local.ongy.net
+        CLIENT_ID: __CLIENT_ID__
+      tasks:
+      - name: Ensure groups client scope
+        community.general.keycloak_clientscope:
+          auth_keycloak_url: "{{ KEYCLOAK_URL }}"
+          auth_username: admin
+          auth_password: admin
+          auth_realm: master
+          realm: "{{ KEYCLOAK_REALM }}"
+
+          name: groups
+          protocol: openid-connect
+          description: Provide groups for openid clients based on roles in keycloak
+          protocol_mappers:
+          - name: groups
+            protocol: openid-connect
+            protocolMapper: oidc-usermodel-realm-role-mapper
+            config:
+              "access.token.claim": "true"
+              "claim.name": "groups"
+              "id.token.claim": "true"
+              "introspection.token.claim": "true"
+              "jsonType.label": "String"
+              "multivalued": "true"
+              "user.attribute": "foo"
+
+      - name: Create {{ CLIENT_ID }} Client
+        community.general.keycloak_client:
+          auth_keycloak_url: "{{ KEYCLOAK_URL }}"
+          auth_username: admin
+          auth_password: admin
+          auth_realm: master
+          realm: "{{ KEYCLOAK_REALM }}"
+
+          client_id: "{{ CLIENT_ID }}"
+          consent_required: false
+          direct_access_grants_enabled: false
+          public_client: false
+          redirect_uris:
+          - https://{{ CLIENT_ID }}.local.ongy.net/oauth2/callback
+          default_client_scopes:
+          - groups
+
+          - name: Read {{ CLIENT_ID }} client secret
+            register: "client_id"
+            community.general.keycloak_clientsecret_info:
+              auth_keycloak_url: "{{ KEYCLOAK_URL }}"
+              auth_username: admin
+              auth_password: admin
+              auth_realm: master
+              realm: "{{ KEYCLOAK_REALM }}"
+              client_id: "{{ CLIENT_ID }}"
+
+          - name: Store {{ CLIENT_ID }} client secret
+            ansible.builtin.copy:
+              dest: "{{ CLIENT_ID }}.secret"
+              content: "{{ client_id.clientsecret_info.value }}"
+
   keycloak.oauth-proxy: |
       - name: Realm
         hosts: localhost
@@ -120,7 +185,11 @@ data:
         NAMESPACE="${2}"
         echo "Ensuring client '${NAME}' exists for NS '${NAMESPACE}"
 
-        </templates/keycloak-oauth-proxy sed -e "s/__CLIENT_ID__/${NAME}/" > "/ansible/${NAME}.playbook.yaml"
+        if [ "$(kubectl get -n argo-workflows configmap argo-workflows -o jsonpath="{.metadata.labels.ongy\\.net/keycloak-application-type}")" = group ]; then
+          </templates/keycloak-groups sed -e "s/__CLIENT_ID__/${NAME}/" > "/ansible/${NAME}.playbook.yaml"
+        else
+          </templates/keycloak-oauth-proxy sed -e "s/__CLIENT_ID__/${NAME}/" > "/ansible/${NAME}.playbook.yaml"
+        fi
 
         kubectl exec -i -n shell-operator deploy/shell-operator --container ansible -- \
           env HOME=/tmp/ ansible-playbook "/ansible/${NAME}.playbook.yaml"

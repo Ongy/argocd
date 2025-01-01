@@ -66,6 +66,9 @@ spec:
             - mountPath: "/templates/keycloak-oauth-proxy"
               name: hooks
               subPath: keycloak.oauth-proxy
+            - mountPath: "/templates/keycloak-groups"
+              name: hooks
+              subPath: keycloak.groups
         - image: alpine/ansible
           command:
           - sleep
