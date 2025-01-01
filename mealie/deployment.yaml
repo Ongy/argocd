@@ -57,12 +57,18 @@ spec:
               value: "true"
             - name: OIDC_CONFIGURATION_URL
               value: https://keycloak.local.ongy.net/realms/local.ongy.net/.well-known/openid-configuration
-            - name: OIDC_CLIENT_ID
-              value: mealie
-            - name: OIDC_CLIENT_SECRET
-              value: sxJMICZSr6nyGhIPqwsK2hH1qNMG3e0g
             - name: OIDC_REMEMBER_ME
               value: "true"
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-client-mealie
+                  key: client_id
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-client-mealie
+                  key: client_secret
           volumeMounts:
             - mountPath: "/psql-tls-secrets"
               name: psql-tls-secrets
@@ -72,4 +78,9 @@ spec:
             limits:
               memory: "1024Mi"
 ---
-
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mealie
+  labels:
+    ongy.net/keycloak-application: "true"
