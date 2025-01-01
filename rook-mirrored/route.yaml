@@ -16,8 +16,8 @@ spec:
   - backendRefs:
     - group: ""
       kind: Service
-      name: rook-ceph-mgr-dashboard
-      port: 7000
+      name: dashboard-proxy
+      port: 80
       weight: 1
     matches:
     - path:

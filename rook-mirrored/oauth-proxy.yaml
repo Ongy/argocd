@@ -4,3 +4,75 @@ metadata:
   name: ceph
   labels:
     ongy.net/keycloak-application: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ceph-dashboard-proxy
+  name: ceph-dashboard-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ceph-dashboard-proxy
+  template:
+    metadata:
+      labels:
+        app: ceph-dashboard-proxy
+    spec:
+      containers:
+        - image: quay.io/oauth2-proxy/oauth2-proxy
+          args:
+          - --provider=keycloak-oidc
+          - --redirect-url=https://ceph-mirrored.local.ongy.net/oauth2/callback
+          - --oidc-issuer-url=https://keycloak.local.ongy.net/realms/local.ongy.net
+          - --code-challenge-method=S256
+          - --reverse-proxy=true
+          - --http-address=0.0.0.0:8080
+          - --upstream=http://rook-ceph-mgr-dashboard:7000
+          - --email-domain=*
+          - --cookie-secret=QjFoZ3QwN2JHQUtYeGs2S2hmQU9TbCtVUWh0NlJVWXc=
+
+          - --skip-provider-button=true
+          env:
+          - name: OAUTH2_PROXY_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-client-ceph
+                key: client_id
+          - name: OAUTH2_PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-client-ceph
+                key: client_secret
+          - name: OAUTH2_PROXY_BASIC_AUTH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: rook-ceph-dashboard-password
+                key: password
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 1000
+            privileged: false
+          name: oauth-proxy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard-proxy
+spec:
+  selector:
+    app: dashboard-proxy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      name: http
