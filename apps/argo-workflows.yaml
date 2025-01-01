@@ -3,10 +3,16 @@ kind: Application
 metadata:
   name: argo-workflows
   namespace: argocd
+  finalizers:
+    # The default behaviour is foreground cascading deletion
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  source:
-    chart: argo-workflows
+  sources:
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: argo-workflows
+    targetRevision: new-cluster
+  - chart: argo-workflows
     repoURL: https://argoproj.github.io/argo-helm
     targetRevision: 0.45.2
     helm:
@@ -43,49 +49,3 @@ spec:
     syncOptions:
       - PruneLast=true
       - CreateNamespace=true
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: argo-server-sso
-  namespace: argo-workflows
-data:
-  client-secret: SWxXOHI4Qkg4RXE1eDRMY0RqaWhjVGdyVlBtYlBVQVo=
-  client-id: YXJnby13b3JrZmxvd3M=
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: argo-workflows
-  namespace: argo-workflows
-spec:
-  hostnames:
-  - argo-workflows.local.ongy.net
-  parentRefs:
-  - group: gateway.networking.k8s.io
-    kind: Gateway
-    name: gateway
-    namespace: kube-system
-    sectionName: https
-  rules:
-  - backendRefs:
-    - group: ""
-      kind: Service
-      name: argo-workflows-server
-      port: 2746
-      weight: 1
-    matches:
-    - path:
-        type: PathPrefix
-        value: /
----
-apiVersion: objectbucket.io/v1alpha1
-kind: ObjectBucketClaim
-metadata:
-  name: argo-artifacts
-  namespace: argo-workflows
-spec:
-  generateBucketName: argo-workflow-artifacts
-  storageClassName: rook-ceph-bucket
-
-
