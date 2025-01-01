@@ -109,20 +109,20 @@ data:
           default_client_scopes:
           - groups
 
-          - name: Read {{ CLIENT_ID }} client secret
-            register: "client_id"
-            community.general.keycloak_clientsecret_info:
-              auth_keycloak_url: "{{ KEYCLOAK_URL }}"
-              auth_username: admin
-              auth_password: admin
-              auth_realm: master
-              realm: "{{ KEYCLOAK_REALM }}"
-              client_id: "{{ CLIENT_ID }}"
+      - name: Read {{ CLIENT_ID }} client secret
+        register: "client_id"
+        community.general.keycloak_clientsecret_info:
+          auth_keycloak_url: "{{ KEYCLOAK_URL }}"
+          auth_username: admin
+          auth_password: admin
+          auth_realm: master
+          realm: "{{ KEYCLOAK_REALM }}"
+          client_id: "{{ CLIENT_ID }}"
 
-          - name: Store {{ CLIENT_ID }} client secret
-            ansible.builtin.copy:
-              dest: "{{ CLIENT_ID }}.secret"
-              content: "{{ client_id.clientsecret_info.value }}"
+      - name: Store {{ CLIENT_ID }} client secret
+        ansible.builtin.copy:
+          dest: "{{ CLIENT_ID }}.secret"
+          content: "{{ client_id.clientsecret_info.value }}"
 
   keycloak.oauth-proxy: |
       - name: Realm
