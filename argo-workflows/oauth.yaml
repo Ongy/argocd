@@ -1,13 +1,4 @@
 apiVersion: v1
-kind: Secret
-metadata:
-  name: argo-server-sso
-  namespace: argo-workflows
-data:
-  client-secret: SWxXOHI4Qkg4RXE1eDRMY0RqaWhjVGdyVlBtYlBVQVo=
-  client-id: YXJnby13b3JrZmxvd3M=
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: argo-workflows

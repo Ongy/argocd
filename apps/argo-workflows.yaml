@@ -35,6 +35,12 @@ spec:
           authModes:
           - sso
           sso:
+            clientId:
+              name: keycloak-client-argo-workflows
+              key: client_id
+            clientSecret:
+              name: keycloak-client-argo-workflows
+              key: client_secret
             enabled: true
             issuer: https://keycloak.local.ongy.net/realms/local.ongy.net
             redirectUrl: https://argo-workflows.local.ongy.net/oauth2/callback
