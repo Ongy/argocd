@@ -59,39 +59,99 @@ data:
       fi
     fi
 
-  keycloak.sh: |
-    #!/bin/bash
+  keycloak:
+    oauth-proxy: |
+      - name: Realm
+        hosts: localhost
+        gather_facts: false
+        vars:
+          KEYCLOAK_URL: http://keycloak.keycloak.svc.cluster.local
+          KEYCLOAK_REALM: local.ongy.net
+          CLIENT_ID: __CLIENT_ID__
+        tasks:
+        - name: Create {{ CLIENT_ID }} client
+          community.general.keycloak_client:
+            auth_keycloak_url: "{{ KEYCLOAK_URL }}"
+            auth_username: admin
+            auth_password: admin
+            auth_realm: master
+            realm: "{{ KEYCLOAK_REALM }}"
 
-    set -euo pipefail
+            client_id: "{{ CLIENT_ID }}"
+            consent_required: false
+            name: "{{ CLIENt_ID }}"
+            direct_access_grants_enabled: false
+            public_client: false
 
-    if [[ ${1:-""} == "--config" ]] ; then
-      cat <<EOF
-    {
-      "configVersion":"v1",
-      "kubernetes":[
-        {
-          "apiVersion": "v1",
-          "kind": "ConfigMap",
+            protocol_mappers:
+            - name: aud-mapper-{{ CLIENT_ID }}
+              protocol: openid-connect
+              protocolMapper: oidc-audience-mapper
+              config:
+                "access.token.claim": "true"
+                "id.token.claim": "true"
+                "included.client.audience": "{{ CLIENT_ID }}"
+                "introspection.token.claim": "true"
+                "lightweight.claim": "false"
 
-          "labelSelector": {
-            "matchLabels":{
-              "ongy.net/keycloak-application": "true"
-            }
-          },
-          "executeHookOnEvent": ["Added"]
-        }
-      ]
-    }
-    EOF
-    else
-      type=$(jq -r '.[0].type' ${BINDING_CONTEXT_PATH})
-      if [[ $type == "Synchronization" ]] ; then
-        for db in $(jq -r '.[0].objects[]|.object.metadata.name' "${BINDING_CONTEXT_PATH}"); do
-          echo "${db}"
-        done
+        - name: Read {{ CLIENT_ID }} client secret
+          register: "client_id"
+          community.general.keycloak_clientsecret_info:
+            auth_keycloak_url: "{{ KEYCLOAK_URL }}"
+            auth_username: admin
+            auth_password: admin
+            auth_realm: master
+            realm: "{{ KEYCLOAK_REALM }}"
+            client_id: "{{ CLIENT_ID }}"
+
+        - name: Store {{ CLIENT_ID }} client secret
+          ansible.builtin.copy:
+            dest: "{{ CLIENT_ID }}.secret"
+            content: "{{ client_id.clientsecret_info.value }}"
+
+    script: |
+      #!/bin/bash
+
+      set -euo pipefail
+
+      function ensure_client() {
+        NAME="${1}"
+        echo "Ensuring client '${NAME}' exists"
+
+        </templates/keycloak-oauth-proxy sed -e "s/__CLIENT_ID__/${NAME}/" > "/ansible/${NAME}.playbook.yaml"
+
+        kubectl exec -i -n shell-operator -l app=shell-operator --container ansible \
+          ansible-playbook "/ansible/${NAME}.playbook.yaml"
+      }
+
+      if [[ ${1:-""} == "--config" ]] ; then
+        cat <<EOF
+      {
+        "configVersion":"v1",
+        "kubernetes":[
+          {
+            "apiVersion": "v1",
+            "kind": "Secret",
+
+            "labelSelector": {
+              "matchLabels":{
+                "ongy.net/keycloak-application": "true"
+              }
+            },
+            "executeHookOnEvent": ["Added"]
+          }
+        ]
+      }
+      EOF
       else
-        if [[ "$(jq -r '.[0].watchEvent' "${BINDING_CONTEXT_PATH}")" = "Added" ]]; then
-          echo "$(jq -r '.[0].object.metadata.name' "${BINDING_CONTEXT_PATH}")"
+        type=$(jq -r '.[0].type' ${BINDING_CONTEXT_PATH})
+        if [[ $type == "Synchronization" ]] ; then
+          for db in $(jq -r '.[0].objects[]|.object.metadata.name' "${BINDING_CONTEXT_PATH}"); do
+            ensure_client "${db}"
+          done
+        else
+          if [[ "$(jq -r '.[0].watchEvent' "${BINDING_CONTEXT_PATH}")" = "Added" ]]; then
+            ensure_client "$(jq -r '.[0].object.metadata.name' "${BINDING_CONTEXT_PATH}")"
+          fi
         fi
       fi
-    fi
