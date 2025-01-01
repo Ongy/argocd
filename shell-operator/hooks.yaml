@@ -13,7 +13,7 @@ data:
       NAME="${1}"
       echo "Ensuring db '${NAME}' exists"
 
-      if kubectl exec -i -n psql psql-0 -- psql -U postgres -nlqt | cut -d '|' -f 1 | grep -o -E \\S+ | grep -E "^${NAME}$"; then
+      if kubectl exec -i -n psql psql-0 -- psql -U postgres -nlqt | cut -d '|' -f 1 | grep -o -E \\S+ | grep -E "^${NAME}$" > /dev/null; then
         echo "${NAME} already exists"
       else
         echo "Creating db '${NAME}'"
