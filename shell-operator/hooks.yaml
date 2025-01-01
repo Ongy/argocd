@@ -81,6 +81,8 @@ data:
             name: "{{ CLIENT_ID }}"
             direct_access_grants_enabled: false
             public_client: false
+            redirect_uris:
+            - https://{{ CLIENT_ID }}.local.ongy.net/oauth2/callback
 
             protocol_mappers:
             - name: aud-mapper-{{ CLIENT_ID }}

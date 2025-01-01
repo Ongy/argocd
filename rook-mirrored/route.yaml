@@ -5,7 +5,7 @@ metadata:
   namespace: rook-ceph
 spec:
   hostnames:
-  - ceph-mirrored.local.ongy.net
+  - ceph.local.ongy.net
   parentRefs:
   - group: gateway.networking.k8s.io
     kind: Gateway
