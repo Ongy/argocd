@@ -13,4 +13,4 @@ metadata:
   name: argo-workflows
   labels:
     ongy.net/keycloak-application-type: group
-#    ongy.net/keycloak-application: "true"
+    ongy.net/keycloak-application: "true"
