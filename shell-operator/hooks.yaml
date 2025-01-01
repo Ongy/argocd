@@ -58,3 +58,40 @@ data:
         fi
       fi
     fi
+
+  keycloak.sh: |
+    #!/bin/bash
+
+    set -euo pipefail
+
+    if [[ ${1:-""} == "--config" ]] ; then
+      cat <<EOF
+    {
+      "configVersion":"v1",
+      "kubernetes":[
+        {
+          "apiVersion": "v1",
+          "kind": "ConfigMap",
+
+          "labelSelector": {
+            "matchLabels":{
+              "ongy.net/keycloak-application": "true"
+            }
+          },
+          "executeHookOnEvent": ["Added"]
+        }
+      ]
+    }
+    EOF
+    else
+      type=$(jq -r '.[0].type' ${BINDING_CONTEXT_PATH})
+      if [[ $type == "Synchronization" ]] ; then
+        for db in $(jq -r '.[0].objects[]|.object.metadata.name' "${BINDING_CONTEXT_PATH}"); do
+          echo "${db}"
+        done
+      else
+        if [[ "$(jq -r '.[0].watchEvent' "${BINDING_CONTEXT_PATH}")" = "Added" ]]; then
+          echo "$(jq -r '.[0].object.metadata.name' "${BINDING_CONTEXT_PATH}")"
+        fi
+      fi
+    fi

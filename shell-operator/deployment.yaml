@@ -56,6 +56,9 @@ spec:
             - mountPath: "/hooks/psql.sh"
               name: hooks
               subPath: psql.sh
+            - mountPath: "/hooks/keycloak.sh"
+              name: hooks
+              subPath: keycloak.sh
         - image: alpine/ansible
           command:
           - sleep
