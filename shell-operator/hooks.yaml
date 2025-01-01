@@ -115,7 +115,8 @@ data:
 
       function ensure_client() {
         NAME="${1}"
-        echo "Ensuring client '${NAME}' exists"
+        NAMESPACE="${2}"
+        echo "Ensuring client '${NAME}' exists for NS '${NAMESPACE}"
 
         </templates/keycloak-oauth-proxy sed -e "s/__CLIENT_ID__/${NAME}/" > "/ansible/${NAME}.playbook.yaml"
 
@@ -144,13 +145,15 @@ data:
       EOF
       else
         type=$(jq -r '.[0].type' ${BINDING_CONTEXT_PATH})
+        echo "${BINDING_CONTEXT_PATH}"
+        cat "${BINDING_CONTEXT_PATH}"
         if [[ $type == "Synchronization" ]] ; then
           for db in $(jq -r '.[0].objects[]|.object.metadata.name' "${BINDING_CONTEXT_PATH}"); do
-            ensure_client "${db}"
+            ensure_client "${db}" '???'
           done
         else
           if [[ "$(jq -r '.[0].watchEvent' "${BINDING_CONTEXT_PATH}")" = "Added" ]]; then
-            ensure_client "$(jq -r '.[0].object.metadata.name' "${BINDING_CONTEXT_PATH}")"
+            ensure_client "$(jq -r '.[0].object.metadata.name' "${BINDING_CONTEXT_PATH}")" "$(jq -r '.[0].object.metadata.namespace' "${BINDING_CONTEXT_PATH}")"
           fi
         fi
       fi
