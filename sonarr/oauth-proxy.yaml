@@ -32,10 +32,13 @@ spec:
           - --http-address=0.0.0.0:8080
           - --upstream=http://sonarr
           - --email-domain=*
-          - --cookie-secret=QjFoZ3QwN2JHQUtYeGs2S2hmQU9TbCtVUWh0NlJVWXc=
-
           - --skip-provider-button=true
           env:
+          - name: OAUTH2_PROXY_COOKIE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: sonarr-oauth-cookie
+                key: value
           - name: OAUTH2_PROXY_CLIENT_ID
             valueFrom:
               secretKeyRef:
