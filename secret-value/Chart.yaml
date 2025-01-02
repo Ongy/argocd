@@ -5,5 +5,5 @@ description: >
   This value is generated on first installation and kept constant on upgrades.
   Suitable for e.g. cookie encryption.
 type: application
-version: "0.0.2"
+version: "0.0.3"
 appVersion: "1.0.0"
