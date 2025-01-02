@@ -1,0 +1,9 @@
+apiVersion: v2
+name: secret-data
+description: >
+  Provides a single secret value via a k8s secret.
+  This value is generated on first installation and kept constant on upgrades.
+  Suitable for e.g. cookie encryption.
+type: application
+version: "VERSION"
+appVersion: "0.1.0"

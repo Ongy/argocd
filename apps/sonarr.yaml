@@ -8,10 +8,16 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  source:
-    repoURL: https://git.local.ongy.net/ongy/argocd.git
+  sources:
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
     path: sonarr
     targetRevision: new-cluster
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: new-cluster
+    helm:
+      valuesObject:
+        secretName: sonarr-oauth-cookie
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: mediaretriever
