@@ -11,9 +11,15 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: paperless
     targetRevision: new-cluster
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: new-cluster
+    helm:
+      valuesObject:
+        secretName: paperless-oauth-cookie
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: mediaserver

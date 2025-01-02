@@ -13,10 +13,16 @@ metadata:
     argocd-image-updater.argoproj.io/z2m.allow-tags: regexp:^[0-9]+\.[0-9]+\.[1-9][0-9]*$
 spec:
   project: default
-  source:
-    repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+  sources:
+  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: z2m
     targetRevision: new-cluster
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: new-cluster
+    helm:
+      valuesObject:
+        secretName: z2m-oauth-cookie
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: smarthome
