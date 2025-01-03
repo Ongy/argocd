@@ -25,5 +25,5 @@ spec:
               apiVersion: argoproj.io/v1alpha1
               kind: WorkflowTemplate
               metadata:
-                name: sync-git-blog
+                name: git-sync
                 namespace: argo-workflows
