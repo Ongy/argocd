@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventBus
+metadata:
+  name: default
+spec:
+  nats:
+    native:
+      # Optional, defaults to 3. If it is < 3, set it to 3, that is the minimal requirement.
+      replicas: 3
+      # Optional, authen strategy, "none" or "token", defaults to "none"
+      auth: token
+#      containerTemplate:
+#        resources:
+#          requests:
+#            cpu: "10m"
+#      metricsContainerTemplate:
+#        resources:
+#          requests:
+#            cpu: "10m"
+#      antiAffinity: false
+#      persistence:
+#        storageClassName: standard
+#        accessMode: ReadWriteOnce
+#        volumeSize: 10Gi
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: container-builder
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: container-builder
+subjects:
+- kind: ServiceAccount
+  name: container-builder
+roleRef:
+  kind: Role
+  name: argo-workflows-workflow
+  apiGroup: rbac.authorization.k8s.io
+
