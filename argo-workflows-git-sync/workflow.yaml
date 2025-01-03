@@ -35,7 +35,6 @@ spec:
             ORIGIN_URL="$(git remote get-url origin)"
             GITHUB_URL="$(echo "${ORIGIN_URL}" | sed -e 's#https://git.local.ongy.net/ongy/#git@github.com:Ongy/#')"
             git remote add github "${GITHUB_URL}"
-            sleep infinity
             git push github main
         workingDir: /src
   entrypoint: entry
