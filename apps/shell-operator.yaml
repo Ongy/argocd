@@ -16,7 +16,7 @@ spec:
   source:
     repoURL: https://git.local.ongy.net/ongy/argocd.git
     path: shell-operator
-    targetRevision: new-cluster
+    targetRevision: main
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: shell-operator

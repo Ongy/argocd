@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://git.local.ongy.net/ongy/argocd.git
     path: argocd-image-updater
-    targetRevision: new-cluster
+    targetRevision: main
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: argocd

@@ -8,10 +8,10 @@ spec:
   sources:
   - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: psql
-    targetRevision: new-cluster
+    targetRevision: main
   - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: snapshot-schedule
-    targetRevision: new-cluster
+    targetRevision: main
     helm:
       valuesObject:
         appSelector: psql

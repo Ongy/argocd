@@ -16,7 +16,7 @@ spec:
   source:
     repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: photoprism
-    targetRevision: new-cluster
+    targetRevision: main
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: mediaserver

@@ -15,7 +15,7 @@ spec:
   source:
     repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: jellyfin
-    targetRevision: new-cluster
+    targetRevision: main
     kustomize:
   destination:
     server: 'https://kubernetes.default.svc'

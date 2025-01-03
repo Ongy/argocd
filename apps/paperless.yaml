@@ -13,16 +13,16 @@ spec:
   sources:
   - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: paperless
-    targetRevision: new-cluster
+    targetRevision: main
   - repoURL: https://git.local.ongy.net/ongy/argocd.git
     path: secret-value
-    targetRevision: new-cluster
+    targetRevision: main
     helm:
       valuesObject:
         secretName: paperless-oauth-cookie
 #  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
 #    path: snapshot-schedule
-#    targetRevision: new-cluster
+#    targetRevision: main
 #    helm:
 #      valuesObject:
 #        suffix: paperless
