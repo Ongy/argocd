@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: EventSource
 metadata:
-  name: git-sync
+  name: git-sync-webhook
 spec:
   service:
     ports:
