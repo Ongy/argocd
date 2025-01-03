@@ -7,8 +7,6 @@ metadata:
   # Schedules are namespaced objects
   namespace: homeassistant
 spec:
-  # A LabelSelector to control which PVCs should be snapshotted
-  claimSelector:  # optional
   # Set to true to make the schedule inactive
   disabled: false  # optional
   retention:
