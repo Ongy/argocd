@@ -46,6 +46,7 @@ spec:
     strategy: OnPodCompletion
   volumes:
   - name: github-deploy-key
+    defaultMode: 400
     secret:
       secretName: github-deploy-key
 
