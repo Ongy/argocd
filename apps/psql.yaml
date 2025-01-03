@@ -5,10 +5,16 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://git.local.ongy.net/ongy/argocd.git
+  sources:
+  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: psql
     targetRevision: new-cluster
+  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    path: snapshot-schedule
+    targetRevision: new-cluster
+    helm:
+      valuesObject:
+        appSelector: psql
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: psql
