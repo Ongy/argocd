@@ -33,7 +33,6 @@ spec:
                     value: master
                 workflowTemplateRef:
                   name: git-sync
-                  namespace: argo-workflows
           parameters:
             - src:
                 dependencyName: webhook-dep
