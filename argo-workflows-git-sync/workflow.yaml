@@ -39,7 +39,7 @@ spec:
         command: [/bin/sh]
         source: |
           mkdir -p /out
-          echo "{{inputs.parameters.rev}}" | sed -e 's#/refs/heads/##' > /out/rev
+          echo "{{inputs.parameters.rev}}" | sed -e 's#refs/heads/##' > /out/rev
       
     - name: push
       inputs:
