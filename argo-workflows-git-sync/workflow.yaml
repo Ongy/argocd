@@ -19,12 +19,21 @@ spec:
               revision: main
       container:
         name: main
+        volumeMounts:
+        - name: github-deploy-key     # mount file containing secret at /secret/mountpath
+          mountPath: "/ssh"
         image: alpine/git
         command:
-          - git
+          - sh
         args:
-          - remote
-          - -v
+          - -x
+          - -euc
+          - |
+            ORIGIN_URL="$(git remote get-url origin)"
+            GITHUB_URL="$(echo "${ORIGIN_URL}" | sed -e 's#https://git.local.ongy.net/ongy/#git@github.com:Ongy/#')"
+            git remote add github "${GITHUB_URL}"
+            sleep infinity
+            git push github main
         workingDir: /src
   entrypoint: entry
   arguments: {}
@@ -33,4 +42,9 @@ spec:
     secondsAfterCompletion: 3600
   podGC:
     strategy: OnPodCompletion
+  volumes:
+  - name: github-deploy-key
+    secret:
+      secretName: github-deploy-key
+
 
