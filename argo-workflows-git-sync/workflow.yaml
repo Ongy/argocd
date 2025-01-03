@@ -15,8 +15,8 @@ spec:
           - name: argo-source
             path: /src
             git:
-              repo: https://git.local.ongy.net/ongy/blog.git
-              revision: HEAD
+              repo: https://git.local.ongy.net/ongy/argocd.git
+              revision: main
       container:
         name: main
         image: alpine/git
