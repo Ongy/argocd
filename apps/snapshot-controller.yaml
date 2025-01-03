@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: snapshot-controller
+  namespace: argocd
+  finalizers:
+    # The default behaviour is foreground cascading deletion
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+  - repoURL: https://github.com/kubernetes-csi/external-snapshotter.git
+    path: client/config/crd
+    targetRevision: head
+  - repoURL: https://github.com/kubernetes-csi/external-snapshotter.git
+    path: deploy/kubernetes/snapshot-controller
+    targetRevision: head
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true
