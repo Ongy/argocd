@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
 - sensor.yaml
 - event-source.yaml
+- workflow.yaml

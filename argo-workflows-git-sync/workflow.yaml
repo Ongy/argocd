@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: git-sync
+spec:
+  templates:
+    - name: entry
+      dag:
+        tasks:
+        - name: push
+          template: push
+    - name: push
+      inputs:
+        artifacts:
+          - name: argo-source
+            path: /src
+            git:
+              repo: https://git.local.ongy.net/ongy/blog.git
+              revision: HEAD
+      container:
+        name: main
+        image: alpine/git
+        command:
+          - git
+        args:
+          - remote
+          - -v
+        workingDir: /src
+  entrypoint: entry
+  arguments: {}
+  serviceAccountName: git-sync
+  ttlStrategy:
+    secondsAfterCompletion: 3600
+  podGC:
+    strategy: OnPodCompletion
+
