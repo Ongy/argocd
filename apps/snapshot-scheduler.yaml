@@ -9,9 +9,6 @@ metadata:
 spec:
   project: default
   sources:
-  - repoURL: https://git.local.ongy.net/ongy/argocd.git
-    path: snapshot-scheduler
-    targetRevision: new-cluster
   - chart: snapscheduler
     repoURL: https://backube.github.io/helm-charts/
     targetRevision: 3.4.0
