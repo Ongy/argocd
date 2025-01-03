@@ -5,7 +5,11 @@ metadata:
   # of the template for naming the snapshots.
   name: subhourly-{{- .Values.suffix }}
 spec:
-  claimSelector: {{ .Values.claimSelector }}
+  {{ if .Values.appSelector }}
+  claimSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Values.appSelector }}
+  {{ end }}
   # Set to true to make the schedule inactive
   disabled: {{ not .Values.subhourly }}  # optional
   retention:
