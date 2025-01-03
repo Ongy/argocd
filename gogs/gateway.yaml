@@ -8,6 +8,10 @@ spec:
   - name: ssh
     port: 7022
     protocol: TCP
+    allowedRoutes:
+      kinds:
+      - kind: TCPRoute
+
 ---
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TCPRoute
