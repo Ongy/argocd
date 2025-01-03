@@ -20,6 +20,10 @@ spec:
         name: argo-workflow-trigger
         argoWorkflow:
           operation: submit-from
+          arguments:
+            parameters:
+            - name: ref
+              value: main
           source:
             resource:
               apiVersion: argoproj.io/v1alpha1
@@ -27,3 +31,8 @@ spec:
               metadata:
                 name: git-sync
                 namespace: argo-workflows
+        parameters:
+          - src:
+              dependencyName: webhook-dep
+              dataKey: body.ref
+            dest: argoWorkflow.arguments.parameters.0.value

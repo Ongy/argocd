@@ -3,6 +3,10 @@ kind: WorkflowTemplate
 metadata:
   name: git-sync
 spec:
+  inputs:
+    parameters:
+      - name: rev
+        value: main
   templates:
     - name: entry
       dag:
@@ -16,7 +20,7 @@ spec:
             path: /src
             git:
               repo: https://git.local.ongy.net/ongy/argocd.git
-              revision: main
+              revision: "{{inputs.parameters.rev}}"
       container:
         name: main
         volumeMounts:
@@ -39,7 +43,6 @@ spec:
             git push github main
         workingDir: /src
   entrypoint: entry
-  arguments: {}
   serviceAccountName: git-sync
   ttlStrategy:
     secondsAfterCompletion: 3600
