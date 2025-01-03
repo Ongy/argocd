@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: git-sync
+spec:
+  template:
+    serviceAccountName: argo-workflows-server
+  dependencies:
+    - name: webhook-dep
+      eventSourceName: git-sync-webhook
+      eventName: git-sync-webhook
+      filters:
+        exprs:
+          - expr: ref == "refs/heads/master" || ref == "refs/heads/main"
+            fields:
+              - name: ref
+                path: body.ref
+  triggers:
+    - template:
+        name: argo-workflow-trigger
+        argoWorkflow:
+          operation: submit-from
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: WorkflowTemplate
+              metadata:
+                name: sync-git-blog
+                namespace: argo-workflows
