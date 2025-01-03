@@ -3,7 +3,7 @@ kind: SnapshotSchedule
 metadata:
   # The name for this schedule. It is also used as a part
   # of the template for naming the snapshots.
-  name: hourly
+  name: fifteen-minutes
   # Schedules are namespaced objects
   namespace: homeassistant
 spec:
