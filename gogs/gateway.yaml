@@ -1,0 +1,23 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: ssh-gateway
+spec:
+  gatewayClassName: cilium
+  listeners:
+  - name: ssh
+    port: 7022
+    protocol: TCP
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+  name: gogs-ssh
+spec:
+  parentRefs:
+  - name: ssh-gateway
+    sectionName: ssh
+  rules:
+  - backendRefs:
+    - name: gogs
+      port: 22
