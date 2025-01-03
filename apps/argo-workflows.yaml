@@ -12,6 +12,11 @@ spec:
   - repoURL: https://git.local.ongy.net/ongy/argocd.git
     path: argo-workflows
     targetRevision: new-cluster
+  - chart: argo-events
+    repoURL: https://argoproj.github.io/argo-helm
+    targetRevision: 2.4.4
+    helm:
+      releaseName: argo-events
   - chart: argo-workflows
     repoURL: https://argoproj.github.io/argo-helm
     targetRevision: 0.45.2
