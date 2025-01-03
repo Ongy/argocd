@@ -17,35 +17,6 @@ spec:
     targetRevision: 3.4.0
     helm:
       valuesObject:
-        workflow:
-          serviceAccount:
-            create: true
-        artifactRepository:
-          s3:
-            accessKeySecret:
-              name: argo-artifacts
-              key: AWS_ACCESS_KEY_ID
-            secretKeySecret:
-              name: argo-artifacts
-              key: AWS_SECRET_ACCESS_KEY
-            insecure: true
-            bucket: argo-workflow-artifacts-307d87ae-0425-41d3-a389-fd9ec5ac8790
-            endpoint: rook-ceph-rgw-my-store.rook-ceph.svc:80
-        server:
-          authModes:
-          - sso
-          sso:
-            clientId:
-              name: keycloak-client-argo-workflows
-              key: client_id
-            clientSecret:
-              name: keycloak-client-argo-workflows
-              key: client_secret
-            enabled: true
-            issuer: https://keycloak.local.ongy.net/realms/local.ongy.net
-            redirectUrl: https://argo-workflows.local.ongy.net/oauth2/callback
-            rbac:
-              enabled: false
   destination:
     server: "https://kubernetes.default.svc"
     namespace: backube-snapscheduler
