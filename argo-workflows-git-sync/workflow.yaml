@@ -11,12 +11,36 @@ spec:
     - name: entry
       dag:
         tasks:
-        - name: push
-          template: push
+        - name: cleanup
+          template: cleanup-rev
           arguments:
             parameters:
             - name: rev
               value: "{{workflow.parameters.rev}}"
+
+        - name: push
+          dependencies: [cleanup]
+          template: push
+          arguments:
+            parameters:
+            - name: rev
+              value: "{{tasks.cleanup.outputs.parameters.rev}}"
+    - name: cleanup-rev
+      inputs:
+        parameters:
+        - name: rev
+      outputs:
+        parameters:
+        - name: rev
+          valueFrom:
+            path: /out/rev
+      script:
+        image: alpine
+        command: [/bin/sh]
+        source: |
+          mkdir -p /out
+          echo "{{inputs.parameters.rev}}" | sed -e 's#/refs/heads/##' > /out/rev
+      
     - name: push
       inputs:
         parameters:
