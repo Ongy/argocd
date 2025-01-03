@@ -13,14 +13,20 @@ spec:
         tasks:
         - name: push
           template: push
+          arguments:
+            parameters:
+            - name: rev
+              value: "{{workflow.parameters.rev}}"
     - name: push
       inputs:
+        parameters:
+        - name: rev
         artifacts:
           - name: argo-source
             path: /src
             git:
               repo: https://git.local.ongy.net/ongy/argocd.git
-              revision: "{{workflow.parameters.rev}}"
+              revision: "{{inputs.parameters.rev}}"
       container:
         name: main
         volumeMounts:
