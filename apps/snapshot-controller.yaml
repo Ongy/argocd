@@ -11,10 +11,10 @@ spec:
   sources:
   - repoURL: https://github.com/kubernetes-csi/external-snapshotter.git
     path: client/config/crd
-    targetRevision: head
+    targetRevision: HEAD
   - repoURL: https://github.com/kubernetes-csi/external-snapshotter.git
     path: deploy/kubernetes/snapshot-controller
-    targetRevision: head
+    targetRevision: HEAD
   destination:
     server: "https://kubernetes.default.svc"
     namespace: kube-system
