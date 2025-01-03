@@ -7,6 +7,7 @@ spec:
     parameters:
       - name: rev
         value: main
+      - name: repo
   templates:
     - name: entry
       dag:
@@ -49,7 +50,7 @@ spec:
           - name: argo-source
             path: /src
             git:
-              repo: https://git.local.ongy.net/ongy/argocd.git
+              repo: "{{workflow.parameters.repo}}"
               revision: "{{inputs.parameters.rev}}"
       container:
         name: main
