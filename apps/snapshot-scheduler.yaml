@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: shapshot-scheduler
+  name: snapshot-scheduler
   namespace: argocd
   finalizers:
     # The default behaviour is foreground cascading deletion
