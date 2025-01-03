@@ -1,0 +1,24 @@
+apiVersion: snapscheduler.backube/v1
+kind: SnapshotSchedule
+metadata:
+  # The name for this schedule. It is also used as a part
+  # of the template for naming the snapshots.
+  name: weekly-{{- .Values.suffix }}
+spec:
+  claimSelector: {{ .Values.claimSelector }}
+  # Set to true to make the schedule inactive
+  disabled: {{ not .Values.weekly }}  # optional
+  retention:
+    # The maximum number of snapshots per PVC to keep
+    maxCount: 8  # optional
+  # The cronspec (https://en.wikipedia.org/wiki/Cron#Overview)
+  # that defines the schedule. It is interpreted with
+  # respect to the UTC timezone. The following pre-defined
+  # shortcuts are also supported: @hourly, @daily, @weekly,
+  # @monthly, and @yearly
+  schedule: "@weekly"
+  snapshotTemplate:
+    # The SnapshotClassName to use when creating the
+    # snapshots. If omitted, the cluster default will
+    # be used.
+    snapshotClassName: cephfs-myfs  # optional

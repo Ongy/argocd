@@ -3,24 +3,20 @@ kind: SnapshotSchedule
 metadata:
   # The name for this schedule. It is also used as a part
   # of the template for naming the snapshots.
-  name: fifteen-minutes
-  # Schedules are namespaced objects
-  namespace: homeassistant
+  name: daily-{{- .Values.suffix }}
 spec:
+  claimSelector: {{ .Values.claimSelector }}
   # Set to true to make the schedule inactive
-  disabled: false  # optional
+  disabled: {{ not .Values.daily }}  # optional
   retention:
-    # The length of time a given snapshot should be
-    # retained, specified in hours. (168h = 1 week)
-    expires: "48h"  # optional
     # The maximum number of snapshots per PVC to keep
-    maxCount: 192  # optional
+    maxCount: 30  # optional
   # The cronspec (https://en.wikipedia.org/wiki/Cron#Overview)
   # that defines the schedule. It is interpreted with
   # respect to the UTC timezone. The following pre-defined
   # shortcuts are also supported: @hourly, @daily, @weekly,
   # @monthly, and @yearly
-  schedule: "15,30,45,00 * * * *"
+  schedule: "@daily"
   snapshotTemplate:
     # The SnapshotClassName to use when creating the
     # snapshots. If omitted, the cluster default will

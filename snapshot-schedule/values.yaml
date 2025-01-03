@@ -1,0 +1,7 @@
+suffix: snapshots
+claimSelector:
+
+subhourly: true
+daily: true
+weekly: true
+monthly: true

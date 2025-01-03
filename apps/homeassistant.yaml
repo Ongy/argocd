@@ -10,9 +10,12 @@ metadata:
     argocd-image-updater.argoproj.io/homeassistant.allow-tags: regexp:^[0-9]+\.[0-9]+\.[1-9][0-9]*$
 spec:
   project: default
-  source:
-    repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+  sources:
+  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: homeassistant
+    targetRevision: new-cluster
+  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    path: snapshot-schedule
     targetRevision: new-cluster
   destination:
     server: 'https://kubernetes.default.svc'
