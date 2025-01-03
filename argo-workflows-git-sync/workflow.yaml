@@ -3,7 +3,7 @@ kind: WorkflowTemplate
 metadata:
   name: git-sync
 spec:
-  inputs:
+  arguments:
     parameters:
       - name: rev
         value: main
@@ -20,7 +20,7 @@ spec:
             path: /src
             git:
               repo: https://git.local.ongy.net/ongy/argocd.git
-              revision: "{{inputs.parameters.rev}}"
+              revision: "{{workflow.parameters.rev}}"
       container:
         name: main
         volumeMounts:
