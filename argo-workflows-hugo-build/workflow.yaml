@@ -1,0 +1,80 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: hugo-build
+spec:
+  arguments:
+    parameters:
+      - name: rev
+        value: main
+      - name: repo
+  templates:
+    - name: entry
+      dag:
+        tasks:
+        - name: cleanup
+          template: cleanup-rev
+          arguments:
+            parameters:
+            - name: rev
+              value: "{{workflow.parameters.rev}}"
+
+        - name: build
+          dependencies: [cleanup]
+          template: build
+          arguments:
+            parameters:
+            - name: rev
+              value: "{{tasks.cleanup.outputs.parameters.rev}}"
+    - name: cleanup-rev
+      inputs:
+        parameters:
+        - name: rev
+      outputs:
+        parameters:
+        - name: rev
+          valueFrom:
+            path: /out/rev
+      script:
+        image: alpine
+        command: [/bin/sh]
+        source: |
+          mkdir -p /out
+          echo "{{inputs.parameters.rev}}" | sed -e 's#refs/heads/##' > /out/rev
+      
+    - name: build
+      inputs:
+        parameters:
+        - name: rev
+        artifacts:
+          - name: argo-source
+            path: /src
+            git:
+              repo: "{{workflow.parameters.repo}}"
+              revision: "{{inputs.parameters.rev}}"
+      container:
+        name: main
+        image: klakegg/hugo:ext-alpine
+        volumeMounts:
+        - name: data
+          mountPath: "/out"
+        command:
+          - hugo
+        args:
+          - --destination
+          - /out/{{workflow.parameters.rev}}
+          - --minify
+          - --enableGitInfo
+        workingDir: /src
+  entrypoint: entry
+  serviceAccountName: hugo-build
+  ttlStrategy:
+    secondsAfterCompletion: 3600
+  podGC:
+    strategy: OnPodCompletion
+  volumes:
+  - name: data
+    nfs:
+      path: /srv/share/backed/appdata/blog
+      server: mario.local.ongy.net
+      readOnly: false

@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-workflows-hugo-build
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: argo-workflows-hugo-build
+    targetRevision: main
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argo-workflows
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true
