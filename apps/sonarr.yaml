@@ -25,9 +25,7 @@ spec:
       valuesObject:
         suffix: sonarr
         subhourly: false
-        claimSelector:
-          matchLabels:
-            app.kubernetes.io/instance: sonarr
+        appSelector: sonarr
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: mediaretriever
