@@ -5,3 +5,4 @@ resources:
 - sensor.yaml
 - event-source.yaml
 - workflow.yaml
+- service-account.yaml
