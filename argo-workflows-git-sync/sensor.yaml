@@ -29,7 +29,7 @@ spec:
               spec:
                 arguments:
                   parameters:
-                  - name: ref
+                  - name: rev
                     value: master
                 workflowTemplateRef:
                   name: git-sync
