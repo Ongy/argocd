@@ -22,6 +22,7 @@ spec:
         volumeMounts:
         - name: github-deploy-key     # mount file containing secret at /secret/mountpath
           mountPath: "/ssh"
+          readOnly: true
         env:
         - name: GIT_SSH_COMMAND
           value: "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i /ssh/private-key"
@@ -46,8 +47,8 @@ spec:
     strategy: OnPodCompletion
   volumes:
   - name: github-deploy-key
-    defaultMode: 400
     secret:
+      defaultMode: 256 # 0400
       secretName: github-deploy-key
 
 
