@@ -22,7 +22,7 @@ spec:
           persistentVolumeClaim:
             claimName: zigbee2mqtt
       containers:
-        - image: koenkk/zigbee2mqtt:1.36.1 # {"$imagepolicy": "flux-system:zigbee2mqtt"}
+        - image: koenkk/zigbee2mqtt
           imagePullPolicy: IfNotPresent
           securityContext:
             seccompProfile:
@@ -43,8 +43,6 @@ spec:
               - cap_mknod
               - cap_audit_write
               - cap_setfcap
-#              drop: ['ALL']
-#              add: [CAP_NET_BIND_SERVICE]
             allowPrivilegeEscalation: false
             runAsNonRoot: true
             runAsUser: 998
