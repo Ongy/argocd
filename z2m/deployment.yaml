@@ -54,3 +54,69 @@ spec:
               memory: 256Mi
               cpu: "500m"
               ongy.net/zigbee: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zigbee2mqtt-testing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zigbee2mqtt-testing
+  template:
+    metadata:
+      labels:
+        app: zigbee2mqtt-testing
+    spec:
+      containers:
+        - image: koenkk/zigbee2mqtt:2.0.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 998
+            runAsGroup: 20
+            privileged: false
+          command:
+          - sh
+          - -c
+          - |
+            capsh --print ; /usr/bin/node ; sleep infinity
+          name: dropped-casp
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: "500m"
+            limits:
+              memory: 256Mi
+              cpu: "500m"
+        - image: koenkk/zigbee2mqtt:2.0.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+#            capabilities:
+#              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 998
+            runAsGroup: 20
+            privileged: false
+          command:
+          - sh
+          - -c
+          - |
+            capsh --print ; /usr/bin/node ; sleep infinity
+          name: kept-caps
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: "500m"
+            limits:
+              memory: 256Mi
+              cpu: "500m"
