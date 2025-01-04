@@ -25,6 +25,6 @@ spec:
           containerPort: 80
         image: nginx
         volumeMounts:
-        - mountPath: "/usr/share/nginx/html:ro"
+        - mountPath: "/usr/share/nginx/html"
           name: "data"
           readOnly: true
