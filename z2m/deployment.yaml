@@ -25,10 +25,10 @@ spec:
         - image: koenkk/zigbee2mqtt:1.36.1 # {"$imagepolicy": "flux-system:zigbee2mqtt"}
           imagePullPolicy: IfNotPresent
           securityContext:
-#            seccompProfile:
-#              type: RuntimeDefault
-            capabilities:
-              drop: ['ALL']
+            seccompProfile:
+              type: RuntimeDefault
+#            capabilities:
+#              drop: ['ALL']
             allowPrivilegeEscalation: false
             runAsNonRoot: true
             runAsUser: 998
