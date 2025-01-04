@@ -10,7 +10,7 @@ metadata:
     argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/image-list: z2m=koenkk/zigbee2mqtt
     argocd-image-updater.argoproj.io/z2m.update-strategy: semver
-    argocd-image-updater.argoproj.io/z2m.allow-tags: regexp:^[0-9]+\.[0-9]+\.[1-9][0-9]*$
+    argocd-image-updater.argoproj.io/z2m.allow-tags: regexp:^[0-9]+\.[0-9]+\.[0-9]+$
 spec:
   project: default
   sources:
