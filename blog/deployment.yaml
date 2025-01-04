@@ -31,8 +31,3 @@ spec:
         - mountPath: "/usr/share/nginx/html:ro"
           name: "data"
           readOnly: true
-        securityContext:
-          capabilities:
-            drop:
-            - ALL
-          privileged: false
