@@ -70,7 +70,7 @@ spec:
           - --enableGitInfo
           - --buildFuture
           - --ignoreCache
-          - --baseURL=file:///media/home/backed/appdata/blog/{{workflow.parameters.rev}}
+          - --baseURL=https://blog.local.ongy.net/{{workflow.parameters.rev}}
         workingDir: /src
   entrypoint: entry
   serviceAccountName: hugo-build
