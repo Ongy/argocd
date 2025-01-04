@@ -58,6 +58,9 @@ spec:
         volumeMounts:
         - name: data
           mountPath: "/out"
+        env:
+        - name: HUGO_CANONIFYURLS
+          value: "true"
         command:
           - hugo
         args:
@@ -67,6 +70,7 @@ spec:
           - --enableGitInfo
           - --buildFuture
           - --ignoreCache
+          - --baseURL=file:///media/home/backed/appdata/blog/{{workflow.parameters.rev}}
         workingDir: /src
   entrypoint: entry
   serviceAccountName: hugo-build
