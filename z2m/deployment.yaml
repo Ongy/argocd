@@ -31,8 +31,8 @@ spec:
               drop: ['ALL']
             allowPrivilegeEscalation: false
             runAsNonRoot: true
-            runAsUser: 998
-            runAsGroup: 20
+#            runAsUser: 998
+#            runAsGroup: 20
             privileged: false
           readinessProbe:
             httpGet:
