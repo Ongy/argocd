@@ -42,9 +42,6 @@ spec:
             - name: TZ
               value: Europe/Amsterdam
           name: zigbee2mqtt
-          command:
-          - sleep
-          - infinity
           volumeMounts:
             - mountPath: "/app/data"
               name: zigbee2mqtt-data
