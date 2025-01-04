@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog
+spec:
+  selector:
+    matchLabels:
+      app: blog
+  template:
+    metadata:
+      labels:
+        app: blog
+    spec:
+      volumes:
+      - name: data
+        nfs:
+          path: /srv/share/backed/appdata/blog
+          server: mario.local.ongy.net
+          readOnly: true
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+        - mountPath: "/usr/share/nginx/html:ro"
+          name: "data"
+          readOnly: true
