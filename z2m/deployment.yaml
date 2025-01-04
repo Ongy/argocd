@@ -27,8 +27,8 @@ spec:
           securityContext:
 #            seccompProfile:
 #              type: RuntimeDefault
-#            capabilities:
-#              drop: ['ALL']
+            capabilities:
+              drop: ['ALL']
             allowPrivilegeEscalation: false
             runAsNonRoot: true
             runAsUser: 998
