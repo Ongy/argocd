@@ -35,6 +35,7 @@ spec:
             runAsUser: 998
             runAsGroup: 20
             privileged: false
+            readOnlyRootFilesystem: true
           readinessProbe:
             httpGet:
               path: /
