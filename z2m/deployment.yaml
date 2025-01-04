@@ -78,9 +78,6 @@ spec:
             capabilities:
               drop: ['ALL']
             allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 998
-            runAsGroup: 20
             privileged: false
           command:
           - sh
@@ -103,9 +100,6 @@ spec:
 #            capabilities:
 #              drop: ['ALL']
             allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 998
-            runAsGroup: 20
             privileged: false
           command:
           - sh
