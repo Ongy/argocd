@@ -66,6 +66,7 @@ spec:
           - --minify
           - --enableGitInfo
           - --buildFuture
+          - --ignoreCache
         workingDir: /src
   entrypoint: entry
   serviceAccountName: hugo-build
