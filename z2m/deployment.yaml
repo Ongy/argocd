@@ -27,7 +27,22 @@ spec:
           securityContext:
             seccompProfile:
               type: RuntimeDefault
-#            capabilities:
+            capabilities:
+              drop:
+              - cap_chown
+              - cap_dac_override
+              - cap_fowner
+              - cap_fsetid
+              - cap_kill
+              - cap_setgid
+              - cap_setuid
+              - cap_setpcap
+              # - cap_net_bind_service Not dropped due to setcap on node file.
+              - cap_net_raw
+              - cap_sys_chroot
+              - cap_mknod
+              - cap_audit_write
+              - cap_setfcap
 #              drop: ['ALL']
 #              add: [CAP_NET_BIND_SERVICE]
             allowPrivilegeEscalation: false
