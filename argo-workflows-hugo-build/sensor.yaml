@@ -9,12 +9,6 @@ spec:
     - name: webhook-dep
       eventSourceName: hugo-build-webhook
       eventName: hugo-build-webhook
-      filters:
-        exprs:
-          - expr: ref == "refs/heads/master" || ref == "refs/heads/main"
-            fields:
-              - name: ref
-                path: body.ref
   triggers:
     - template:
         name: argo-workflow-trigger
