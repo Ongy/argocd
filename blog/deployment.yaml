@@ -19,8 +19,20 @@ spec:
           readOnly: true
       containers:
       - name: nginx
+        env:
+        - name: NGINX_PORT
+          value: "8080"
+        ports:
+        - name: http
+          protocol: TCP
+          containerPort: 8080
         image: nginx
         volumeMounts:
         - mountPath: "/usr/share/nginx/html:ro"
           name: "data"
           readOnly: true
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
