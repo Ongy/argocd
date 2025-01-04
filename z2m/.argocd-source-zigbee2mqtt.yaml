@@ -1,3 +1,0 @@
-kustomize:
-  images:
-  - koenkk/zigbee2mqtt:1.40.2
