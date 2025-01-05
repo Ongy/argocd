@@ -1,3 +1,0 @@
-kustomize:
-  images:
-  - photoprism/photoprism:240915
