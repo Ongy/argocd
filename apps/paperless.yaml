@@ -4,10 +4,13 @@ metadata:
   name: paperless
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/image-list: paperless=ghcr.io/paperless-ngx/paperless-ngx
     argocd-image-updater.argoproj.io/paperless.update-strategy: semver
     argocd-image-updater.argoproj.io/paperless.allow-tags: regexp:^[0-9]+\.[0-9]+\.[1-9][0-9]*$
+
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/git-repository: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    argocd-image-updater.argoproj.io/write-back-target: kustomization:/paperless
 spec:
   project: default
   sources:

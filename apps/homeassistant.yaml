@@ -4,10 +4,13 @@ metadata:
   name: homeassistant
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/image-list: homeassistant=ghcr.io/home-assistant/home-assistant
     argocd-image-updater.argoproj.io/homeassistant.update-strategy: semver
     argocd-image-updater.argoproj.io/homeassistant.allow-tags: regexp:^[0-9]+\.[0-9]+\.[1-9][0-9]*$
+
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/git-repository: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    argocd-image-updater.argoproj.io/write-back-target: kustomization:/homeassistant
 spec:
   project: default
   sources:
