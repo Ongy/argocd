@@ -34,7 +34,7 @@ spec:
               name: argo-artifacts
               key: AWS_SECRET_ACCESS_KEY
             insecure: true
-            bucket: argo-workflow-artifacts-307d87ae-0425-41d3-a389-fd9ec5ac8790
+            bucket: argo-workflow-artifacts-fc758d1e-d9ad-4d39-932f-7768abf330c8
             endpoint: rook-ceph-rgw-my-store.rook-ceph.svc:80
         server:
           authModes:
