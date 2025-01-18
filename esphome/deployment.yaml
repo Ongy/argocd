@@ -14,9 +14,8 @@ spec:
     spec:
       volumes:
       - name: data
-        nfs:
-          persistentVolumeClaim:
-            claimName: esphome-config
+        persistentVolumeClaim:
+          claimName: esphome-config
       containers:
       - image: ghcr.io/esphome/esphome
         name: builder
