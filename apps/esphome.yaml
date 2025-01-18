@@ -5,10 +5,16 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://git.local.ongy.net/ongy/argocd.git
+  sources:
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
     path: esphome
     targetRevision: main
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: main
+    helm:
+      valuesObject:
+        secretName: esphome-oauth-cookie
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: smarthome
