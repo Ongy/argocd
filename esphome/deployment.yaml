@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esphome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: esphome
+  template:
+    metadata:
+      labels:
+        app: esphome
+    spec:
+      volumes:
+      - name: data
+        nfs:
+          persistentVolumeClaim:
+            claimName: esphome-config
+      containers:
+      - image: ghcr.io/esphome/esphome
+        name: builder
+        env:
+        - name: ESPHOME_DASHBOARD_USE_PING
+          value: "true"
+        volumeMounts:
+        - name: data
+          mountPath: /config
+        ports:
+        - name: http
+          protocol: TCP
+          containerPort: 6052
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
