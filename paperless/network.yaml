@@ -35,16 +35,8 @@ spec:
     matchLabels:
       app: paperless-core
   policyTypes:
-    - Ingress
     - Egress
   ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              app: paperless-proxy
-      ports:
-        - protocol: TCP
-          port: 8000
   egress:
     - to:
         - namespaceSelector:
