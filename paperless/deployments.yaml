@@ -99,7 +99,7 @@ spec:
 #            - mountPath: "/data"
 #              subPath: data
 #              name: paperless-data
-        - image: ghcr.io/paperless-ngx/paperless-ngx:2.13.5 # {"$imagepolicy": "flux-system:paperless"}
+        - image: ghcr.io/paperless-ngx/paperless-ngx
           command: ['/usr/local/bin/supervisord']
           args:
             - -c
