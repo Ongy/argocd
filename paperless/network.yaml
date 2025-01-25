@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: paperless-core
-  namespace: mediaserver
 spec:
   selector:
     app: paperless-core
@@ -16,7 +15,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: paperless-broker
-  namespace: mediaserver
 spec:
   selector:
     app: paperless-broker
@@ -29,13 +27,24 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: paperless-core
-  namespace: mediaserver
 spec:
   podSelector:
     matchLabels:
       app: paperless-core
   policyTypes:
+    - Ingress
     - Egress
+  ingres:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: paperless-proxy
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: mediaserver
+      ports:
+      - protocol: TCP
+        port: 8000
   egress:
     - to:
         - namespaceSelector:
