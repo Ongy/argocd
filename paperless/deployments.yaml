@@ -27,7 +27,6 @@ spec:
                   values:
                   - paperless-broker
               topologyKey: kubernetes.io/hostname
-
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: "OnRootMismatch"
