@@ -36,7 +36,6 @@ spec:
       app: paperless-core
   policyTypes:
     - Egress
-  ingress:
   egress:
     - to:
         - namespaceSelector:
