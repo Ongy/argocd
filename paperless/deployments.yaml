@@ -15,6 +15,13 @@ spec:
       labels:
         app: paperless-core
     spec:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchLabels:
+                app: paperless-broker
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: "OnRootMismatch"
