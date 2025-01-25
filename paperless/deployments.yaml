@@ -39,9 +39,9 @@ spec:
             sizeLimit: 500Mi
         - name: old-data
           nfs:
-            path: /srv/share/backed/appdata/paperless/export
+            path: /srv/share/backed/appdata/paperless/data
             server: mario.local.ongy.net
-            readOnly: false
+            readOnly: true
         - name: paperless-export
           nfs:
             path: /srv/share/backed/appdata/paperless/export
