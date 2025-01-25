@@ -37,6 +37,11 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 500Mi
+        - name: old-data
+          nfs:
+            path: /srv/share/backed/appdata/paperless/export
+            server: mario.local.ongy.net
+            readOnly: false
         - name: paperless-export
           nfs:
             path: /srv/share/backed/appdata/paperless/export
@@ -164,6 +169,8 @@ spec:
               name: paperless-export
             - mountPath: "/usr/src/paperless/consume"
               name: paperless-consume
+            - mountPath: "/old"
+              name: old-data
             - name: psql-tls-secrets
               mountPath: "/psql-tls-secrets"
               readOnly: true
