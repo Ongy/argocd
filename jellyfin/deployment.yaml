@@ -76,6 +76,10 @@ spec:
       labels:
         app: jellyfin-mpv
     spec:
+      tolerations:
+      - key: ongy.net/htpc
+        operator: Exists
+        effect: NoSchedule
       terminationGracePeriodSeconds: 5
       serviceAccountName: jellyfin-mpv-log-reader
       nodeSelector:
