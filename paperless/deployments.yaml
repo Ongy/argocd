@@ -18,14 +18,23 @@ spec:
       affinity:
         podAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 2
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - paperless-broker
+              topologyKey: kubernetes.io/hostname
           - weight: 1
             podAffinityTerm:
               labelSelector:
                 matchExpressions:
-                  key: app
+                - key: app
                   operator: In
                   values:
-                  - paperless-broker
+                  - paperless-proxy
               topologyKey: kubernetes.io/hostname
       securityContext:
         fsGroup: 1000
