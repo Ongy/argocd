@@ -21,6 +21,18 @@ spec:
       labels:
         app: paperless-proxy
     spec:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - paperless-core
+              topologyKey: kubernetes.io/hostname
       containers:
         - image: quay.io/oauth2-proxy/oauth2-proxy
           args:

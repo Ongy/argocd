@@ -213,6 +213,18 @@ spec:
       labels:
         app: paperless-broker
     spec:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - paperless-core
+              topologyKey: kubernetes.io/hostname
       volumes:
         - name: redis-data
           nfs:
