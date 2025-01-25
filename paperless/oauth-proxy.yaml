@@ -30,7 +30,7 @@ spec:
           - --code-challenge-method=S256
           - --reverse-proxy=true
           - --http-address=0.0.0.0:8080
-          - --upstream=http://paperless
+          - --upstream=http://paperless-core
           - --email-domain=*
 
           - --skip-provider-button=true

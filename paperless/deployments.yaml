@@ -55,12 +55,6 @@ spec:
       containers:
         - image: alpine:edge
           imagePullPolicy: Always
-          name: test
-          command:
-          - sleep
-          - infinity
-        - image: alpine:edge
-          imagePullPolicy: Always
           name: consume-loop
           command: [sh]
           args:
