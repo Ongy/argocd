@@ -23,6 +23,21 @@ spec:
       port: 6379
       name: http
 ---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: paperless-core-probe
+spec:
+  endpointSelector:
+    matchLabels:
+      app: paperless-core
+  ingress:
+    - fromEntities:
+        - host
+      toPorts:
+        - ports:
+            - port: "8000"
+---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
