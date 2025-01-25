@@ -20,8 +20,14 @@ spec:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 1
             preference:
-              matchLabels:
-                app: paperless-broker
+              labelSelector:
+                matchExpressions:
+                  key: app
+                  operator: In
+                  values:
+                  - paperless-broker
+              topologyKey: kubernetes.io/hostname
+
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: "OnRootMismatch"
