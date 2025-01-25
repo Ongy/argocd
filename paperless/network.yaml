@@ -34,7 +34,7 @@ spec:
   policyTypes:
     - Ingress
     - Egress
-  ingres:
+  ingress:
     - from:
       - podSelector:
           matchLabels:
