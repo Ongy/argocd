@@ -137,6 +137,7 @@ spec:
             runAsGroup: 1000
             privileged: false
           livenessProbe:
+            failureThreshold: 10
             httpGet:
               path: /
               port: 8000
