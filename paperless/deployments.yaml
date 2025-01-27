@@ -136,14 +136,6 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
             privileged: false
-          livenessProbe:
-            failureThreshold: 10
-            httpGet:
-              path: /
-              port: 8000
-              httpHeaders:
-                - name: Host
-                  value: paperless.local.ongy.net
           readinessProbe:
             httpGet:
               path: /
