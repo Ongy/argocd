@@ -30,7 +30,7 @@ spec:
           persistentVolumeClaim:
             claimName: piper-config
       containers:
-        - image: lscr.io/linuxserver/faster-piper:latest
+        - image: lscr.io/linuxserver/piper:latest
           name: faster-piper
           volumeMounts:
             - mountPath: "/config"
