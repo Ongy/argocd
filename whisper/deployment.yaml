@@ -29,19 +29,19 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: whisper-config
-      env:
-      - name: PUID
-        value: "1000"
-      - name: PGID
-        value: "1000"
-      - name: TZ
-        value: Etc/UTC
-      - name: WHISPER_MODEL
-        value: tiny-int8
       containers:
         - image: lscr.io/linuxserver/faster-whisper:latest
           name: faster-whisper
           volumeMounts:
             - mountPath: "/config"
               name: config
+          env:
+          - name: PUID
+            value: "1000"
+          - name: PGID
+            value: "1000"
+          - name: TZ
+            value: Etc/UTC
+          - name: WHISPER_MODEL
+            value: tiny-int8
 ---
