@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: homeassistant
+  name: whisper
   namespace: argocd
   annotations:
 #    argocd-image-updater.argoproj.io/image-list: homeassistant=ghcr.io/home-assistant/home-assistant
