@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: piper
+  name: piper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: piper
+  template:
+    metadata:
+      labels:
+        app: piper
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - birdo
+                      - mario
+      automountServiceAccountToken: false
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: piper-config
+      containers:
+        - image: lscr.io/linuxserver/faster-piper:latest
+          name: faster-piper
+          volumeMounts:
+            - mountPath: "/config"
+              name: config
+          env:
+          - name: PUID
+            value: "1000"
+          - name: PGID
+            value: "1000"
+          - name: TZ
+            value: Etc/UTC
+          - name: PIPER_VOICE
+            value: en_US-lessac-medium
+---

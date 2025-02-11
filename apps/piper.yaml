@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: piper
+  namespace: argocd
+  annotations:
+#    argocd-image-updater.argoproj.io/image-list: homeassistant=ghcr.io/home-assistant/home-assistant
+#    argocd-image-updater.argoproj.io/homeassistant.update-strategy: semver
+#    argocd-image-updater.argoproj.io/homeassistant.allow-tags: regexp:^[0-9]+\.[0-9]+\.[1-9][0-9]*$
+#
+#    argocd-image-updater.argoproj.io/write-back-method: git
+#    argocd-image-updater.argoproj.io/git-repository: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+#    argocd-image-updater.argoproj.io/write-back-target: kustomization:/piper
+spec:
+  project: default
+  source:
+    repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    path: piper
+    targetRevision: main
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: homeassistant
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true
