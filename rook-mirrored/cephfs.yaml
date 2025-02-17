@@ -25,10 +25,10 @@ spec:
             matchExpressions:
             - key: app
               operator: In
-              value: [rook-ceph-mds]
+              values: [rook-ceph-mds]
             - key: rook_file_system
               operator: In
-              value: [myfs]
+              values: [myfs]
           topologyKey: kubernetes.io/hostname
 
 
