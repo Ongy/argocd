@@ -15,8 +15,6 @@ spec:
       labels:
         app: psql
     spec:
-      nodeSelector:
-        node-role.kubernetes.io/control-plane: ""
       volumes:
         - name: psql-data
           persistentVolumeClaim:
@@ -30,10 +28,6 @@ spec:
       securityContext:
         fsGroup: 70
         fsGroupChangePolicy: "OnRootMismatch"
-      tolerations:
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
       containers:
         - image: postgres:14-alpine
           readinessProbe:
