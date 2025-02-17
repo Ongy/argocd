@@ -38,9 +38,6 @@ spec:
           name: config
         workingDir: /root/
       tolerations:
-      - key: node-role.kubernetes.io/control-plane
-        operator: Exists
-        effect: NoSchedule
       - key: CriticalAddonsOnly
         operator: Exists
       volumes:
