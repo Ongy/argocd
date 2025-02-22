@@ -34,8 +34,6 @@ spec:
     server: "https://kubernetes.default.svc"
     namespace: kube-prometheus
   syncPolicy:
-    automated:
-      prune: true
     syncOptions:
       - PruneLast=true
       - CreateNamespace=true
