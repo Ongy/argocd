@@ -5,8 +5,8 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    chart: kube-prometheus-stack
+  sources:
+  - chart: kube-prometheus-stack
     repoURL: https://prometheus-community.github.io/helm-charts
     targetRevision: 69.3.1
     helm:
@@ -21,6 +21,15 @@ spec:
           enabled: false
         kubeControllerManager:
           enabled: false
+  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    path: prometheus
+    targetRevision: main
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: main
+    helm:
+      valuesObject:
+        secretName: prometheus-oauth-cookie
   destination:
     server: "https://kubernetes.default.svc"
     namespace: kube-prometheus
