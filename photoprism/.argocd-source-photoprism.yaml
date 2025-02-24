@@ -1,3 +1,3 @@
 kustomize:
   images:
-  - photoprism/photoprism:250223
+  - photoprism/photoprism:250224
