@@ -39,6 +39,8 @@ spec:
           - 1001:1001
           - /run
           securityContext:
+            runAsUser: 0
+            runAsGroup: 0
             seccompProfile:
               type: RuntimeDefault
             capabilities:
