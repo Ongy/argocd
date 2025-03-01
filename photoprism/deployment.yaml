@@ -54,8 +54,8 @@ spec:
               value: "true"
             - name: PHOTOPRISM_ORIGINALS_LIMIT
               value: "-1"
-            - name: PHOTOPRISM_DISABLE_CHOWN
-              value: "true"
+#            - name: PHOTOPRISM_DISABLE_CHOWN # This leads to a crash on startup for some odd reason
+#              value: "true"
             - name: PHOTOPRISM_UID
               value: "1001"
             - name: PHOTOPRISM_GID
