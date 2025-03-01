@@ -37,7 +37,10 @@ spec:
               type: RuntimeDefault
             capabilities:
               drop: ['ALL']
-              add: ['NET_BIND_SERVICE']
+              add: 
+              - 'NET_BIND_SERVICE'
+              - 'SETUID'
+              - 'SETGID'
             allowPrivilegeEscalation: true
             readOnlyRootFilesystem: true
             privileged: false
