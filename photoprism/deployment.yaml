@@ -38,7 +38,7 @@ spec:
             capabilities:
               drop: ['ALL']
               add: ['NET_BIND_SERVICE']
-            allowPrivilegeEscalation: false
+            allowPrivilegeEscalation: true
             readOnlyRootFilesystem: true
             privileged: false
           readinessProbe:
