@@ -17,8 +17,6 @@ spec:
     spec:
       automountServiceAccountToken: false
       securityContext:
-        runAsUser: 1001
-        runAsGroup: 1001
         fsGroupChangePolicy: "OnRootMismatch"
       volumes:
         - name: photoprism-config
@@ -42,7 +40,6 @@ spec:
               add: ['NET_BIND_SERVICE']
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
-            runAsNonRoot: true
             privileged: false
           readinessProbe:
             httpGet:
@@ -57,6 +54,10 @@ spec:
               value: "true"
             - name: PHOTOPRISM_ORIGINALS_LIMIT
               value: "-1"
+            - name: PHOTOPRISM_UID
+              value: "1001"
+            - name: PHOTOPRISM_GID
+              value: "1001"
           name: photoprism
           volumeMounts:
             - mountPath: "/photoprism"
