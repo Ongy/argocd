@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate-data
+spec:
+  template:
+    spec:
+      containers:
+      volumes:
+      - name: keycloak-data
+        persistentVolumeClaim:
+          claimName: keycloak-data
+          readOnly: false
+      - name: keycloak-data-migrate
+        persistentVolumeClaim:
+          claimName: keycloak-data-migrate
+          readOnly: false
+      - name: copy
+        image: drinternet/rsync
+        args:
+        - -avhP
+        - /old/
+        - /new/
+        volumeMounts:
+        - name: keycloak-data
+          mountPath: /old
+        - name: keycloak-data-migrate
+          mountPath: /new
+      restartPolicy: Never
