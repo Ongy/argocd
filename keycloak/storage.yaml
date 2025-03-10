@@ -16,7 +16,7 @@ metadata:
   name: keycloak-nfs
 spec:
   capacity:
-    storage: 100G
+    storage: 5G
   volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
@@ -41,6 +41,6 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Gi
+      storage: 2Gi
   storageClassName: "" # Empty string must be explicitly set otherwise default StorageClass will be set
   volumeName: keycloak-nfs
