@@ -1,26 +1,26 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: esphome
-  namespace: argocd
-spec:
-  project: default
-  sources:
-  - repoURL: https://git.local.ongy.net/ongy/argocd.git
-    path: esphome
-    targetRevision: main
-  - repoURL: https://git.local.ongy.net/ongy/argocd.git
-    path: secret-value
-    targetRevision: main
-    helm:
-      valuesObject:
-        secretName: esphome-oauth-cookie
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: smarthome
-  syncPolicy:
-    automated:
-      prune: true
-    syncOptions:
-      - PruneLast=true
-      - CreateNamespace=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: esphome
+#   namespace: argocd
+# spec:
+#   project: default
+#   sources:
+#   - repoURL: https://git.local.ongy.net/ongy/argocd.git
+#     path: esphome
+#     targetRevision: main
+#   - repoURL: https://git.local.ongy.net/ongy/argocd.git
+#     path: secret-value
+#     targetRevision: main
+#     helm:
+#       valuesObject:
+#         secretName: esphome-oauth-cookie
+#   destination:
+#     server: 'https://kubernetes.default.svc'
+#     namespace: smarthome
+#   syncPolicy:
+#     automated:
+#       prune: true
+#     syncOptions:
+#       - PruneLast=true
+#       - CreateNamespace=true
