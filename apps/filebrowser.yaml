@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: filebrowser
+  namespace: argocd
+spec:
+  project: default
+  sources:
+  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    path: filebrowser
+    targetRevision: main
+    kustomize:
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: main
+    helm:
+      valuesObject:
+        secretName: filebrowser-oauth-cookie
+#  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+#    path: snapshot-schedule
+#    targetRevision: main
+#    helm:
+#      valuesObject:
+#        suffix: filebrowser
+#        appSelector: filebrowser
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: mediaserver
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true

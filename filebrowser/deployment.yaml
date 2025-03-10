@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: filebrowser
+  name: filebrowser
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: filebrowser
+  template:
+    metadata:
+      labels:
+        app: filebrowser
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: mario
+      volumes:
+        - name: file-root
+          hostPath:
+            path: "/srv/share/"
+            type: Directory
+      containers:
+        - image: filebrowser/filebrowser
+          args:
+          - --noauth
+          - --root
+          - /data
+          - -p
+          - '8080'
+#          securityContext:
+#            seccompProfile:
+#              type: RuntimeDefault
+#            capabilities:
+#              drop: ['ALL']
+#            allowPrivilegeEscalation: false
+#            readOnlyRootFilesystem: false
+#            privileged: false
+#            runAsNonRoot: true
+#            runAsUser: 1000
+#            runAsGroup: 1004
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+          name: filebrowser
+          volumeMounts:
+            - mountPath: "/data"
+              name: file-root
+              readOnly: true
+---
