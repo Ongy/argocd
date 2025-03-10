@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: filebrowser
+  name: files
   labels:
     ongy.net/keycloak-application: "true"
 ---
