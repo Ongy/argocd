@@ -15,7 +15,7 @@ spec:
     targetRevision: main
     helm:
       valuesObject:
-        secretName: filebrowser-oauth-cookie
+        secretName: files-oauth-cookie
 #  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
 #    path: snapshot-schedule
 #    targetRevision: main
