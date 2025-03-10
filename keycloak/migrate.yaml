@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: migrate-data
+  name: keycloak-migrate-data
 spec:
   template:
     spec:
