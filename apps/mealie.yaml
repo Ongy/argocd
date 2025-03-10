@@ -9,12 +9,6 @@ spec:
   - repoURL: https://git.local.ongy.net/ongy/argocd.git
     path: mealie
     targetRevision: main
-  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
-    path: snapshot-schedule
-    targetRevision: main
-    helm:
-      valuesObject:
-        appSelector: mealie
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: mealie

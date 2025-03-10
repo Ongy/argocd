@@ -24,13 +24,6 @@ spec:
     helm:
       valuesObject:
         secretName: paperless-oauth-cookie
-#  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
-#    path: snapshot-schedule
-#    targetRevision: main
-#    helm:
-#      valuesObject:
-#        suffix: paperless
-#        appSelector: paperless
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: mediaserver

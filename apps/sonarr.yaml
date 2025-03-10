@@ -18,14 +18,6 @@ spec:
     helm:
       valuesObject:
         secretName: sonarr-oauth-cookie
-  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
-    path: snapshot-schedule
-    targetRevision: main
-    helm:
-      valuesObject:
-        suffix: sonarr
-        subhourly: false
-        appSelector: sonarr
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: mediaretriever

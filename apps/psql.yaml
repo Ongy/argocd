@@ -9,12 +9,6 @@ spec:
   - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: psql
     targetRevision: main
-  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
-    path: snapshot-schedule
-    targetRevision: main
-    helm:
-      valuesObject:
-        appSelector: psql
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: psql

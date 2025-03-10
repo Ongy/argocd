@@ -27,9 +27,6 @@ spec:
     helm:
       valuesObject:
         secretName: z2m-oauth-cookie
-  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
-    path: snapshot-schedule
-    targetRevision: main
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: smarthome
