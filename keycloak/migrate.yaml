@@ -5,7 +5,6 @@ metadata:
 spec:
   template:
     spec:
-      containers:
       volumes:
       - name: keycloak-data
         persistentVolumeClaim:
@@ -15,6 +14,7 @@ spec:
         persistentVolumeClaim:
           claimName: keycloak-data-migrate
           readOnly: false
+      containers:
       - name: copy
         image: drinternet/rsync
         args:
