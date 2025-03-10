@@ -1,25 +1,25 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: snapshot-scheduler
-  namespace: argocd
-  finalizers:
-    # The default behaviour is foreground cascading deletion
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  sources:
-  - chart: snapscheduler
-    repoURL: https://backube.github.io/helm-charts/
-    targetRevision: 3.4.0
-    helm:
-      valuesObject:
-  destination:
-    server: "https://kubernetes.default.svc"
-    namespace: backube-snapscheduler
-  syncPolicy:
-    automated:
-      prune: true
-    syncOptions:
-      - PruneLast=true
-      - CreateNamespace=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: snapshot-scheduler
+#   namespace: argocd
+#   finalizers:
+#     # The default behaviour is foreground cascading deletion
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   project: default
+#   sources:
+#   - chart: snapscheduler
+#     repoURL: https://backube.github.io/helm-charts/
+#     targetRevision: 3.4.0
+#     helm:
+#       valuesObject:
+#   destination:
+#     server: "https://kubernetes.default.svc"
+#     namespace: backube-snapscheduler
+#   syncPolicy:
+#     automated:
+#       prune: true
+#     syncOptions:
+#       - PruneLast=true
+#       - CreateNamespace=true
