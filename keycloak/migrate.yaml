@@ -16,7 +16,7 @@ spec:
           readOnly: false
       containers:
       - name: copy
-        image: drinternet/rsync
+        image: ogivuk/rsync
         args:
         - -avhP
         - /old/
