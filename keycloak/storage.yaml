@@ -9,3 +9,38 @@ spec:
     requests:
       storage: 1Gi
   storageClassName: rook-cephfs
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: keycloak-nfs
+spec:
+  capacity:
+    storage: 100G
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+#  claimRef:
+#    name: keycloak-nfs
+#    namespace: mediaserver
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  nfs:
+    path: /srv/share/backed/appdata/keycloak
+    server: mario.local.ongy.net
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: keycloak-data-migrate
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: "" # Empty string must be explicitly set otherwise default StorageClass will be set
+  volumeName: keycloak-nfs
