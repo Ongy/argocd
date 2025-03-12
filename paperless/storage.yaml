@@ -23,9 +23,9 @@ spec:
     readOnly: true
     # volumeHandle format: {smb-server-address}#{sub-dir-name}#{share-name}
     # make sure this value is unique for every share in the cluster
-    volumeHandle: //192.168.3.200/MEMORYCARD##
+    volumeHandle: //192.168.3.200/USBSTORAGE##
     volumeAttributes:
-      source: "//192.168.3.200/MEMORYCARD"
+      source: "//192.168.3.200/USBSTORAGE"
     nodeStageSecretRef:
       name: smbcreds
       namespace: mediaserver
