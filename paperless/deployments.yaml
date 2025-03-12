@@ -90,8 +90,7 @@ spec:
 
               consume() {
                 cd /consume
-                # for file in `find /scans -type f -iname \*.pdf`; do
-                for file in $(smbclient  //192.168.3.200/USBSTORAGE -NU ongy%$PASS -c 'cd EPSCAN\001; mask *.PDF; ls'); do
+                for file in $(smbclient  //192.168.3.200/USBSTORAGE -NU ongy%$PASS -c 'cd EPSCAN\001; mask *.PDF; ls' | grep -oE "EPSON.*.PDF"); do
                   if grep -q "${file}" "${DB}"; then continue; fi
                   smbclient //192.168.3.200/USBSTORAGE -NU ongy%$PASS -c 'cd EPSCAN\001; get "${file}"
                   #cp "${file}" /consume
