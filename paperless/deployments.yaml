@@ -76,8 +76,8 @@ spec:
             - name: PASS
               valueFrom:
                 secretKeyRef:
-                  name: password
-                  key: smbcreds
+                  key: password
+                  name: smbcreds
           imagePullPolicy: Always
           name: consume-loop
           command: [sh]
