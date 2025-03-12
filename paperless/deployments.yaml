@@ -74,52 +74,52 @@ spec:
             optional: false
             defaultMode: 0640
       containers:
-        - image: alpine:edge
-          imagePullPolicy: Always
-          name: consume-loop
-          command: [sh]
-          args:
-            - -eu
-            - -c
-            - |
-              DB="/data/.consumed.txt"
-              touch "${DB}"
-
-              consume() {
-                for file in `find /scans -type f -iname \*.pdf`; do
-                  if grep -q "${file}" "${DB}"; then continue; fi
-                  cp "${file}" /consume
-                  echo "${file}" >> "${DB}"
-                  echo Processed file "${file}"
-                done
-              }
-
-              consume
-              # Doing it like this makes it easier to stop the process via signal!
-              while sleep 1800 ; do
-                consume
-              done
-          securityContext:
-            seccompProfile:
-              type: RuntimeDefault
-            capabilities:
-              drop: ['ALL']
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
-            privileged: false
-          volumeMounts:
-            - mountPath: "/consume"
-              name: paperless-consume
-              readOnly: false
-            - mountPath: "/scans"
-              name: scan-data
-              readOnly: true
-            - mountPath: "/data"
-              subPath: data
-              name: paperless-data
+#         - image: alpine:edge
+#           imagePullPolicy: Always
+#           name: consume-loop
+#           command: [sh]
+#           args:
+#             - -eu
+#             - -c
+#             - |
+#               DB="/data/.consumed.txt"
+#               touch "${DB}"
+# 
+#               consume() {
+#                 for file in `find /scans -type f -iname \*.pdf`; do
+#                   if grep -q "${file}" "${DB}"; then continue; fi
+#                   cp "${file}" /consume
+#                   echo "${file}" >> "${DB}"
+#                   echo Processed file "${file}"
+#                 done
+#               }
+# 
+#               consume
+#               # Doing it like this makes it easier to stop the process via signal!
+#               while sleep 1800 ; do
+#                 consume
+#               done
+#           securityContext:
+#             seccompProfile:
+#               type: RuntimeDefault
+#             capabilities:
+#               drop: ['ALL']
+#             allowPrivilegeEscalation: false
+#             readOnlyRootFilesystem: true
+#             runAsNonRoot: true
+#             runAsUser: 1000
+#             runAsGroup: 1000
+#             privileged: false
+#           volumeMounts:
+#             - mountPath: "/consume"
+#               name: paperless-consume
+#               readOnly: false
+#             - mountPath: "/scans"
+#               name: scan-data
+#               readOnly: true
+#             - mountPath: "/data"
+#               subPath: data
+#               name: paperless-data
         - image: ghcr.io/paperless-ngx/paperless-ngx
           command: ['/usr/local/bin/supervisord']
           args:
