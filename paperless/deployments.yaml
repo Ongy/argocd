@@ -82,7 +82,7 @@ spec:
           name: consume-loop
           command: [sh]
           args:
-            - -eu
+            - -eux
             - -c
             - |
               DB="/data/.consumed.txt"
