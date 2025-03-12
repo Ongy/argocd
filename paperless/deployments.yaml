@@ -92,7 +92,7 @@ spec:
                 cd /consume
                 for file in $(smbclient  //192.168.3.200/USBSTORAGE -NU ongy%$PASS -c 'cd EPSCAN\001; mask *.PDF; ls' | grep -oE "EPSON.*.PDF"); do
                   if grep -q "${file}" "${DB}"; then continue; fi
-                  smbclient //192.168.3.200/USBSTORAGE -NU ongy%$PASS -c 'cd EPSCAN\001; get "${file}"
+                  smbclient //192.168.3.200/USBSTORAGE -NU ongy%$PASS -c 'cd EPSCAN\001; get "${file}"''
                   #cp "${file}" /consume
                   echo "${file}" >> "${DB}"
                   echo Processed file "${file}"
