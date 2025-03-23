@@ -168,6 +168,8 @@ spec:
               value: "password"
             - name: PAPERLESS_URL
               value: https://paperless.local.ongy.net
+            - name: PAPERLESS_OCR_USER_ARGS
+              value: '{"continue_on_soft_render_error": true}'
           name: core
           volumeMounts:
             - mountPath: "/etc/supervisord.conf"
