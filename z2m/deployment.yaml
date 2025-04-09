@@ -64,8 +64,6 @@ spec:
             requests:
               memory: 256Mi
               cpu: "500m"
-              ongy.net/zigbee: 1
             limits:
               memory: 256Mi
               cpu: "500m"
-              ongy.net/zigbee: 1
