@@ -122,7 +122,7 @@ spec:
             - mountPath: "/data"
               subPath: data
               name: paperless-data
-        - image: ghcr.io/paperless-ngx/paperless-ngx
+        - image: ghcr.io/paperless-ngx/paperless-ngx:2.14.7
           command: ['/usr/local/bin/supervisord']
           args:
             - -c
