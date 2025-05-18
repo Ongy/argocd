@@ -22,7 +22,7 @@ spec:
           persistentVolumeClaim:
             claimName: zigbee2mqtt
       containers:
-        - image: koenkk/zigbee2mqtt
+        - image: docker.io/koenkk/zigbee2mqtt
           imagePullPolicy: IfNotPresent
           securityContext:
             seccompProfile:
