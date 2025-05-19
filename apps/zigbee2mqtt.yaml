@@ -20,7 +20,6 @@ spec:
   - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: z2m
     targetRevision: main
-    kustomize:
   - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: secret-value
     targetRevision: main
