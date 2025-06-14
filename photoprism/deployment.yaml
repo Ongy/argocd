@@ -25,7 +25,7 @@ spec:
         - name: tmp
           emptyDir:
             medium: Memory
-            sizeLimit: 150Mi
+            sizeLimit: 1G
         - name: run
           emptyDir:
             medium: Memory
