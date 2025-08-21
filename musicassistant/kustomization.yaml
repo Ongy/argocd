@@ -6,4 +6,3 @@ resources:
 - network.yaml
 - route.yaml
 - storage.yaml
-- oauth-proxy.yaml
