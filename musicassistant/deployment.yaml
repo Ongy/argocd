@@ -20,6 +20,9 @@ spec:
       containers:
       - image: ghcr.io/music-assistant/server
         name: assistant
+        command:
+        - /usr/bin/sleep
+        - infinity
         volumeMounts:
         - name: data
           mountPath: /data
