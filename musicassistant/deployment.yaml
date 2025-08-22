@@ -22,9 +22,6 @@ spec:
       containers:
       - image: ghcr.io/music-assistant/server
         name: assistant
-        command:
-        - /bin/sleep
-        - infinity
         volumeMounts:
         - name: data
           mountPath: /data
@@ -32,7 +29,10 @@ spec:
         - name: http
           protocol: TCP
           containerPort: 8095
-#        readinessProbe:
-#          httpGet:
-#            path: /
-#            port: http
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
