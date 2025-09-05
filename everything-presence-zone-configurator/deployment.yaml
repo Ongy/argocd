@@ -20,7 +20,7 @@ spec:
           name: configurator
           env:
           - name: HA_URL
-            value: https://homeassistant.local.ongy.net
+            value: http://homeassistant.homeassistant.svc.cluster.local
           - name: HA_TOKEN
             value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIyMDA0NjAzMTI1Y2M0MzM4ODFlMDY3YzhjM2IwZjA5ZCIsImlhdCI6MTc1NzA3NzQzMywiZXhwIjoyMDcyNDM3NDMzfQ.HtHM_mRo78UYD3hOJ1FIc-tMEIiJZteeY6bFfRu8dow"
 ---
