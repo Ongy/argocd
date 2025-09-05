@@ -16,7 +16,7 @@ spec:
     spec:
       automountServiceAccountToken: false
       containers:
-        - image: everythingsmarthome/everything-presence-mmwave-configurator:latest
+        - image: cr.local.ongy.net/everythingsmarthome/everything-presence-mmwave-configurator:latest
           name: configurator
           env:
           - name: HA_URL
