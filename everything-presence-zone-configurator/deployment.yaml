@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: everything-presence-zone-configurator
+  name: everything-presence-zone-configurator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: everything-presence-zone-configurator
+  template:
+    metadata:
+      labels:
+        app: everything-presence-zone-configurator
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - image: everythingsmarthome/everything-presence-mmwave-configurator:latest
+          name: configurator
+          env:
+          - name: HA_URL
+            value: https://homeassistant.local.ongy.net
+          - name: HA_TOKEN
+            value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIyMDA0NjAzMTI1Y2M0MzM4ODFlMDY3YzhjM2IwZjA5ZCIsImlhdCI6MTc1NzA3NzQzMywiZXhwIjoyMDcyNDM3NDMzfQ.HtHM_mRo78UYD3hOJ1FIc-tMEIiJZteeY6bFfRu8dow"
+---
