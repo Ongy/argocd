@@ -10,3 +10,17 @@ spec:
       port: 80
       targetPort: 8099
       name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: supervisor
+  namespace: homeassistant
+spec:
+  selector:
+    app: homeassistant
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8123
+      name: http
