@@ -16,7 +16,7 @@ metadata:
   name: node-dev-payload
 spec:
   selector:
-    app: node-dev-payload
+    app: node-dev
   ports:
     - protocol: TCP
       port: 80
