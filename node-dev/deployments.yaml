@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: node-dev
+  name: node-dev
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-dev
+  template:
+    metadata:
+      labels:
+        app: node-dev
+    spec:
+      volumes:
+        - name: node-dev-data
+          persistentVolumeClaim:
+            claimName: node-dev-data
+      containers:
+        - image: cr.local.ongy.net/dev/angular
+          imagePullPolicy: IfNotPresent
+#          readinessProbe:
+#            httpGet:
+#              path: /
+#              port: 8080
+#          env:
+#            - name: PUID
+#              value: "1005"
+#            - name: GUID
+#              value: "1004"
+#            - name: UMASK
+#              value: "002"
+          securityContext:
+            privileged: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+          name: node-dev
+          volumeMounts:
+            - mountPath: "/data"
+              name: node-dev-data
+#          resources:
+#            requests:
+#              memory: 256Mi
+#              cpu: "100m"
+#            limits:
+#              memory: 512Mi
+#              cpu: "500m"

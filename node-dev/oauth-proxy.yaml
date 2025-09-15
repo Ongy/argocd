@@ -1,0 +1,121 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-dev
+  labels:
+    ongy.net/keycloak-application: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: node-dev-proxy
+  name: node-dev-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-dev-proxy
+  template:
+    metadata:
+      labels:
+        app: node-dev-proxy
+    spec:
+      containers:
+        - image: quay.io/oauth2-proxy/oauth2-proxy
+          args:
+          - --provider=keycloak-oidc
+          - --redirect-url=https://node-dev.local.ongy.net/oauth2/callback
+          - --oidc-issuer-url=https://keycloak.local.ongy.net/realms/local.ongy.net
+          - --code-challenge-method=S256
+          - --reverse-proxy=true
+          - --http-address=0.0.0.0:8080
+          - --upstream=http://node-dev
+          - --email-domain=*
+
+          - --skip-provider-button=true
+          env:
+          - name: OAUTH2_PROXY_COOKIE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: node-dev-oauth-cookie
+                key: value
+          - name: OAUTH2_PROXY_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-client-node-dev
+                key: client_id
+          - name: OAUTH2_PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-client-node-dev
+                key: client_secret
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 1000
+            privileged: false
+          name: oauth-proxy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-dev-proxy
+spec:
+  selector:
+    app: node-dev-proxy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: node-dev-proxy
+spec:
+  podSelector:
+    matchLabels:
+      app: node-dev-proxy
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 192.168.128.2/32
+      ports:
+        - protocol: TCP
+          port: 443
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+    - to:
+        - podSelector:
+            matchLabels:
+              app: node-dev
+      ports:
+        - protocol: TCP
+          port: 7878
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: node-dev-proxy
+spec:
+  endpointSelector:
+    matchLabels:
+      app: node-dev-proxy
+  ingress:
+    - fromEntities:
+        - ingress

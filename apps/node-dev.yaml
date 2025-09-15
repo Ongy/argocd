@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: node-dev
+  namespace: argocd
+  finalizers:
+    # The default behaviour is foreground cascading deletion
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: node-dev
+    targetRevision: main
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: main
+    helm:
+      valuesObject:
+        secretName: node-dev-oauth-cookie
+  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    path: snapshot-schedule
+    targetRevision: main
+    helm:
+      valuesObject:
+        suffix: node-dev
+        subhourly: false
+        appSelector: node-dev
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: experimental
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true
