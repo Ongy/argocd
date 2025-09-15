@@ -9,7 +9,19 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 8000
-      name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-dev-payload
+spec:
+  selector:
+    app: node-dev-payload
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 4200
+      name: http     name: http
 ---
 # apiVersion: networking.k8s.io/v1
 # kind: NetworkPolicy
