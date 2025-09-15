@@ -16,6 +16,10 @@ spec:
       labels:
         app: node-dev
     spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
       volumes:
         - name: node-dev-data
           persistentVolumeClaim:
@@ -43,8 +47,6 @@ spec:
           securityContext:
             privileged: false
             runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
           name: node-dev
           volumeMounts:
             - mountPath: "/data"
