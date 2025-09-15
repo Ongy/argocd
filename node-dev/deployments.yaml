@@ -22,7 +22,12 @@ spec:
             claimName: node-dev-data
       containers:
         - image: cr.local.ongy.net/dev/angular
-          command: [/usr/bin/sleep, infinity]
+          command: [/usr/bin/code]
+          args:
+          - serve-web
+          - --host
+          - 0.0.0.0
+          - --without-connection-token
           imagePullPolicy: Always
 #          readinessProbe:
 #            httpGet:
