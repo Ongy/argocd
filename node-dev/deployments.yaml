@@ -22,7 +22,8 @@ spec:
             claimName: node-dev-data
       containers:
         - image: cr.local.ongy.net/dev/angular
-          imagePullPolicy: IfNotPresent
+          command: [/usr/bin/sleep, infinity]
+          imagePullPolicy: Always
 #          readinessProbe:
 #            httpGet:
 #              path: /
