@@ -1,0 +1,108 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: node-dev-builder
+spec:
+  schedule: "0 0 * * 0"
+  concurrencyPolicy: "Replace"
+  startingDeadlineSeconds: 0
+  workflowSpec:
+    entrypoint: build-all
+    serviceAccountName: argo-workflow
+    templates:
+      - name: build-all
+        dag:
+          tasks:
+            - name: combine
+              template: combine-images
+              dependencies: [build-arm64, build-amd64]
+              arguments:
+                artifacts:
+                  - name: amd64-image
+                    from: "{{tasks.build-amd64.outputs.artifacts.container-image}}"
+#                  - name: arm64-image
+#                    from: "{{tasks.build-arm64.outputs.artifacts.container-image}}"
+
+            - name: build-arm64
+              template: buildah-build
+              arguments:
+                parameters:
+                  - name: platform
+                    value: arm64
+            - name: build-amd64
+              template: buildah-build
+              arguments:
+                parameters:
+                  - name: platform
+                    value: amd64
+
+      - name: combine-images
+        inputs:
+          artifacts:
+            - name: amd64-image
+              path: /images/amd64
+#            - name: arm64-image
+#              path: /images/arm64
+        container:
+          name: buildah
+          image: quay.io/buildah/stable:latest
+          workingDir: /
+          securityContext:
+            privileged: true # For fuse access
+          command:
+            - sh
+          args:
+            - -x
+            - -eu
+            - -c
+            - |
+              mkdir -p /out
+              TAG="cr.local.ongy.net/dev/angular:$(date -u --rfc-3339=date)"
+              buildah manifest create "${TAG}"
+
+              for arch in /images/*; do
+                IMAGE="$(buildah pull "oci-archive:${arch}" | tail -n 1)"
+                buildah manifest add "${TAG}" "${IMAGE}"
+              done
+
+              buildah manifest push "${TAG}" docker://${TAG}
+
+      - name: buildah-build
+        inputs:
+          parameters:
+            - name: platform
+          artifacts:
+            - name: source
+              path: /src
+              git:
+                repo: https://git.local.ongy.net/ongy/dockerfiles.git
+                revision: HEAD
+        outputs:
+          artifacts:
+            - name: container-image
+              path: /out/image
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: kubernetes.io/arch
+                      operator: In
+                      values:
+                        - "{{ inputs.parameters.platform }}"
+        container:
+          name: buildah
+          image: quay.io/buildah/stable:latest
+          workingDir: /src
+          securityContext:
+            privileged: true # For fuse access
+          command:
+            - sh
+          args:
+            - -x
+            - -eu
+            - -c
+            - |
+              mkdir -p /out
+              buildah bud --platform linux/{{inputs.parameters.platform}} -f angular-dev/Dockerfile --tag cr.local.ongy.net:dev/angular:{{inputs.parameters.platform}} angular-dev
+              buildah push cr.local.ongy.net:dev/angular:{{inputs.parameters.platform}} oci-archive:/out/image
