@@ -24,6 +24,9 @@ spec:
         - name: node-dev-data
           persistentVolumeClaim:
             claimName: node-dev-data
+        - name: node-dev-home
+          persistentVolumeClaim:
+            claimName: node-dev-home
       containers:
         - image: cr.local.ongy.net/dev/angular
           command: [/usr/bin/code]
@@ -51,6 +54,8 @@ spec:
           volumeMounts:
             - mountPath: "/data"
               name: node-dev-data
+            - mountPath: "/home/ubuntu"
+              name: node-dev-home
 #          resources:
 #            requests:
 #              memory: 256Mi
