@@ -23,12 +23,12 @@ spec:
 #                  - name: arm64-image
 #                    from: "{{tasks.build-arm64.outputs.artifacts.container-image}}"
 
-            - name: build-arm64
-              template: buildah-build
-              arguments:
-                parameters:
-                  - name: platform
-                    value: arm64
+#            - name: build-arm64
+#              template: buildah-build
+#              arguments:
+#                parameters:
+#                  - name: platform
+#                    value: arm64
             - name: build-amd64
               template: buildah-build
               arguments:
@@ -104,5 +104,5 @@ spec:
             - -c
             - |
               mkdir -p /out
-              buildah bud --platform linux/{{inputs.parameters.platform}} -f angular-dev/Dockerfile --tag cr.local.ongy.net:dev/angular:{{inputs.parameters.platform}} angular-dev
+              buildah bud --platform linux/{{inputs.parameters.platform}} -f angular-dev/Dockerfile --tag cr.local.ongy.net/dev/angular:{{inputs.parameters.platform}} angular-dev
               buildah push cr.local.ongy.net:dev/angular:{{inputs.parameters.platform}} oci-archive:/out/image
