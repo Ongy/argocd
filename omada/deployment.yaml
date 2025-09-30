@@ -5,6 +5,8 @@ metadata:
     app: omada
   name: omada
 spec:
+  strategy:
+    type: Recreate
   replicas: 1
   selector:
     matchLabels:
