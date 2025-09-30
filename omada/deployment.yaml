@@ -45,7 +45,8 @@ spec:
               port: 8043
               scheme: https
               httpHeaders:
-                Host: omada.local.ongy.net
+              - name: Host
+                value: omada.local.ongy.net
           name: omada-controller
           env:
             - name: MONGO_EXTERNAL
