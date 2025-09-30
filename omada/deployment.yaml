@@ -43,7 +43,7 @@ spec:
             httpGet:
               path: /
               port: 8043
-              scheme: https
+              scheme: HTTPS
               httpHeaders:
               - name: Host
                 value: omada.local.ongy.net
