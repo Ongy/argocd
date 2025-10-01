@@ -67,6 +67,7 @@ data:
         KEYCLOAK_URL: http://keycloak.keycloak.svc.cluster.local
         KEYCLOAK_REALM: local.ongy.net
         CLIENT_ID: __CLIENT_ID__
+        CALLBACK_PATH: __CALLBACK_PATH__
       tasks:
       - name: Ensure groups client scope
         community.general.keycloak_clientscope:
@@ -105,7 +106,7 @@ data:
           direct_access_grants_enabled: false
           public_client: false
           redirect_uris:
-          - https://{{ CLIENT_ID }}.local.ongy.net/auth/callback
+          - https://{{ CLIENT_ID }}.local.ongy.net/{{ CALLBACK_PATH }}
           default_client_scopes:
           - groups
 
@@ -132,6 +133,7 @@ data:
           KEYCLOAK_URL: http://keycloak.keycloak.svc.cluster.local
           KEYCLOAK_REALM: local.ongy.net
           CLIENT_ID: __CLIENT_ID__
+          CALLBACK_PATH: __CALLBACK_PATH__
         tasks:
         - name: Create {{ CLIENT_ID }} client
           community.general.keycloak_client:
@@ -147,7 +149,7 @@ data:
             direct_access_grants_enabled: false
             public_client: false
             redirect_uris:
-            - https://{{ CLIENT_ID }}.local.ongy.net/oauth2/callback
+            - https://{{ CLIENT_ID }}.local.ongy.net/{{ CALLBACK_PATH }}
 
             protocol_mappers:
             - name: aud-mapper-{{ CLIENT_ID }}
@@ -183,12 +185,15 @@ data:
       function ensure_client() {
         NAME="${1}"
         NAMESPACE="${2}"
+        CALLBACK=$(kubectl get -n "${NAMESPACE}" configmap "${NAME}" -o jsonpath="{.data.callback}" || true)
         echo "Ensuring client '${NAME}' exists for NS '${NAMESPACE}"
 
         if [ "$(kubectl get -n "${NAMESPACE}" configmap "${NAME}" -o jsonpath="{.metadata.labels.ongy\\.net/keycloak-application-type}")" = group ]; then
-          </templates/keycloak-groups sed -e "s/__CLIENT_ID__/${NAME}/" > "/ansible/${NAME}.playbook.yaml"
+          CALLBACK=$(CALLBACK:-/auth/callback)
+          </templates/keycloak-groups sed -e "s/__CLIENT_ID__/${NAME}/" -e "s/__CALLBACK_PATH__/${CALLBACK}" > "/ansible/${NAME}.playbook.yaml"
         else
-          </templates/keycloak-oauth-proxy sed -e "s/__CLIENT_ID__/${NAME}/" > "/ansible/${NAME}.playbook.yaml"
+          CALLBACK=$(CALLBACK:-/oauth2/callback)
+          </templates/keycloak-oauth-proxy sed -e "s/__CLIENT_ID__/${NAME}/" -e "s/__CALLBACK_PATH__/${CALLBACK}" > "/ansible/${NAME}.playbook.yaml"
         fi
 
         kubectl exec -i -n shell-operator deploy/shell-operator --container ansible -- \

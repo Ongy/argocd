@@ -84,3 +84,5 @@ metadata:
   name: mealie
   labels:
     ongy.net/keycloak-application: "true"
+data:
+  callback: login
