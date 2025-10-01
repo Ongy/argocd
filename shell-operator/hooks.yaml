@@ -190,10 +190,10 @@ data:
 
         if [ "$(kubectl get -n "${NAMESPACE}" configmap "${NAME}" -o jsonpath="{.metadata.labels.ongy\\.net/keycloak-application-type}")" = group ]; then
           CALLBACK=${CALLBACK:-/auth/callback}
-          </templates/keycloak-groups sed -e "s/__CLIENT_ID__/${NAME}/" -e "s/__CALLBACK_PATH__/${CALLBACK}" > "/ansible/${NAME}.playbook.yaml"
+          </templates/keycloak-groups sed -e "s/__CLIENT_ID__/${NAME}/" -e "s#__CALLBACK_PATH__#${CALLBACK}#" > "/ansible/${NAME}.playbook.yaml"
         else
           CALLBACK=${CALLBACK:-/oauth2/callback}
-          </templates/keycloak-oauth-proxy sed -e "s/__CLIENT_ID__/${NAME}/" -e "s/__CALLBACK_PATH__/${CALLBACK}" > "/ansible/${NAME}.playbook.yaml"
+          </templates/keycloak-oauth-proxy sed -e "s/__CLIENT_ID__/${NAME}/" -e "s#__CALLBACK_PATH__#${CALLBACK}#" > "/ansible/${NAME}.playbook.yaml"
         fi
 
         kubectl exec -i -n shell-operator deploy/shell-operator --container ansible -- \
