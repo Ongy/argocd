@@ -189,10 +189,10 @@ data:
         echo "Ensuring client '${NAME}' exists for NS '${NAMESPACE}"
 
         if [ "$(kubectl get -n "${NAMESPACE}" configmap "${NAME}" -o jsonpath="{.metadata.labels.ongy\\.net/keycloak-application-type}")" = group ]; then
-          CALLBACK=${CALLBACK:-/auth/callback}
+          CALLBACK=${CALLBACK:-auth/callback}
           </templates/keycloak-groups sed -e "s/__CLIENT_ID__/${NAME}/" -e "s#__CALLBACK_PATH__#${CALLBACK}#" > "/ansible/${NAME}.playbook.yaml"
         else
-          CALLBACK=${CALLBACK:-/oauth2/callback}
+          CALLBACK=${CALLBACK:-oauth2/callback}
           </templates/keycloak-oauth-proxy sed -e "s/__CLIENT_ID__/${NAME}/" -e "s#__CALLBACK_PATH__#${CALLBACK}#" > "/ansible/${NAME}.playbook.yaml"
         fi
 
