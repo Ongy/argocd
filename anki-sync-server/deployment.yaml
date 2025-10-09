@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anki-sync-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anki-sync-server
+  template:
+    metadata:
+      labels:
+        app: anki-sync-server
+    spec:
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: anki-sync-data
+      containers:
+      - image: jeankhawand/anki-sync-server:25.07-distroless
+        name: anki-sync-server
+        env:
+        - name: SYNC_BASE
+          value: "/anki_data"
+        - name: SYNC_PORT
+          value: "8080"
+        - name: SYNC_USER
+          value: "user:password"
+        volumeMounts:
+        - name: data
+          mountPath: /anki_data
+        ports:
+        - name: http
+          protocol: TCP
+          containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
