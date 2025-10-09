@@ -24,7 +24,7 @@ spec:
           value: "/anki_data"
         - name: SYNC_PORT
           value: "8080"
-        - name: SYNC_USER
+        - name: SYNC_USER1
           value: "user:password"
         volumeMounts:
         - name: data
