@@ -33,7 +33,7 @@ spec:
         - name: http
           protocol: TCP
           containerPort: 8080
-        readinessProbe:
-          httpGet:
-            path: /
-            port: http
+#        readinessProbe:
+#          httpGet:
+#            path: /
+#            port: http
