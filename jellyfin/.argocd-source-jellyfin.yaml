@@ -1,4 +1,4 @@
 kustomize:
   images:
   - cr.local.ongy.net/jellyfin-mpv-shim:2025-10-19
-  - jellyfin/jellyfin:10.10.7
+  - jellyfin/jellyfin:10.11.0
