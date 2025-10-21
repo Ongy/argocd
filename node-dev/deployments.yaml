@@ -27,7 +27,7 @@ spec:
             claimName: node-dev-home
         - name: ssh-key
           secret:
-            secretName: git-key
+            secretName: git-ssh
       containers:
         - image: cr.local.ongy.net/dev/angular
           command: [/usr/bin/code]
