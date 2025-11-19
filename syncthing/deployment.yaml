@@ -18,7 +18,7 @@ spec:
           claimName: syncthing-config
       - name: photoprism
         persistentVolumeClaim:
-          claimName: photoprism-config-pv
+          claimName: photoprism-config-pvc
       containers:
       - image: syncthing/syncthing
         name: syncthing
