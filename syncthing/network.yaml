@@ -10,3 +10,16 @@ spec:
     port: 80
     targetPort: http
     name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: syncthing-data
+spec:
+  selector:
+    app: syncthing
+  ports:
+  - protocol: TCP
+    port: 22000
+    targetPort: 22000
+    name: tcp
