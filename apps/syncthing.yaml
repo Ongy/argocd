@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: synkthing
+  name: syncthing
   namespace: argocd
   finalizers:
     # The default behaviour is foreground cascading deletion
@@ -10,7 +10,7 @@ spec:
   project: default
   sources:
   - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
-    path: synkthing
+    path: syncthing
     targetRevision: main
   destination:
     server: 'https://kubernetes.default.svc'
