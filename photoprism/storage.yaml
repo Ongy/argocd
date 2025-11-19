@@ -7,7 +7,7 @@ spec:
     storage: 100G
   volumeMode: Filesystem
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ""
   claimRef:
@@ -27,7 +27,7 @@ metadata:
   namespace: mediaserver
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 100Gi
