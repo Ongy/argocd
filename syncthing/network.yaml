@@ -4,7 +4,7 @@ metadata:
   name: syncthing-gui
 spec:
   selector:
-    app: syncthing-gui
+    app: syncthing
   ports:
   - protocol: TCP
     port: 80
