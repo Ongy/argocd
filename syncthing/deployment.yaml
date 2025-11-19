@@ -16,12 +16,17 @@ spec:
       - name: config
         persistentVolumeClaim:
           claimName: syncthing-config
+      - name: photoprism
+        persistentVolumeClaim:
+          claimName: photoprism-config-pv
       containers:
       - image: syncthing/syncthing
         name: syncthing
         volumeMounts:
         - name: config
           mountPath: /var/syncthing
+        - name: photoprism
+          mountPath: /var/photoprism
         ports:
         - name: http
           protocol: TCP
