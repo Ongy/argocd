@@ -56,13 +56,12 @@ spec:
           livenessProbe:
             failureThreshold: 6
             periodSeconds: 10
-            httpGet:
-              path: /
-              port: 8043
-              scheme: HTTPS
-              httpHeaders:
-              - name: Host
-                value: omada.local.ongy.net
+            exec:
+              command:
+              - /usr/bin/wget
+              - -O
+              - /dev/null
+              - https://omada.local.ongy.net
           name: omada-controller
           env:
             - name: MONGO_EXTERNAL
