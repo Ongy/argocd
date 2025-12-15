@@ -44,6 +44,10 @@ spec:
           persistentVolumeClaim:
             claimName: paperless-data
             readOnly: false
+        - name: paperless-backup
+          persistentVolumeClaim:
+            claimName: paperless-backup
+            readOnly: false
         - name: supervisord-config
           configMap:
             name: supervisord-config
@@ -192,6 +196,9 @@ spec:
             - name: psql-tls-secrets
               mountPath: "/psql-tls-secrets"
               readOnly: true
+            - mountPath: "/usr/src/paperless/backup"
+              name: paperless-backup
+              subPath: paperless
 ---
 apiVersion: apps/v1
 kind: Deployment
