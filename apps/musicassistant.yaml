@@ -6,6 +6,14 @@ metadata:
   finalizers:
     # The default behaviour is foreground cascading deletion
     - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: musicassistant=ghcr.io/music-assistant/server
+    argocd-image-updater.argoproj.io/musicassistant.update-strategy: semver
+    argocd-image-updater.argoproj.io/musicassistant.allow-tags: regexp:^[0-9]+\.[0-9]+\.[1-9][0-9]*$
+
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/git-repository: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    argocd-image-updater.argoproj.io/write-back-target: kustomization:/musicassistant
 spec:
   project: default
   sources:
