@@ -11,9 +11,9 @@ spec:
       eventName: event-aggregator
       filters:
         exprs:
-          - expr: ref == "tag"
+          - expr: type == "tag"
             fields:
-              - name: ref
+              - name: type
                 path: body.ref_type
   triggers:
     - template:
