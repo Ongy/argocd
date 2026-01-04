@@ -69,6 +69,7 @@ spec:
           - ko
         args:
           - build
+          - .
           - '--bare'
         workingDir: /src
         env:
