@@ -41,6 +41,8 @@ spec:
             privileged: false
           name: mealie
           env:
+            - name: ALLOW_PASSWORD_LOGIN
+              value: "false"
             - name: DB_ENGINE
               value: postgres
             - name: POSTGRES_URL_OVERRIDE
