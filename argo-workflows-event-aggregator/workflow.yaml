@@ -12,10 +12,6 @@ spec:
         - name: build
           dependencies: [go-version, test]
           template: ko
-          arguments:
-            parameters:
-            - name: go-version
-              value: "{{tasks.go-version.outputs.result}}"
         - name: test
           template: run-test
           dependencies: [go-version]
@@ -39,9 +35,6 @@ spec:
           <./go.mod grep -E "^go " | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?'
     - name: ko
       inputs:
-        parameters:
-        - name: go-version
-          value: "{{inputs.parameters.go-version}}"
         artifacts:
           - name: argo-source
             path: /src
@@ -64,7 +57,7 @@ spec:
           - .
           - '--bare'
           - --tags
-          - "{{inputs.parameters.go-version}}"
+          - "{{workflow.parameters.rev}}"
         env:
           - name: KO_DOCKER_REPO
             value: cr.local.ongy.net/ongy/event-aggregator
