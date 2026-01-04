@@ -10,7 +10,12 @@ spec:
         - name: go-version
           template: go-version
         - name: build
+          dependencies: [go-version, test]
           template: ko
+          arguments:
+            parameters:
+            - name: go-version
+              value: "{{tasks.go-version.outputs.result}}"
         - name: test
           template: run-test
           dependencies: [go-version]
@@ -18,22 +23,6 @@ spec:
             parameters:
             - name: go-version
               value: "{{tasks.go-version.outputs.result}}"
-        - name: get-image-name
-          dependencies: [build, test]
-          template: extract-image
-          arguments:
-            parameters:
-            - name: ko-output
-              value: "{{tasks.build.outputs.result}}"
-    - name: extract-image
-      inputs:
-        parameters:
-        - name: ko-output
-      script:
-        image: alpine:latest
-        command: [sh]
-        source: |
-          echo '{{inputs.parameters.ko-output}}' | tail -n 1
     - name: go-version
       inputs:
         artifacts:
@@ -50,6 +39,9 @@ spec:
           <./go.mod grep -E "^go " | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?'
     - name: ko
       inputs:
+        parameters:
+        - name: go-version
+          value: "{{inputs.parameters.go-version}}"
         artifacts:
           - name: argo-source
             path: /src
@@ -71,6 +63,8 @@ spec:
           - build
           - .
           - '--bare'
+          - --tags
+          - "{{inputs.parameters.go-version}}"
         env:
           - name: KO_DOCKER_REPO
             value: cr.local.ongy.net/ongy/event-aggregator
