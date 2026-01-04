@@ -18,8 +18,6 @@ spec:
             parameters:
             - name: go-version
               value: "{{tasks.go-version.outputs.result}}"
-        - name: get-ref
-          template: get-ref
         - name: get-image-name
           dependencies: [build, test]
           template: extract-image
@@ -36,19 +34,6 @@ spec:
         command: [sh]
         source: |
           echo '{{inputs.parameters.ko-output}}' | tail -n 1
-    - name: get-ref
-      inputs:
-        artifacts:
-          - name: argo-source
-            path: /src
-            git:
-              repo: https://git.local.ongy.net/ongy/event-aggregator.git
-              revision: HEAD
-      script:
-        image: alpine/git
-        command: [sh]
-        source: |
-          git -C /src/ rev-parse HEAD
     - name: go-version
       inputs:
         artifacts:
@@ -56,7 +41,7 @@ spec:
             path: /src
             git:
               repo: https://git.local.ongy.net/ongy/event-aggregator.git
-              revision: HEAD
+              revision: "{{inputs.parameters.rev}}"
       script:
         image: alpine
         command: [sh]
@@ -69,7 +54,7 @@ spec:
             path: /src
             git:
               repo: https://git.local.ongy.net/ongy/event-aggregator.git
-              revision: HEAD
+              revision: "{{inputs.parameters.rev}}"
       container:
         volumeMounts:
         - name: go-cache
@@ -121,7 +106,7 @@ spec:
             path: /src
             git:
               repo: https://git.local.ongy.net/ongy/event-aggregator.git
-              revision: HEAD
+              revision: "{{inputs.parameters.rev}}"
       container:
         volumeMounts:
         - name: go-cache
@@ -150,7 +135,7 @@ spec:
             path: /src
             git:
               repo: https://git.local.ongy.net/ongy/event-aggregator.git
-              revision: HEAD
+              revision: "{{inputs.parameters.rev}}"
       container:
         volumeMounts:
         - name: go-cache
@@ -186,7 +171,9 @@ spec:
       server: mario.local.ongy.net
       readOnly: false
 
-  arguments: {}
+  arguments:
+    parameters:
+      - name: rev
   serviceAccountName: event-aggregator
   ttlStrategy:
     secondsAfterCompletion: 3600
