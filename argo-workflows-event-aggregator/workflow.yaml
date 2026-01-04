@@ -109,7 +109,7 @@ spec:
         - name: go-pkg
           mountPath: "/pkg"
         name: main
-        image: golang:{{inputs.parameters.go-version}}-alpine
+        image: golang:{{inputs.parameters.go-version}}
         command:
           - go
         args:
@@ -138,7 +138,7 @@ spec:
         - name: go-pkg
           mountPath: "/pkg"
         name: main
-        image: golang:{{inputs.parameters.go-version}}-alpine
+        image: golang:{{inputs.parameters.go-version}}
         command:
           - go
         args:
