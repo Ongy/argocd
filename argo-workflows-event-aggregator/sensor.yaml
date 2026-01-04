@@ -32,7 +32,7 @@ spec:
                   - name: rev
                     value: __TO_BE_REPLACD__
                 workflowTemplateRef:
-                  name: git-sync
+                  name: build-event-aggregator
           parameters:
             - src:
                 dependencyName: webhook-dep
