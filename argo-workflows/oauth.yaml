@@ -5,3 +5,5 @@ metadata:
   labels:
     ongy.net/keycloak-application-type: group
     ongy.net/keycloak-application: "true"
+  data:
+    callback: /oauth/callback
