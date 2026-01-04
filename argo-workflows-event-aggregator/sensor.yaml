@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: event-aggregator
+spec:
+  template:
+    serviceAccountName: argo-workflows-server
+  dependencies:
+    - name: webhook-dep
+      eventSourceName: event-aggregator
+      eventName: event-aggregator
+      filters:
+        exprs:
+          - expr: ref =~ "^refs/tags/.*$"
+            fields:
+              - name: ref
+                path: body.ref
+  triggers:
+    - template:
+        name: argo-workflow-trigger
+        argoWorkflow:
+          operation: submit-from
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: WorkflowTemplate
+              metadata:
+                name: build-event-aggregator
+                namespace: argo
