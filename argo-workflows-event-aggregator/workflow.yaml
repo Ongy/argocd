@@ -72,7 +72,6 @@ spec:
           - build
           - .
           - '--bare'
-        workingDir: /src
         env:
           - name: KO_DOCKER_REPO
             value: cr.local.ongy.net/ongy/event-aggregator
