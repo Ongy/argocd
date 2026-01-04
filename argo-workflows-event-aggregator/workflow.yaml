@@ -41,7 +41,7 @@ spec:
             path: /src
             git:
               repo: https://git.local.ongy.net/ongy/event-aggregator.git
-              revision: "{{inputs.parameters.rev}}"
+              revision: "{{workflow.parameters.rev}}"
       script:
         image: alpine
         command: [sh]
@@ -54,7 +54,7 @@ spec:
             path: /src
             git:
               repo: https://git.local.ongy.net/ongy/event-aggregator.git
-              revision: "{{inputs.parameters.rev}}"
+              revision: "{{workflow.parameters.rev}}"
       container:
         volumeMounts:
         - name: go-cache
@@ -106,7 +106,7 @@ spec:
             path: /src
             git:
               repo: https://git.local.ongy.net/ongy/event-aggregator.git
-              revision: "{{inputs.parameters.rev}}"
+              revision: "{{workflow.parameters.rev}}"
       container:
         volumeMounts:
         - name: go-cache
@@ -135,7 +135,7 @@ spec:
             path: /src
             git:
               repo: https://git.local.ongy.net/ongy/event-aggregator.git
-              revision: "{{inputs.parameters.rev}}"
+              revision: "{{workflow.parameters.rev}}"
       container:
         volumeMounts:
         - name: go-cache
