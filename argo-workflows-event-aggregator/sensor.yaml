@@ -11,10 +11,10 @@ spec:
       eventName: event-aggregator
       filters:
         exprs:
-          - expr: ref =~ "^refs/tags/.*$"
+          - expr: ref == "tag"
             fields:
               - name: ref
-                path: body.ref
+                path: body.ref_type
   triggers:
     - template:
         name: argo-workflow-trigger
