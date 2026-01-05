@@ -1,26 +1,37 @@
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: esphome
-#   namespace: argocd
-# spec:
-#   project: default
-#   sources:
-#   - repoURL: https://git.local.ongy.net/ongy/argocd.git
-#     path: esphome
-#     targetRevision: main
-#   - repoURL: https://git.local.ongy.net/ongy/argocd.git
-#     path: secret-value
-#     targetRevision: main
-#     helm:
-#       valuesObject:
-#         secretName: esphome-oauth-cookie
-#   destination:
-#     server: 'https://kubernetes.default.svc'
-#     namespace: smarthome
-#   syncPolicy:
-#     automated:
-#       prune: true
-#     syncOptions:
-#       - PruneLast=true
-#       - CreateNamespace=true
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: esphome
+  namespace: argocd
+  finalizers:
+    # The default behaviour is foreground cascading deletion
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: main=ghcr.io/esphome/esphome
+    argocd-image-updater.argoproj.io/main.update-strategy: semver
+    argocd-image-updater.argoproj.io/main.allow-tags: regexp:^[0-9]+\.[0-9]+\.[1-9][0-9]*$
+
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/git-repository: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    argocd-image-updater.argoproj.io/write-back-target: kustomization:/esphome
+spec:
+  project: default
+  sources:
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: esphome
+    targetRevision: main
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: main
+    helm:
+      valuesObject:
+        secretName: esphome-oauth-cookie
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: smarthome
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true
