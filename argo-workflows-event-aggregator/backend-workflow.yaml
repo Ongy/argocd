@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: build-events-frontend
+spec:
+  templates:
+    - name: entry
+      dag:
+        tasks:
+        - name: build
+          template: build
+#        - name: push
+#          dependencies: [build]
+#          template: push
+    - name: build
+      inputs:
+        artifacts:
+          - name: argo-source
+            path: /src
+            git:
+              repo: https://git.local.ongy.net/ongy/events-frontend.git
+              revision: "{{workflow.parameters.rev}}"
+      container:
+        name: main
+        image: node:24-alpine
+        command:
+          - sh
+        args:
+          - x
+          - euc
+          - |
+            npm install
+            npm build
+        workingDir: /src/events-admin
+  entrypoint: entry
+  volumes:
+  - name: git-ssh-key
+    secret:
+      secretName: gogs-deploy-key
+  arguments:
+    parameters:
+      - name: rev
+  serviceAccountName: event-aggregator
+  ttlStrategy:
+    secondsAfterCompletion: 3600
