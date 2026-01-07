@@ -1,170 +1,67 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: build-event-aggregator
+  name: build-events-frontend
 spec:
   templates:
     - name: entry
       dag:
         tasks:
-        - name: go-version
-          template: go-version
         - name: build
-          dependencies: [go-version, test]
-          template: ko
-        - name: test
-          template: run-test
-          dependencies: [go-version]
+          template: build
+        - name: push
+          dependencies: [build]
+          template: push
           arguments:
-            parameters:
-            - name: go-version
-              value: "{{tasks.go-version.outputs.result}}"
-    - name: go-version
+            artifacts:
+            - name: events-admin-dist
+              from: "{{tasks.build.outputs.artifacts.events-admin-dist}}"
+
+    - name: build
       inputs:
         artifacts:
           - name: argo-source
             path: /src
             git:
-              repo: https://git.local.ongy.net/ongy/event-aggregator.git
+              repo: https://git.local.ongy.net/ongy/events-frontend.git
               revision: "{{workflow.parameters.rev}}"
-      script:
-        image: alpine
-        command: [sh]
-        workingDir: /src
-        source: |
-          <./go.mod grep -E "^go " | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?'
-    - name: ko
-      inputs:
+      outputs:
         artifacts:
-          - name: argo-source
-            path: /src
-            git:
-              repo: https://git.local.ongy.net/ongy/event-aggregator.git
-              revision: "{{workflow.parameters.rev}}"
+        - name: events-admin-dist
+          path: /src/events-admin/dist/events-admin
       container:
-        volumeMounts:
-        - name: go-cache
-          mountPath: "/cache"
-        - name: go-pkg
-          mountPath: "/pkg"
         name: main
-        image: ghcr.io/ko-build/ko:latest
-        workingDir: /src
+        image: node:24-alpine
         command:
-          - ko
+          - sh
         args:
-          - build
-          - .
-          - '--bare'
-          - --tags
-          - "{{workflow.parameters.rev}}"
-        env:
-          - name: KO_DOCKER_REPO
-            value: cr.local.ongy.net/ongy/event-aggregator
-          - name: KO_DEFAULTPLATFORMS
-            value: all
-          - name: GOCACHE
-            value: /cache
-          - name: GOMODCACHE
-            value: /pkg
-    - name: run-test
+          - -x
+          - -euc
+          - |
+            npm install
+            npm run build
+            cp default.conf Dockerfile dist/events-admin
+        workingDir: /src/events-admin
+    - name: push
       inputs:
-        parameters:
-        - name: go-version
-      dag:
-        tasks:
-        - name: go-test
-          template: go-test
-          arguments:
-            parameters:
-            - name: go-version
-              value: "{{inputs.parameters.go-version}}"
-        - name: go-vet
-          template: go-vet
-          arguments:
-            parameters:
-            - name: go-version
-              value: "{{inputs.parameters.go-version}}"
-    - name: go-test
-      inputs:
-        parameters:
-        - name: go-version
         artifacts:
-          - name: argo-source
+          - name: events-admin-dist
             path: /src
-            git:
-              repo: https://git.local.ongy.net/ongy/event-aggregator.git
-              revision: "{{workflow.parameters.rev}}"
       container:
-        volumeMounts:
-        - name: go-cache
-          mountPath: "/cache"
-        - name: go-pkg
-          mountPath: "/pkg"
         name: main
-        image: golang:{{inputs.parameters.go-version}}
-        command:
-          - go
+        image: gcr.io/kaniko-project/executor
         args:
-          - test
-          - ./...
-        workingDir: /src
-        env:
-          - name: GOCACHE
-            value: /cache
-          - name: GOMODCACHE
-            value: /pkg
-    - name: go-vet
-      inputs:
-        parameters:
-        - name: go-version
-        artifacts:
-          - name: argo-source
-            path: /src
-            git:
-              repo: https://git.local.ongy.net/ongy/event-aggregator.git
-              revision: "{{workflow.parameters.rev}}"
-      container:
-        volumeMounts:
-        - name: go-cache
-          mountPath: "/cache"
-        - name: go-pkg
-          mountPath: "/pkg"
-        name: main
-        image: golang:{{inputs.parameters.go-version}}
-        command:
-          - go
-        args:
-          - vet
-          - ./...
-        workingDir: /src
-        env:
-          - name: GOCACHE
-            value: /cache
-          - name: GOMODCACHE
-            value: /pkg
+        - "--dockerfile=/Dockerfile"
+        - "--context=dir:///src"
+        - "--destination=cr.local.ongy.net/ongy/events-frontend:{{workflow.parameters.rev}}"
   entrypoint: entry
   volumes:
   - name: git-ssh-key
     secret:
       secretName: gogs-deploy-key
-  - name: go-cache
-    nfs:
-      path: /srv/share/scratch/go/cache
-      server: mario.local.ongy.net
-      readOnly: false
-  - name: go-pkg
-    nfs:
-      path: /srv/share/scratch/go/pkg
-      server: mario.local.ongy.net
-      readOnly: false
-
   arguments:
     parameters:
       - name: rev
   serviceAccountName: event-aggregator
   ttlStrategy:
     secondsAfterCompletion: 3600
-  podGC:
-    strategy: OnPodCompletion
-
