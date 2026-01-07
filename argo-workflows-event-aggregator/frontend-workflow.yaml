@@ -9,14 +9,29 @@ spec:
         tasks:
         - name: build
           template: build
-        - name: push
+        - name: push-arm64
           dependencies: [build]
           template: push
           arguments:
+            parameters:
+            - name: arch
+              value: arm64
             artifacts:
             - name: events-admin-dist
               from: "{{tasks.build.outputs.artifacts.events-admin-dist}}"
-
+        - name: push-amd64
+          dependencies: [build]
+          template: push
+          arguments:
+            parameters:
+            - name: arch
+              value: amd64
+            artifacts:
+            - name: events-admin-dist
+              from: "{{tasks.build.outputs.artifacts.events-admin-dist}}"
+        - name: manifest-tool
+          dependencies: [push-arm64, push-amd64]
+          template: manifest-tool
     - name: build
       inputs:
         artifacts:
@@ -47,14 +62,30 @@ spec:
         artifacts:
           - name: events-admin-dist
             path: /src
+        parameters:
+          - name: arch
       container:
         name: main
         image: gcr.io/kaniko-project/executor
         args:
-        - --custom-platform=linux/amd64,linux/arm64
+        - --custom-platform=linux/{{inputs.parameters.arch}}
         - "--dockerfile=/Dockerfile"
         - "--context=dir:///src"
-        - "--destination=cr.local.ongy.net/ongy/events-frontend:{{workflow.parameters.rev}}"
+        - "--destination=cr.local.ongy.net/ongy/events-frontend:{{workflow.parameters.rev}}-{{inputs.parameters.arch}}"
+    - name: manifest-tool
+      container:
+        name: main
+        image: mplatform/manifest-tool:alpine
+        args:
+        - push
+        - from-args
+        - --platforms
+        - linux/amd64,linux/arm64
+        - --template
+        - cr.local.ongy.net/ongy/events-frontend:{{workflow.parameters.rev}}-ARCH
+        - --target
+        - cr.local.ongy.net/ongy/events-frontend:{{workflow.parameters.rev}}
+
   entrypoint: entry
   volumes:
   - name: git-ssh-key
