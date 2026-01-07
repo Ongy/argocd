@@ -19,7 +19,7 @@ spec:
             path: /src
             git:
               repo: https://git.local.ongy.net/ongy/events-frontend.git
-              revision: "{{workflow.parameters.rev}}"
+#              revision: "{{workflow.parameters.rev}}"
       container:
         name: main
         image: node:24-alpine
@@ -37,9 +37,9 @@ spec:
   - name: git-ssh-key
     secret:
       secretName: gogs-deploy-key
-  arguments:
-    parameters:
-      - name: rev
+#  arguments:
+#    parameters:
+#      - name: rev
   serviceAccountName: event-aggregator
   ttlStrategy:
     secondsAfterCompletion: 3600
