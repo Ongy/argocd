@@ -13,6 +13,14 @@ spec:
       # port to run HTTP server on
       port: "12000"
       # endpoint to listen to
-      endpoint: /push
+      endpoint: /backend
+      # HTTP request method to allow. In this case, only POST requests are accepted
+      method: POST
+    # event-source can run multiple HTTP servers. Simply define a unique port to start a new HTTP server
+    events-frontend:
+      # port to run HTTP server on
+      port: "12000"
+      # endpoint to listen to
+      endpoint: /frontend
       # HTTP request method to allow. In this case, only POST requests are accepted
       method: POST

@@ -38,3 +38,44 @@ spec:
                 dependencyName: webhook-dep
                 dataKey: body.ref
               dest: spec.arguments.parameters.0.value
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: events-frontend
+spec:
+  template:
+    serviceAccountName: argo-workflows-server
+  dependencies:
+    - name: webhook-dep
+      eventSourceName: events-aggregator
+      eventName: events-frontend
+      filters:
+        exprs:
+          - expr: type == "tag"
+            fields:
+              - name: type
+                path: body.ref_type
+  triggers:
+    - template:
+        name: argo-workflow-trigger
+        argoWorkflow:
+          operation: submit
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: events-frontend-
+              spec:
+                arguments:
+                  parameters:
+                  - name: rev
+                    value: __TO_BE_REPLACD__
+                workflowTemplateRef:
+                  name: build-events-frontend
+          parameters:
+            - src:
+                dependencyName: webhook-dep
+                dataKey: body.ref
+              dest: spec.arguments.parameters.0.value
