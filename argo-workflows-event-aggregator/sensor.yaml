@@ -48,7 +48,7 @@ spec:
     serviceAccountName: argo-workflows-server
   dependencies:
     - name: webhook-dep
-      eventSourceName: events-aggregator
+      eventSourceName: event-aggregator
       eventName: events-frontend
       filters:
         exprs:
