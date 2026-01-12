@@ -7,4 +7,4 @@ resources:
 - db.spec.yaml
 images:
 - name: ghcr.io/home-assistant/home-assistant
-  newTag: 2025.12.5
+  newTag: 2026.1.1
