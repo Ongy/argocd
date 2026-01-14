@@ -6,4 +6,4 @@ metadata:
     ongy.net/keycloak-application-type: group
     ongy.net/keycloak-application: "true"
 data:
-  callback: /oauth2/callback
+  callback: oauth2/callback
