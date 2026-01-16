@@ -7,4 +7,4 @@ resources:
 - storage.yaml
 images:
 - name: ghcr.io/music-assistant/server
-  newTag: 2.7.3
+  newTag: 2.7.4
