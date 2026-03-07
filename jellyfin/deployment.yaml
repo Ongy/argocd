@@ -84,6 +84,8 @@ spec:
       serviceAccountName: jellyfin-mpv-log-reader
       nodeSelector:
         graphics: wayland
+      securityContext:
+        supplementalGroups: [110, 992]
       volumes:
         - name: tmp-dir
           emptyDir:
@@ -129,7 +131,6 @@ spec:
             runAsNonRoot: true
             runAsUser: 1000
             runAsGroup: 1000
-            supplementalGroups: [110, 992]
             privileged: true
           name: jellyfin-mpv
           volumeMounts:
