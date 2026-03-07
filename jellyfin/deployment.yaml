@@ -123,6 +123,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          command:
+          - /bin/sh
+          - -c
+          - env XAUTHORITY=`find $XDG_RUNTIME_DIR -type f -name \*mutter-Xwaylandauth\*` /usr/local/bin/jellyfin-mpv-shim
           securityContext:
             seccompProfile:
               type: RuntimeDefault
