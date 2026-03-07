@@ -128,7 +128,8 @@ spec:
               drop: ['ALL']
             runAsNonRoot: true
             runAsUser: 1000
-            runAsGroup: 110
+            runAsGroup: 1000
+            supplementalGroups: [110, 992]
             privileged: true
           name: jellyfin-mpv
           volumeMounts:
