@@ -24,7 +24,7 @@ spec:
         - mountPath: "/psql-tls-secrets"
           name: psql-tls-secrets
         persistence:
-          storageClassName: "rook-ceph"
+          storageClassName: "rook-cephfs"
         config:
           env:
             "DB_CONNECTION": "pgsql"
