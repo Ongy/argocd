@@ -27,10 +27,10 @@ spec:
         config:
           env:
             "DB_CONNECTION": "pgsql"
-            "DB_DATABASE": "firefly-iii"
+            "DB_DATABASE": "firefly"
             "DB_HOST": psql.psql
             "DB_PORT": "5432"
-            "DB_USERNAME": "firefly-iii"
+            "DB_USERNAME": "firefly"
             
             "PGSQL_SSL_MODE": "verify-full"
             "PGSQL_SSL_CERT": "/psql-tls-secrets/..data/tls.crt"
@@ -52,7 +52,7 @@ spec:
         secretName: firefly-oauth-cookie
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: firefly-iii
+    namespace: firefly
   syncPolicy:
     syncOptions:
       - PruneLast=true
