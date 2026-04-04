@@ -9,6 +9,14 @@ metadata:
 spec:
   project: default
   sources:
+  - chart: importer
+    repoURL: https://firefly-iii.github.io/kubernetes/
+    targetRevision: 1.5.1
+    helm:
+      valuesObject:
+        fireflyiii:
+          url: http://firefly-iii:80
+          vanityUrl: https://firefly.local.ongy.net
   - chart: firefly-iii
     repoURL: https://firefly-iii.github.io/kubernetes/
     targetRevision: 1.9.12
