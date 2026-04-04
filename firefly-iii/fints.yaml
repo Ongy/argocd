@@ -22,10 +22,7 @@ spec:
             capabilities:
               drop: ['ALL']
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            runAsNonRoot: true
-            runAsUser: 33
-            runAsGroup: 33
+            readOnlyRootFilesystem: false
             privileged: false
           name: firefly-fints
 ---
