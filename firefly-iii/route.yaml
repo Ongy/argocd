@@ -40,7 +40,7 @@ spec:
     - backendRefs:
         - group: ""
           kind: Service
-          name: importer
+          name: firefly-iii-importer
           port: 80
           weight: 1
       matches:
