@@ -1,0 +1,61 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: firefly-iii
+  namespace: argocd
+  finalizers:
+    # The default behaviour is foreground cascading deletion
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+  - chart: firefly-iii
+    repoURL: https://firefly-iii.github.io/kubernetes/
+    targetRevision: 1.9.12
+    helm:
+      valuesObject:
+        config:
+          extraVolumes:
+          - name: psql-tls-secrets
+            secret:
+              defaultMode: 416
+              optional: true
+              secretName: psql-client-secret
+          extraVolumeMounts:
+          - mountPath: "/psql-tls-secrets"
+            name: psql-tls-secrets
+          env:
+            "DB_CONNECTION": "pgsql"
+            "DB_DATABASE": "firefly"
+            "DB_HOST": psql.psql
+            "DB_PORT": "5432"
+            "DB_USERNAME": "firefly"
+            
+            "PGSQL_SSL_MODE": "verify-full"
+            "PGSQL_SSL_CERT": "/psql-tls-secrets/..data/tls.crt"
+            "PGSQL_SSL_KEY": "/psql-tls-secrets/..data/tls.key"
+            "PGSQL_SSL_ROOT_CERT": "/psql-tls-secrets/..data/ca.crt"
+
+            "DEFAULT_LANGUAGE": "en_US"
+            "DEFAULT_LOCALE": "equal"
+            "TRUSTED_PROXIES": "**"
+            "TZ": "Europe/Berlin"	
+  - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    path: firefly-iii
+    targetRevision: main
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: main
+    helm:
+      valuesObject:
+        secretName: firefly-oauth-cookie
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: firefly-iii
+  syncPolicy:
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true
+      - ServerSideApply=true
+
+
