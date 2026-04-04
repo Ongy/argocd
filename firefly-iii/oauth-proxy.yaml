@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       labels:
-        app: paperless-proxy
+        app: firefly-proxy
     spec:
       affinity:
         podAffinity:
