@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
 - db.yaml
 - route.yaml
+- oauth-proxy.yaml
 images: []

@@ -44,6 +44,10 @@ spec:
             "DEFAULT_LOCALE": "equal"
             "TRUSTED_PROXIES": "**"
             "TZ": "Europe/Berlin"	
+
+            AUTHENTICATION_GUARD: remote_user_guard
+            AUTHENTICATION_GUARD_HEADER: X-Forwarded-User
+            AUTHENTICATION_GUARD_EMAIL: X-Forwarded-Email
   - repoURL: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
     path: firefly-iii
     targetRevision: main
