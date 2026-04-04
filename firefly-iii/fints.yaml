@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: firefly-fints
+  name: firefly-fints
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: firefly-fints
+  template:
+    metadata:
+      labels:
+        app: firefly-fints
+    spec:
+      containers:
+        - image: benkl/firefly-iii-fints-importer
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 33
+            runAsGroup: 33
+            privileged: false
+          name: firefly-fints
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: firefly-fints
+spec:
+  selector:
+    app: firefly-fints
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      name: http
