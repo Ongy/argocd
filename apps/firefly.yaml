@@ -14,18 +14,18 @@ spec:
     targetRevision: 1.9.12
     helm:
       valuesObject:
+        extraVolumes:
+        - name: psql-tls-secrets
+          secret:
+            defaultMode: 416
+            optional: true
+            secretName: psql-client-secret
+        extraVolumeMounts:
+        - mountPath: "/psql-tls-secrets"
+          name: psql-tls-secrets
+        persistence:
+          storageClassName: "rook-ceph"
         config:
-          extraVolumes:
-          - name: psql-tls-secrets
-            secret:
-              defaultMode: 416
-              optional: true
-              secretName: psql-client-secret
-          extraVolumeMounts:
-          - mountPath: "/psql-tls-secrets"
-            name: psql-tls-secrets
-          persistence:
-            storageClassName: "rook-ceph"
           env:
             "DB_CONNECTION": "pgsql"
             "DB_DATABASE": "firefly"
