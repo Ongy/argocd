@@ -17,7 +17,7 @@ spec:
         extraVolumes:
         - name: psql-tls-secrets
           secret:
-            defaultMode: 416
+            defaultMode: 438
             secretName: psql-client-secret
         extraVolumeMounts:
         - mountPath: "/psql-tls-secrets"
