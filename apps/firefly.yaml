@@ -24,7 +24,8 @@ spec:
           extraVolumeMounts:
           - mountPath: "/psql-tls-secrets"
             name: psql-tls-secrets
-          persistence.storageClassName: "rook-ceph"
+          persistence:
+            storageClassName: "rook-ceph"
           env:
             "DB_CONNECTION": "pgsql"
             "DB_DATABASE": "firefly"
