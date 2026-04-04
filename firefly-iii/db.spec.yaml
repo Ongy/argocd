@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: firefly
-  namespace: psql
-  labels:
-    ongy.net/psql-db: "true"
