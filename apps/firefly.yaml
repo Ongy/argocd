@@ -24,6 +24,8 @@ spec:
           extraVolumeMounts:
           - mountPath: "/psql-tls-secrets"
             name: psql-tls-secrets
+          persistence:
+            existingClaim: "firefly-iii"
           env:
             "DB_CONNECTION": "pgsql"
             "DB_DATABASE": "firefly"
