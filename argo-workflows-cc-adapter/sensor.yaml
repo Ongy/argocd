@@ -10,32 +10,25 @@ spec:
       eventSourceName: cc-adapter
       eventName: cc-adapter
   triggers:
-#    - template:
-#        name: argo-workflow-trigger
-#        argoWorkflow:
-#          operation: submit
-#          source:
-#            resource:
-#              apiVersion: argoproj.io/v1alpha1
-#              kind: Workflow
-#              metadata:
-#                generateName: git-sync-
-#              spec:
-#                arguments:
-#                  parameters:
-#                  - name: rev
-#                    value: __TO_BE_REPLACD__
-#                  - name: repo
-#                    value: __TO_BE_REPLACD__
-#                workflowTemplateRef:
-#                  name: git-sync
-#          parameters:
-#            - src:
-#                dependencyName: webhook-dep
-#                dataKey: body.ref
-#              dest: spec.arguments.parameters.0.value
-#            - src:
-#                dependencyName: webhook-dep
-#                dataKey: body.repository.clone_url
-#              dest: spec.arguments.parameters.1.value
-#
+    - template:
+        name: argo-workflow-trigger
+        argoWorkflow:
+          operation: submit
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: cc-adapter
+              spec:
+                arguments:
+                  parameters:
+                  - name: file
+                    value: __TO_BE_REPLACD__
+                workflowTemplateRef:
+                  name: cc-adapter
+          parameters:
+            - src:
+                dependencyName: webhook-dep
+                dataKey: body.Records.0.s3.object.key
+              dest: spec.arguments.parameters.0.value

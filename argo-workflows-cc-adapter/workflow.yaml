@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: cc-adapter
+spec:
+  arguments:
+    parameters:
+      - name: file
+  templates:
+    - name: entry
+      dag:
+        tasks:
+        - name: test
+          template: test
+    - name: test
+      inputs:
+        artifacts:
+        - name: file
+          path: /input
+          s3:
+            key: "{{workflow.parameters.file}}"
+            endpoint: rook-ceph-rgw-my-store.rook-ceph.svc
+            bucket: argo-uploads-ec28f1b8-f2a8-4b6a-9e84-720afbe8185b
+            accessKeySecret:
+              name: argo-uplaods
+              key: AWS_ACCESS_KEY_ID
+            secretKeySecret:
+              name: argo-uplaods
+              key: AWS_SECRET_ACCESS_KEY
+      script:
+        image: alpine
+        command: [/bin/sh]
+        source: |
+          ls -lAhtr /input
+  entrypoint: entry
+  serviceAccountName: git-sync
+  ttlStrategy:
+    secondsAfterCompletion: 3600
+  podGC:
+    strategy: OnPodCompletion
