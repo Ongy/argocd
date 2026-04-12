@@ -14,7 +14,7 @@ metadata:
   name: uploads
 spec:
   objectStoreName: my-store
-  objectStoreNamespace: argo-workflows
+  objectStoreNamespace: rook-ceph
   endpoint:
     http:
       uri: http://cc-adapter-eventsource-svc.argo-workflows.svc.cluster.local/amazon
