@@ -17,7 +17,7 @@ spec:
   objectStoreNamespace: argo-workflows
   endpoint:
     http:
-      uri: http://cc-adapter-eventsource-svc.argo-workflows.svc.cluster.local
+      uri: http://cc-adapter-eventsource-svc.argo-workflows.svc.cluster.local/amazon
       disableVerifySSL: true
 ---
 apiVersion: ceph.rook.io/v1
