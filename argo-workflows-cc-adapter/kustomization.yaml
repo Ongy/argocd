@@ -5,3 +5,4 @@ resources:
 - sensor.yaml
 - event-source.yaml
 - storage.yaml
+- s3manager.yaml

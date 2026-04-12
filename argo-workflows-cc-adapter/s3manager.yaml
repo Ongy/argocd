@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: s3manager
+  name: s3manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s3manager
+  template:
+    metadata:
+      labels:
+        app: s3manager
+    spec:
+      containers:
+        - image: docker.io/cloudlena/s3manager
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            privileged: false
+          name: s3manager
+          env:
+            - name: 1_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: argo-uploads
+                  key: AWS_ACCESS_KEY_ID
+            - name: 1_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: argo-uploads
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: 1_ENDPOINT
+              value: rook-ceph-rgw-my-store.rook-ceph.svc:80
+            - name: 1_NAME
+              value: argo-uploads
+            - name: 1_USE_SSL
+              value: "false"
+          resources:
+            limits:
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: s3manager
+spec:
+  selector:
+    app: s3manager
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+    name: http
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: s3manager
+spec:
+  hostnames:
+  - s3manager.local.ongy.net
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: gateway
+    namespace: kube-system
+    sectionName: https
+  rules:
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: s3manager
+      port: 80
+      weight: 1
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
