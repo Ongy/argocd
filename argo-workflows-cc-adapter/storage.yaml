@@ -13,7 +13,7 @@ kind: CephBucketTopic
 metadata:
   name: uploads
 spec:
-  objectStoreName: argo-uploads
+  objectStoreName: my-store
   objectStoreNamespace: argo-workflows
   endpoint:
     http:
