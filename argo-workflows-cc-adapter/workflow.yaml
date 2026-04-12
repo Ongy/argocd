@@ -18,8 +18,9 @@ spec:
         - name: file
           path: /input
           s3:
+            insecure: true
             key: "{{workflow.parameters.file}}"
-            endpoint: http://rook-ceph-rgw-my-store.rook-ceph.svc:80
+            endpoint: rook-ceph-rgw-my-store.rook-ceph.svc:80
             bucket: argo-uploads-ec28f1b8-f2a8-4b6a-9e84-720afbe8185b
             accessKeySecret:
               name: argo-uploads
