@@ -1,0 +1,37 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: argo-uploads
+  namespace: argo-workflows
+  labels:
+    bucket-notification-uploads: uploads
+spec:
+  generateBucketName: argo-uploads
+  storageClassName: rook-ceph-bucket
+---
+apiVersion: ceph.rook.io/v1
+kind: CephBucketTopic
+metadata:
+  name: uploads
+spec:
+  objectStoreName: argo-uploads
+  objectStoreNamespace: argo-workflows
+  endpoint:
+    http:
+      uri: http://cc-adapter-eventsource-svc.argo-workflows.svc.cluster.local
+      disableVerifySSL: true
+---
+apiVersion: ceph.rook.io/v1
+kind: CephBucketNotification
+metadata:
+  name: uploads
+spec:
+  topic: uploads
+  filter:
+    keyFilters:
+      # match objects with keys that start with "amazoncc"
+      - name: prefix
+        value: amazoncc
+  events: [8]
+    - s3:ObjectCreated:Put
+    - s3:ObjectCreated:Copy

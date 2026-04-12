@@ -7,11 +7,3 @@ spec:
   generateBucketName: argo-workflow-artifacts
   storageClassName: rook-ceph-bucket
 ---
-apiVersion: objectbucket.io/v1alpha1
-kind: ObjectBucketClaim
-metadata:
-  name: argo-uploads
-  namespace: argo-workflows
-spec:
-  generateBucketName: argo-uploads
-  storageClassName: rook-ceph-bucket
