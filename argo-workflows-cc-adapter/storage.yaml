@@ -26,11 +26,11 @@ metadata:
   name: uploads
 spec:
   topic: uploads
-  filter:
-    keyFilters:
-      # match objects with keys that start with "amazoncc"
-      - name: prefix
-        value: amazoncc
+#  filter:
+#    keyFilters:
+#      # match objects with keys that start with "amazoncc"
+#      - name: prefix
+#        value: amazoncc
   events:
     - s3:ObjectCreated:Put
     - s3:ObjectCreated:Copy
