@@ -28,12 +28,16 @@ spec:
             secretKeySecret:
               name: argo-uploads
               key: AWS_SECRET_ACCESS_KEY
+      outputs:
+        artifacts:
+        - name: csv
+          path: /out.csv
       script:
         image: docker.io/sanrep/gnumeric
         command: 
         - ssconvert
         - /input.xls
-        - /dev/null
+        - /out.csv
   entrypoint: entry
   serviceAccountName: git-sync
   ttlStrategy:
