@@ -16,7 +16,7 @@ spec:
       inputs:
         artifacts:
         - name: file
-          path: /input
+          path: /input.xls
           s3:
             insecure: true
             key: "{{workflow.parameters.file}}"
@@ -29,10 +29,11 @@ spec:
               name: argo-uploads
               key: AWS_SECRET_ACCESS_KEY
       script:
-        image: alpine
-        command: [/bin/sh]
-        source: |
-          ls -lAhtr /input
+        image: docker.io/sanrep/gnumeric
+        command: 
+        - ssconvert
+        - /input.xls
+        - /dev/null
   entrypoint: entry
   serviceAccountName: git-sync
   ttlStrategy:
