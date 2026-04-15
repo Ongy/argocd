@@ -10,9 +10,16 @@ spec:
     - name: entry
       dag:
         tasks:
-        - name: test
-          template: test
-    - name: test
+        - name: xls2csv
+          template: xls2csv
+        - name: cleanup
+          template: cleanup-csv
+          dependencies: [xls2csv]
+          arguments:
+            artifacts:
+            - name: in
+              value: "{{tasks.xls2csv.outputs.csv}}"
+    - name: xls2csv
       inputs:
         artifacts:
         - name: file
@@ -38,6 +45,21 @@ spec:
         - ssconvert
         - /input.xls
         - /out.csv
+    - name: cleanup-csv
+      inputs:
+        artifacts:
+        - name: in
+          path: /input.csv
+      outputs:
+        artifacts:
+        - name: out
+          path: /out.csv
+      script:
+        image: alpine
+        command: [sh]
+        workingDir: /
+        source: |
+          </input.csv tac | sed '1,/^,,,,,,,$/!d' | grep -v ,,,,,,, | tac > /out.csv
   entrypoint: entry
   serviceAccountName: git-sync
   ttlStrategy:
