@@ -18,7 +18,7 @@ spec:
           arguments:
             artifacts:
             - name: in
-              value: "{{tasks.xls2csv.outputs.csv}}"
+              from: "{{tasks.xls2csv.outputs.artifacts.csv}}"
     - name: xls2csv
       inputs:
         artifacts:
