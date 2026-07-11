@@ -21,9 +21,17 @@ spec:
       volumes:
         - name: psql-tls-secrets
           secret:
+            secretName: psql-client-secret
             defaultMode: 416
             optional: true
-            secretName: psql-client-secret
+            items:
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
+                mode: 256
+              - key: ca.crt
+                path: ca.crt
         - name: tmp-dir
           emptyDir:
             medium: Memory
