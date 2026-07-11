@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: stork-builder
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: stork-builder
+    targetRevision: main
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argo-workflows
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true

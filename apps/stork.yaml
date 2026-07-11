@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: stork
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: stork
+    targetRevision: main
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: stork
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true

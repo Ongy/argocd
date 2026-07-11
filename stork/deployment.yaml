@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: stork
+  name: stork
+  namespace: stork
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stork
+  template:
+    metadata:
+      labels:
+        app: stork
+    spec:
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: "OnRootMismatch"
+      volumes:
+        - name: psql-tls-secrets
+          secret:
+            defaultMode: 416
+            optional: true
+            secretName: psql-client-secret
+        - name: tmp-dir
+          emptyDir:
+            medium: Memory
+            sizeLimit: 500Mi
+        - name: stork-lib-dir
+          emptyDir:
+            medium: Memory
+            sizeLimit: 100Mi
+        - name: run-dir
+          emptyDir:
+            medium: Memory
+            sizeLimit: 100Mi
+      containers:
+        - name: stork-server
+          image: cr.local.ongy.net/stork:latest
+          imagePullPolicy: Always
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            privileged: false
+          env:
+            - name: STORK_DATABASE_HOST
+              value: psql.psql
+            - name: STORK_DATABASE_PORT
+              value: "5432"
+            - name: STORK_DATABASE_NAME
+              value: stork
+            - name: STORK_DATABASE_USER_NAME
+              value: stork
+            - name: STORK_DATABASE_PASSWORD
+              value: ""
+            - name: STORK_DATABASE_SSLMODE
+              value: verify-full
+            - name: STORK_DATABASE_SSLCERT
+              value: /psql-tls-secrets/tls.crt
+            - name: STORK_DATABASE_SSLKEY
+              value: /psql-tls-secrets/tls.key
+            - name: STORK_DATABASE_SSLROOTCERT
+              value: /psql-tls-secrets/ca.crt
+            - name: STORK_REST_HOST
+              value: 0.0.0.0
+            - name: STORK_REST_PORT
+              value: "8080"
+            - name: STORK_REST_STATIC_FILES_DIR
+              value: /usr/share/stork/www
+          volumeMounts:
+            - mountPath: "/psql-tls-secrets"
+              name: psql-tls-secrets
+            - mountPath: "/tmp"
+              name: tmp-dir
+            - mountPath: "/var/lib/stork"
+              name: stork-lib-dir
+            - mountPath: "/run"
+              name: run-dir
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
