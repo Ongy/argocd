@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stork
+  namespace: stork
+  labels:
+    ongy.net/keycloak-application-type: group
+    ongy.net/keycloak-application: "true"
+data:
+  callback: oidc/callback
