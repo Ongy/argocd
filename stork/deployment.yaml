@@ -19,17 +19,15 @@ spec:
         fsGroup: 1001
         fsGroupChangePolicy: "OnRootMismatch"
       volumes:
-        - name: psql-tls-secrets
+        - name: psql-tls-raw
           secret:
             secretName: psql-client-secret
-            defaultMode: 256
-            items:
-              - key: tls.crt
-                path: tls.crt
-              - key: tls.key
-                path: tls.key
-              - key: ca.crt
-                path: ca.crt
+            defaultMode: 416
+            optional: true
+        - name: psql-tls-shared
+          emptyDir:
+            medium: Memory
+            sizeLimit: 10Mi
         - name: tmp-dir
           emptyDir:
             medium: Memory
@@ -71,11 +69,11 @@ spec:
             - name: STORK_DATABASE_SSLMODE
               value: verify-full
             - name: STORK_DATABASE_SSLCERT
-              value: /psql-tls-secrets/..data/tls.crt
+              value: /psql-tls-secrets/tls.crt
             - name: STORK_DATABASE_SSLKEY
-              value: /psql-tls-secrets/..data/tls.key
+              value: /psql-tls-secrets/tls.key
             - name: STORK_DATABASE_SSLROOTCERT
-              value: /psql-tls-secrets/..data/ca.crt
+              value: /psql-tls-secrets/ca.crt
             - name: STORK_REST_HOST
               value: 0.0.0.0
             - name: STORK_REST_PORT
@@ -84,7 +82,7 @@ spec:
               value: /usr/share/stork/www
           volumeMounts:
             - mountPath: "/psql-tls-secrets"
-              name: psql-tls-secrets
+              name: psql-tls-shared
             - mountPath: "/tmp"
               name: tmp-dir
             - mountPath: "/var/lib/stork"
@@ -95,3 +93,49 @@ spec:
             httpGet:
               path: /
               port: 8080
+        - name: cert-syncer
+          image: alpine:latest
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            privileged: false
+          command:
+            - sh
+            - -c
+            - |
+              RAW_DIR="/psql-tls-raw"
+              SHARED_DIR="/psql-tls-shared"
+
+              copy_files() {
+                echo "Copying certificates..."
+                cp -f "$RAW_DIR/tls.crt" "$SHARED_DIR/tls.crt"
+                cp -f "$RAW_DIR/tls.key" "$SHARED_DIR/tls.key"
+                cp -f "$RAW_DIR/ca.crt" "$SHARED_DIR/ca.crt"
+                chmod 600 "$SHARED_DIR/tls.key"
+                chmod 644 "$SHARED_DIR/tls.crt" "$SHARED_DIR/ca.crt"
+              }
+
+              copy_files
+
+              while true; do
+                sleep 3600
+                if [ "$RAW_DIR/tls.key" -nt "$SHARED_DIR/tls.key" ] || \
+                   [ "$RAW_DIR/tls.crt" -nt "$SHARED_DIR/tls.crt" ] || \
+                   [ "$RAW_DIR/ca.crt" -nt "$SHARED_DIR/ca.crt" ]; then
+                  echo "Newer certificate files detected, updating..."
+                  copy_files
+                fi
+              done
+          volumeMounts:
+            - mountPath: /psql-tls-raw
+              name: psql-tls-raw
+              readOnly: true
+            - mountPath: /psql-tls-shared
+              name: psql-tls-shared
