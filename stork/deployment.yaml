@@ -71,11 +71,11 @@ spec:
             - name: STORK_DATABASE_SSLMODE
               value: verify-full
             - name: STORK_DATABASE_SSLCERT
-              value: /psql-tls-secrets/tls.crt
+              value: /psql-tls-secrets/..data/tls.crt
             - name: STORK_DATABASE_SSLKEY
-              value: /psql-tls-secrets/tls.key
+              value: /psql-tls-secrets/..data/tls.key
             - name: STORK_DATABASE_SSLROOTCERT
-              value: /psql-tls-secrets/ca.crt
+              value: /psql-tls-secrets/..data/ca.crt
             - name: STORK_REST_HOST
               value: 0.0.0.0
             - name: STORK_REST_PORT
