@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: container-registry-ui
+  name: container-registry-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: container-registry-ui
+  template:
+    metadata:
+      labels:
+        app: container-registry-ui
+    spec:
+      containers:
+        - image: joxit/docker-registry-ui:2.6.0
+          name: ui
+          ports:
+            - containerPort: 80
+              name: http
+          env:
+            - name: REGISTRY_URL
+              value: "https://cr.local.ongy.net"
+            - name: SINGLE_REGISTRY
+              value: "true"
+            - name: DELETE_IMAGES
+              value: "true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: container-registry-ui
+spec:
+  selector:
+    app: container-registry-ui
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      name: http
