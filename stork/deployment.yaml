@@ -22,14 +22,12 @@ spec:
         - name: psql-tls-secrets
           secret:
             secretName: psql-client-secret
-            defaultMode: 416
-            optional: true
+            defaultMode: 256
             items:
               - key: tls.crt
                 path: tls.crt
               - key: tls.key
                 path: tls.key
-                mode: 256
               - key: ca.crt
                 path: ca.crt
         - name: tmp-dir
