@@ -27,7 +27,7 @@ spec:
         fsGroup: 70
         fsGroupChangePolicy: "OnRootMismatch"
       containers:
-        - image: mongo:8-noble
+        - image: mongo:8.0-noble
           name: mongodb
           volumeMounts:
           - name: data
