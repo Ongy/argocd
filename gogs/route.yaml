@@ -39,5 +39,5 @@ spec:
     - group: ""
       kind: Service
       name: gogs
-      port: 7022
+      port: 22
       weight: 1
