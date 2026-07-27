@@ -22,3 +22,22 @@ spec:
     - path:
         type: PathPrefix
         value: /
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: TCPRoute
+metadata:
+  name: gogs-ssh
+spec:
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: gateway
+    namespace: kube-system
+    sectionName: ssh-alt
+  rules:
+  - backendRefs:
+    - group: ""
+      kind: Service
+      name: gogs
+      port: 7022
+      weight: 1
