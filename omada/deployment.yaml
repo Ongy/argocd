@@ -31,7 +31,7 @@ spec:
           server: mario.local.ongy.net
           readOnly: false
       containers:
-        - image: mbentley/omada-controller:5.15
+        - image: mbentley/omada-controller:6.2
           securityContext:
             seccompProfile:
               type: RuntimeDefault
