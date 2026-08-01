@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: karate
+  name: karate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: karate
+  template:
+    metadata:
+      labels:
+        app: karate
+    spec:
+      containers:
+        - image: cr.local.ongy.net/trainer
+          name: trainer
+          ports:
+            - containerPort: 80
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http

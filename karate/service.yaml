@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: karate
+spec:
+  selector:
+    app: karate
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      name: http

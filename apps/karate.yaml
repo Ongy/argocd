@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: karate
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: trainer=cr.local.ongy.net/trainer
+    argocd-image-updater.argoproj.io/trainer.update-strategy: semver
+    argocd-image-updater.argoproj.io/trainer.allow-tags: regexp:^[0-9]+\.[0-9]+\.[0-9]+$
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/git-repository: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    argocd-image-updater.argoproj.io/write-back-target: kustomization:/karate
+spec:
+  project: default
+  source:
+    repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: karate
+    targetRevision: main
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: karate
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true
