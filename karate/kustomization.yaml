@@ -1,9 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 resources:
 - deployment.yaml
 - route.yaml
 - service.yaml
-
-images: []
+images: [{name: cr.local.ongy.net/trainer, newTag: 0.0.2}]
