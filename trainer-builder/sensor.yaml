@@ -11,7 +11,7 @@ spec:
       eventName: trainer-builder-webhook
       filters:
         exprs:
-          - expr: ref == "refs/heads/master" || ref == "refs/heads/main"
+          - expr: ref =~ "^refs/tags/v?[0-9]+\\.[0-9]+\\.[0-9]+$"
             fields:
               - name: ref
                 path: body.ref
