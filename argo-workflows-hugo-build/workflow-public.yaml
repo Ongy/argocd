@@ -70,7 +70,7 @@ spec:
           - --enableGitInfo
           - --buildFuture
           - --ignoreCache
-          - --baseURL=https://local.ongy.net
+          - --baseURL=https://blog.ongy.net
         workingDir: /src
   entrypoint: entry
   serviceAccountName: hugo-build
