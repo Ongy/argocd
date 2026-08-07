@@ -34,4 +34,4 @@ spec:
         name: ssh-proxy
         args:
         - TCP6-listen:8095,reuseaddr,fork
-        - TCP:musicassistant:8095
+        - TCP:music-assistant:8095
