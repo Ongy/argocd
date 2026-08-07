@@ -5,6 +5,7 @@ resources:
 - network.yaml
 - route.yaml
 - storage.yaml
+- proxy.yaml
 images:
 - name: ghcr.io/music-assistant/server
   newTag: 2.9.11

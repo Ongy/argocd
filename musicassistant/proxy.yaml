@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: musicassistant-proxy
+  name: musicassistant-proxy
+spec:
+  selector:
+    matchLabels:
+      app: musicassistant-proxy
+  template:
+    metadata:
+      labels:
+        app: musicassistant-proxy
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - toad
+                      - toadette
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
+      containers:
+      - image: alpine/socat
+        name: ssh-proxy
+        args:
+        - TCP6-listen:8095,reuseaddr,fork
+        - TCP:musicassistant:8095
