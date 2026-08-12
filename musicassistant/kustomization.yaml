@@ -8,4 +8,4 @@ resources:
 - proxy.yaml
 images:
 - name: ghcr.io/music-assistant/server
-  newTag: 2.9.12
+  newTag: 2.9.13
