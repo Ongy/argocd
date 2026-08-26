@@ -6,3 +6,4 @@ resources:
 - deployment.yaml
 - network.yaml
 - certificate.yaml
+- ca-configmap.yaml
