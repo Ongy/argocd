@@ -3,10 +3,14 @@ kind: Certificate
 metadata:
   name: omada-cert
 spec:
-  commonName: 'omada.local.ongy.net'
+  commonName: omada.omada.svc.cluster.local
   dnsNames:
-  - 'omada.local.ongy.net'
+  - omada.omada.svc.cluster.local
+  - omada.omada.svc
+  - omada.omada
+  - omada
   issuerRef:
     kind: ClusterIssuer
-    name: luadns-lexicon
+    name: selfsigned-issuer
   secretName: omada-tls
+
