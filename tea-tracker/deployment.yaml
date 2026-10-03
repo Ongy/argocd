@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tea-tracker
+  labels:
+    app: tea-tracker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tea-tracker
+  template:
+    metadata:
+      labels:
+        app: tea-tracker
+    spec:
+      volumes:
+      - name: data
+        nfs:
+          path: /srv/share/backed/appdata/tea-tracker/
+          server: mario.local.ongy.net
+          readOnly: false
+      containers:
+      - name: tea-tracker
+        image: cr.local.ongy.net/ongy/tea-tracker:v0.0.1
+        ports:
+        - containerPort: 3000
+        env:
+        - name: TEA_TRACKER_DATA
+          value: /data
+        volumeMounts:
+        - name: data
+          mountPath: /data
