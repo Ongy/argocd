@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: tea-tracker
+  name: teatracker
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -9,11 +9,11 @@ spec:
   project: default
   source:
     repoURL: https://git.local.ongy.net/ongy/argocd.git
-    path: tea-tracker
+    path: teatracker
     targetRevision: main
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: tea-tracker
+    namespace: teatracker
   syncPolicy:
     automated:
       prune: true

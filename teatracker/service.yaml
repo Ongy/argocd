@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: tea-tracker
+  name: teatracker
 spec:
   selector:
-    app: tea-tracker
+    app: teatracker
   ports:
   - name: http
     port: 80

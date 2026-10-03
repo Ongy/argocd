@@ -1,30 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tea-tracker
+  name: teatracker
   labels:
-    app: tea-tracker
+    app: teatracker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tea-tracker
+      app: teatracker
   template:
     metadata:
       labels:
-        app: tea-tracker
+        app: teatracker
     spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: tea-tracker-data
+          claimName: teatracker-data
       - name: psql-tls-secrets
         secret:
           defaultMode: 416
           optional: true
           secretName: psql-client-secret
       containers:
-      - name: tea-tracker
+      - name: teatracker
         image: cr.local.ongy.net/ongy/tea-tracker:v0.0.3
         ports:
         - containerPort: 3000
@@ -32,7 +32,7 @@ spec:
         - name: TEA_TRACKER_DATA
           value: /data
         - name: TEA_TRACKER_DATABASE_URL
-          value: postgresql://tea-tracker:@psql.psql/tea-tracker?sslmode=verify-full&sslcert=%2Fpsql-tls-secrets%2Ftls.crt&sslkey=%2Fpsql-tls-secrets%2Ftls.key&sslrootcert=%2Fpsql-tls-secrets%2Fca.crt
+          value: postgresql://teatracker:@psql.psql/teatracker?sslmode=verify-full&sslcert=%2Fpsql-tls-secrets%2Ftls.crt&sslkey=%2Fpsql-tls-secrets%2Ftls.key&sslrootcert=%2Fpsql-tls-secrets%2Fca.crt
         volumeMounts:
         - name: data
           mountPath: /data

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: tea-tracker
+  name: teatracker
   namespace: psql
   labels:
     ongy.net/psql-db: "true"
@@ -12,7 +12,7 @@ metadata:
   name: psql-client-secret
 spec:
   duration: 8760h0m0s # 1 years
-  commonName: tea-tracker
+  commonName: teatracker
   secretName: psql-client-secret
   privateKey:
     algorithm: ECDSA

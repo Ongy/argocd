@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: tea-tracker-data
+  name: teatracker-data
 spec:
   accessModes:
   - ReadWriteOnce
