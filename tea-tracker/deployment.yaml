@@ -20,6 +20,11 @@ spec:
           path: /srv/share/backed/appdata/tea-tracker/
           server: mario.local.ongy.net
           readOnly: false
+      - name: psql-tls-secrets
+        secret:
+          defaultMode: 416
+          optional: true
+          secretName: psql-client-secret
       containers:
       - name: tea-tracker
         image: cr.local.ongy.net/ongy/tea-tracker:v0.0.1
@@ -28,6 +33,10 @@ spec:
         env:
         - name: TEA_TRACKER_DATA
           value: /data
+        - name: TEA_TRACKER_DATABASE_URL
+          value: postgresql://tea-tracker:@psql.psql/tea-tracker?sslmode=verify-full&sslcert=%2Fpsql-tls-secrets%2Ftls.crt&sslkey=%2Fpsql-tls-secrets%2Ftls.key&sslrootcert=%2Fpsql-tls-secrets%2Fca.crt
         volumeMounts:
         - name: data
           mountPath: /data
+        - mountPath: "/psql-tls-secrets"
+          name: psql-tls-secrets
