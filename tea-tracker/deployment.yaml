@@ -16,10 +16,8 @@ spec:
     spec:
       volumes:
       - name: data
-        nfs:
-          path: /srv/share/backed/appdata/tea-tracker/
-          server: mario.local.ongy.net
-          readOnly: false
+        persistentVolumeClaim:
+          claimName: tea-tracker-data
       - name: psql-tls-secrets
         secret:
           defaultMode: 416
