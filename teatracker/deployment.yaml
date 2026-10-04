@@ -27,7 +27,7 @@ spec:
           secretName: psql-client-secret
       containers:
       - name: teatracker
-        image: cr.local.ongy.net/ongy/tea-tracker:v0.0.4
+        image: cr.local.ongy.net/ongy/tea-tracker:v0.0.7
         ports:
         - containerPort: 3000
         livenessProbe:
