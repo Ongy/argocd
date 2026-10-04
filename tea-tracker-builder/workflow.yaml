@@ -1,0 +1,152 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: tea-tracker-builder
+spec:
+  arguments:
+    parameters:
+      - name: rev
+        value: main
+      - name: repo
+        value: https://git.local.ongy.net/ongy/tea-tracker.git
+  templates:
+    - name: entry
+      dag:
+        tasks:
+        - name: cleanup
+          template: cleanup-rev
+          arguments:
+            parameters:
+            - name: rev
+              value: "{{workflow.parameters.rev}}"
+
+        - name: build-amd64
+          dependencies: [cleanup]
+          template: buildah-build
+          arguments:
+            parameters:
+            - name: platform
+              value: amd64
+            - name: rev
+              value: "{{tasks.cleanup.outputs.parameters.rev}}"
+
+        - name: build-arm64
+          dependencies: [cleanup]
+          template: buildah-build
+          arguments:
+            parameters:
+            - name: platform
+              value: arm64
+            - name: rev
+              value: "{{tasks.cleanup.outputs.parameters.rev}}"
+
+        - name: combine
+          dependencies: [build-amd64, build-arm64]
+          template: combine-images
+          arguments:
+            parameters:
+            - name: rev
+              value: "{{tasks.cleanup.outputs.parameters.rev}}"
+            artifacts:
+            - name: amd64-image
+              from: "{{tasks.build-amd64.outputs.artifacts.container-image}}"
+            - name: arm64-image
+              from: "{{tasks.build-arm64.outputs.artifacts.container-image}}"
+
+    - name: cleanup-rev
+      inputs:
+        parameters:
+        - name: rev
+      outputs:
+        parameters:
+        - name: rev
+          valueFrom:
+            path: /out/rev
+      script:
+        image: alpine
+        command: [/bin/sh]
+        source: |
+          mkdir -p /out
+          echo "{{inputs.parameters.rev}}" | sed -e 's#refs/tags/##' | sed -e 's#refs/heads/##' > /out/rev
+
+    - name: combine-images
+      inputs:
+        parameters:
+        - name: rev
+        artifacts:
+          - name: amd64-image
+            path: /images/amd64
+          - name: arm64-image
+            path: /images/arm64
+      container:
+        name: buildah
+        image: quay.io/buildah/stable:latest
+        workingDir: /
+        securityContext:
+          privileged: true
+        command:
+          - sh
+        args:
+          - -x
+          - -eu
+          - -c
+          - |
+            mkdir -p /out
+            TAG="cr.local.ongy.net/ongy/tea-tracker:{{inputs.parameters.rev}}"
+            LATEST="cr.local.ongy.net/ongy/tea-tracker:latest"
+            buildah manifest create "${TAG}"
+
+            for arch in /images/*; do
+              IMAGE="$(buildah pull "oci-archive:${arch}" | tail -n 1)"
+              buildah manifest add "${TAG}" "${IMAGE}"
+            done
+
+            buildah manifest push "${TAG}" docker://${TAG}
+            buildah manifest push "${TAG}" docker://${LATEST}
+
+    - name: buildah-build
+      inputs:
+        parameters:
+          - name: platform
+          - name: rev
+        artifacts:
+          - name: source
+            path: /src
+            git:
+              repo: "{{workflow.parameters.repo}}"
+              revision: "{{inputs.parameters.rev}}"
+      outputs:
+        artifacts:
+          - name: container-image
+            path: /out/image
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - "{{ inputs.parameters.platform }}"
+      container:
+        name: buildah
+        image: quay.io/buildah/stable:latest
+        workingDir: /src
+        securityContext:
+          privileged: true
+        command:
+          - sh
+        args:
+          - -x
+          - -eu
+          - -c
+          - |
+            mkdir -p /out
+            buildah bud --platform linux/{{inputs.parameters.platform}} -f Dockerfile --tag cr.local.ongy.net/ongy/tea-tracker:{{inputs.parameters.platform}} .
+            buildah push cr.local.ongy.net/ongy/tea-tracker:{{inputs.parameters.platform}} oci-archive:/out/image
+  entrypoint: entry
+  serviceAccountName: tea-tracker-builder
+  ttlStrategy:
+    secondsAfterCompletion: 3600
+  podGC:
+    strategy: OnPodCompletion

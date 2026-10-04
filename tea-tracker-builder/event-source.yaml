@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: tea-tracker-builder-webhook
+spec:
+  service:
+    ports:
+      - port: 12000
+        targetPort: 12000
+  webhook:
+    tea-tracker-builder-webhook:
+      port: "12000"
+      endpoint: /tea-tracker
+      method: POST
