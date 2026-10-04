@@ -14,6 +14,8 @@ spec:
       labels:
         app: teatracker
     spec:
+      strategy:
+        type: Recreate
       volumes:
       - name: data
         persistentVolumeClaim:
