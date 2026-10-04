@@ -1,9 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 resources:
 - db.yaml
 - deployment.yaml
 - service.yaml
 - route.yaml
 - storage.yaml
+images:
+- name: cr.local.ongy.net/ongy/tea-tracker
+  newTag: v0.0.6
