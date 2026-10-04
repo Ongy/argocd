@@ -3,6 +3,13 @@ kind: Application
 metadata:
   name: teatracker
   namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: teatracker=cr.local.ongy.net/ongy/tea-tracker
+    argocd-image-updater.argoproj.io/teatracker.update-strategy: semver
+    argocd-image-updater.argoproj.io/teatracker.allow-tags: regexp:^v[0-9]+\.[0-9]+\.[0-9]+$
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/git-repository: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
+    argocd-image-updater.argoproj.io/write-back-target: kustomization:/teatracker
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
