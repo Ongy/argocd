@@ -8,4 +8,4 @@ resources:
 - storage.yaml
 images:
 - name: cr.local.ongy.net/ongy/tea-tracker
-  newTag: v0.0.6
+  newTag: v0.0.7
