@@ -9,13 +9,13 @@ spec:
   selector:
     matchLabels:
       app: teatracker
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
         app: teatracker
     spec:
-      strategy:
-        type: Recreate
       volumes:
       - name: data
         persistentVolumeClaim:
