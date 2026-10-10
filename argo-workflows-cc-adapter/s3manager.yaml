@@ -29,12 +29,12 @@ spec:
             privileged: false
           name: s3manager
           env:
-            - name: 1_ACCESS_KEY_ID
+            - name: ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
                   name: argo-uploads
                   key: AWS_ACCESS_KEY_ID
-            - name: 1_SECRET_ACCESS_KEY
+            - name: SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   name: argo-uploads
