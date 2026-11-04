@@ -93,10 +93,25 @@ spec:
             drop:
             - ALL
         command:
-        - python
-        - manage.py
-        - migrate
-        - --noinput
+        - sh
+        - -c
+        - |
+          set -e
+          python manage.py migrate --noinput
+          python manage.py shell -c "
+          from django.contrib.sites.models import Site
+          from app.models import Syndicate
+          site = Site.objects.first()
+          if site:
+              Site.objects.exclude(pk=site.pk).delete()
+              site.domain = 'obico.local.ongy.net'
+              site.name = 'Obico'
+              site.save()
+          else:
+              site = Site.objects.create(domain='obico.local.ongy.net', name='Obico')
+          for s in Syndicate.objects.all():
+              s.sites.add(site)
+          "
         envFrom:
         - configMapRef:
             name: obico-env
