@@ -9,5 +9,5 @@ resources:
 images:
 - name: ghcr.io/thespaghettidetective/obico-web
   newTag: 2026.10.2
-- name: ghcr.io/thespaghettidetective/obico-ml-api-cpu
-  newTag: 2026.10.2
+- name: cr.local.ongy.net/obico-ml-api
+  newTag: rk3588

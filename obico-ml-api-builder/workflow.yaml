@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: obico-ml-api-builder
+spec:
+  schedule: "0 1 * * 0"
+  concurrencyPolicy: "Replace"
+  startingDeadlineSeconds: 0
+  workflowSpec:
+    entrypoint: build-rk3588
+    serviceAccountName: argo-workflow
+    templates:
+      - name: build-rk3588
+        inputs:
+          artifacts:
+            - name: source
+              path: /src
+              git:
+                repo: https://github.com/TheSpaghettiDetective/obico-server.git
+                revision: release
+                depth: 1
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: kubernetes.io/arch
+                      operator: In
+                      values:
+                        - arm64
+        container:
+          name: buildah
+          image: quay.io/buildah/stable:latest
+          workingDir: /src
+          securityContext:
+            privileged: true # For fuse access
+          command:
+            - sh
+          args:
+            - -x
+            - -eu
+            - -c
+            - |
+              DATE_TAG="cr.local.ongy.net/obico-ml-api:$(date -u --rfc-3339=date)"
+              RK3588_TAG="cr.local.ongy.net/obico-ml-api:rk3588"
+
+              buildah bud --platform linux/arm64 \
+                -f ml_api/Dockerfile.base_rk3588 \
+                --tag docker.io/thespaghettidetective/ml_api_base:1.4-rk3588 \
+                ml_api
+
+              buildah bud --platform linux/arm64 \
+                --pull=never \
+                --build-arg IMAGE_TAG_SUFFIX=-rk3588 \
+                -f ml_api/Dockerfile \
+                --tag "${RK3588_TAG}" \
+                ml_api
+
+              buildah push "${RK3588_TAG}" "docker://${DATE_TAG}"
+              buildah push "${RK3588_TAG}" "docker://${RK3588_TAG}"

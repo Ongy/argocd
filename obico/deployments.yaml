@@ -247,9 +247,19 @@ spec:
       nodeSelector:
         kubernetes.io/hostname: birdo
       automountServiceAccountToken: false
+      volumes:
+      - name: dev-dri
+        hostPath:
+          path: /dev/dri
+      - name: dev-mpp
+        hostPath:
+          path: /dev/mpp_service
       containers:
       - name: ml-api
-        image: ghcr.io/thespaghettidetective/obico-ml-api-cpu:2026.10.2
+        image: cr.local.ongy.net/obico-ml-api:rk3588
+        imagePullPolicy: Always
+        securityContext:
+          privileged: true
         command:
         - gunicorn
         - --bind=0.0.0.0:3333
@@ -260,6 +270,11 @@ spec:
         env:
         - name: FLASK_APP
           value: server.py
+        volumeMounts:
+        - name: dev-dri
+          mountPath: /dev/dri
+        - name: dev-mpp
+          mountPath: /dev/mpp_service
         ports:
         - name: http
           containerPort: 3333

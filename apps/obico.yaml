@@ -4,11 +4,9 @@ metadata:
   name: obico
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: web=ghcr.io/thespaghettidetective/obico-web,ml-api=ghcr.io/thespaghettidetective/obico-ml-api-cpu
+    argocd-image-updater.argoproj.io/image-list: web=ghcr.io/thespaghettidetective/obico-web
     argocd-image-updater.argoproj.io/web.update-strategy: semver
     argocd-image-updater.argoproj.io/web.allow-tags: regexp:^[0-9]+\.[0-9]+\.[0-9]+$
-    argocd-image-updater.argoproj.io/ml-api.update-strategy: semver
-    argocd-image-updater.argoproj.io/ml-api.allow-tags: regexp:^[0-9]+\.[0-9]+\.[0-9]+$
 
     argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/git-repository: ssh://git@git.local.ongy.net:7022/ongy/argocd.git
