@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: obico-web
+spec:
+  selector:
+    app: obico-web
+  ports:
+  - name: http
+    protocol: TCP
+    port: 3334
+    targetPort: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: obico-ml-api
+spec:
+  selector:
+    app: obico-ml-api
+  ports:
+  - name: http
+    protocol: TCP
+    port: 3333
+    targetPort: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: obico-redis
+spec:
+  selector:
+    app: obico-redis
+  ports:
+  - name: redis
+    protocol: TCP
+    port: 6379
+    targetPort: redis
