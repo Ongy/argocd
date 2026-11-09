@@ -27,13 +27,19 @@ spec:
         - /opt/hermes/.venv/bin/python
         - -c
         - |
-          import os, pwd, yaml
+          import os, pwd, shutil, sys
+          sys.path.insert(0, "/opt/hermes")
+          import hermes_yaml as yaml
           path = "/opt/data/config.yaml"
+          example = "/opt/hermes/cli-config.yaml.example"
           os.makedirs("/opt/data", exist_ok=True)
+          if not os.path.exists(path) and os.path.exists(example):
+              shutil.copy2(example, path)
+          ryaml = yaml.roundtrip_yaml()
           cfg = {}
           if os.path.exists(path):
-              with open(path, "r") as f:
-                  cfg = yaml.safe_load(f) or {}
+              with open(path, "r", encoding="utf-8") as f:
+                  cfg = ryaml.load(f) or {}
           webapp = cfg.setdefault("webapp", {})
           webapp["enabled"] = True
           webapp["host"] = "0.0.0.0"
@@ -46,8 +52,8 @@ spec:
               "172.16.0.0/12",
               "192.168.0.0/16",
           ]
-          with open(path, "w") as f:
-              yaml.safe_dump(cfg, f, default_flow_style=False)
+          with open(path, "w", encoding="utf-8") as f:
+              ryaml.dump(cfg, f)
           try:
               pw = pwd.getpwnam("hermes")
               os.chown("/opt/data", pw.pw_uid, pw.pw_gid)
