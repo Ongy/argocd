@@ -54,27 +54,25 @@ spec:
           ]
           with open(path, "w", encoding="utf-8") as f:
               ryaml.dump(cfg, f)
-          site_dir = "/opt/data/site"
-          os.makedirs(site_dir, exist_ok=True)
-          sitecustomize_path = os.path.join(site_dir, "sitecustomize.py")
-          with open(sitecustomize_path, "w", encoding="utf-8") as f:
+          bin_dir = "/opt/data/bin"
+          os.makedirs(bin_dir, exist_ok=True)
+          wrapper_path = os.path.join(bin_dir, "hermes")
+          with open(wrapper_path, "w", encoding="utf-8") as f:
               f.write(
-                  "import os\n"
-                  "try:\n"
-                  "    with open('/proc/self/cmdline', 'rb') as _f:\n"
-                  "        _cmd = _f.read().split(b'\\x00')\n"
-                  "except OSError:\n"
-                  "    _cmd = []\n"
-                  "if b'gateway' in _cmd:\n"
-                  "    os.environ['HERMES_DASHBOARD_OIDC_CLIENT_ID'] = os.environ.get('HERMES_WEBAPP_OIDC_CLIENT_ID', '')\n"
-                  "    os.environ['HERMES_DASHBOARD_OIDC_CLIENT_SECRET'] = os.environ.get('HERMES_WEBAPP_OIDC_CLIENT_SECRET', '')\n"
+                  "#!/bin/sh\n"
+                  "if [ \"${HERMES_S6_SUPERVISED_CHILD:-}\" = \"1\" ] || [ \"${1:-}\" = \"gateway\" ]; then\n"
+                  "    export HERMES_DASHBOARD_OIDC_CLIENT_ID=\"$HERMES_WEBAPP_OIDC_CLIENT_ID\"\n"
+                  "    export HERMES_DASHBOARD_OIDC_CLIENT_SECRET=\"$HERMES_WEBAPP_OIDC_CLIENT_SECRET\"\n"
+                  "fi\n"
+                  "exec /opt/hermes/bin/hermes \"$@\"\n"
               )
+          os.chmod(wrapper_path, 0o755)
           try:
               pw = pwd.getpwnam("hermes")
               os.chown("/opt/data", pw.pw_uid, pw.pw_gid)
               os.chown(path, pw.pw_uid, pw.pw_gid)
-              os.chown(site_dir, pw.pw_uid, pw.pw_gid)
-              os.chown(sitecustomize_path, pw.pw_uid, pw.pw_gid)
+              os.chown(bin_dir, pw.pw_uid, pw.pw_gid)
+              os.chown(wrapper_path, pw.pw_uid, pw.pw_gid)
           except KeyError:
               pass
         volumeMounts:
@@ -89,8 +87,8 @@ spec:
         env:
         - name: HERMES_HOME
           value: /opt/data
-        - name: PYTHONPATH
-          value: /opt/data/site
+        - name: PATH
+          value: /opt/data/bin:/opt/hermes/bin:/opt/hermes/.venv/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
         - name: API_SERVER_ENABLED
           value: "true"
         - name: API_SERVER_HOST
