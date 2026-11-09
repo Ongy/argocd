@@ -47,6 +47,10 @@ spec:
           - --skip-provider-button=true
           - --skip-auth-route=^/api/
           - --skip-auth-route=^/ws/dev/
+          - --skip-auth-route=^/ws/token/
+          - --skip-auth-route=^/ws/share_token/
+          - --skip-auth-route=^/media/
+          - --skip-auth-route=^/o/token/
           env:
           - name: OAUTH2_PROXY_COOKIE_SECRET
             valueFrom:
