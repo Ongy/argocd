@@ -15,8 +15,8 @@ spec:
   - backendRefs:
     - group: ""
       kind: Service
-      name: hermes-webapp-proxy
-      port: 80
+      name: hermes-webapp
+      port: 9120
       weight: 1
     matches:
     - path:
@@ -40,8 +40,8 @@ spec:
   - backendRefs:
     - group: ""
       kind: Service
-      name: hermes-dashboard-proxy
-      port: 80
+      name: hermes-dashboard
+      port: 9119
       weight: 1
     matches:
     - path:

@@ -54,10 +54,22 @@ spec:
           ]
           with open(path, "w", encoding="utf-8") as f:
               ryaml.dump(cfg, f)
+          site_dir = "/opt/data/site"
+          os.makedirs(site_dir, exist_ok=True)
+          sitecustomize_path = os.path.join(site_dir, "sitecustomize.py")
+          with open(sitecustomize_path, "w", encoding="utf-8") as f:
+              f.write(
+                  "import os, sys\n"
+                  "if 'gateway' in sys.argv:\n"
+                  "    os.environ['HERMES_DASHBOARD_OIDC_CLIENT_ID'] = os.environ.get('HERMES_WEBAPP_OIDC_CLIENT_ID', '')\n"
+                  "    os.environ['HERMES_DASHBOARD_OIDC_CLIENT_SECRET'] = os.environ.get('HERMES_WEBAPP_OIDC_CLIENT_SECRET', '')\n"
+              )
           try:
               pw = pwd.getpwnam("hermes")
               os.chown("/opt/data", pw.pw_uid, pw.pw_gid)
               os.chown(path, pw.pw_uid, pw.pw_gid)
+              os.chown(site_dir, pw.pw_uid, pw.pw_gid)
+              os.chown(sitecustomize_path, pw.pw_uid, pw.pw_gid)
           except KeyError:
               pass
         volumeMounts:
@@ -72,6 +84,8 @@ spec:
         env:
         - name: HERMES_HOME
           value: /opt/data
+        - name: PYTHONPATH
+          value: /opt/data/site
         - name: API_SERVER_ENABLED
           value: "true"
         - name: API_SERVER_HOST
@@ -91,23 +105,28 @@ spec:
           value: "9119"
         - name: HERMES_DASHBOARD_PUBLIC_URL
           value: https://hermes-dashboard.local.ongy.net
-        - name: HERMES_DASHBOARD_BASIC_AUTH_USERNAME
-          value: admin
-        - name: HERMES_DASHBOARD_BASIC_AUTH_PASSWORD
+        - name: HERMES_DASHBOARD_OIDC_ISSUER
+          value: https://keycloak.local.ongy.net/realms/local.ongy.net
+        - name: HERMES_DASHBOARD_OIDC_CLIENT_ID
           valueFrom:
             secretKeyRef:
-              name: hermes-basic-auth
-              key: value
-        - name: HERMES_DASHBOARD_BASIC_AUTH_SECRET
+              name: keycloak-client-hermes-dashboard
+              key: client_id
+        - name: HERMES_DASHBOARD_OIDC_CLIENT_SECRET
           valueFrom:
             secretKeyRef:
-              name: hermes-auth-secret
-              key: value
-        - name: HERMES_DASHBOARD_SESSION_TOKEN
+              name: keycloak-client-hermes-dashboard
+              key: client_secret
+        - name: HERMES_WEBAPP_OIDC_CLIENT_ID
           valueFrom:
             secretKeyRef:
-              name: hermes-api-key
-              key: value
+              name: keycloak-client-hermes
+              key: client_id
+        - name: HERMES_WEBAPP_OIDC_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: keycloak-client-hermes
+              key: client_secret
         ports:
         - name: gateway
           protocol: TCP
@@ -127,3 +146,25 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /opt/data
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hermes
+  labels:
+    ongy.net/keycloak-application: "true"
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true,Force=true
+data:
+  callback: auth/callback
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hermes-dashboard
+  labels:
+    ongy.net/keycloak-application: "true"
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true,Force=true
+data:
+  callback: auth/callback
