@@ -25,6 +25,12 @@ spec:
     helm:
       valuesObject:
         secretName: obico-django-secret
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: main
+    helm:
+      valuesObject:
+        secretName: obico-oauth-cookie
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: obico

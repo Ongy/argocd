@@ -15,8 +15,8 @@ spec:
   - backendRefs:
     - group: ""
       kind: Service
-      name: obico-web
-      port: 3334
+      name: obico-proxy
+      port: 80
       weight: 1
     matches:
     - path:

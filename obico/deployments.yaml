@@ -6,12 +6,42 @@ data:
   DEBUG: "False"
   WEBPACK_LOADER_ENABLED: "False"
   SITE_USES_HTTPS: "True"
+  DJANGO_SETTINGS_MODULE: "config.local_settings"
   CSRF_TRUSTED_ORIGINS: '["https://obico.local.ongy.net"]'
   REDIS_URL: "redis://obico-redis:6379/0"
   ML_API_HOST: "http://obico-ml-api:3333"
   INTERNAL_MEDIA_HOST: "http://obico-web:3334"
   OCTOPRINT_TUNNEL_PORT_RANGE: "0-0"
   DATABASE_URL: "postgresql://obico:@psql.psql/obico?sslmode=verify-full&sslcert=%2Fpsql-tls-secrets%2Ftls.crt&sslkey=%2Fpsql-tls-secrets%2Ftls.key&sslrootcert=%2Fpsql-tls-secrets%2Fca.crt"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: obico-local-settings
+data:
+  local_settings.py: |
+    from config.settings import *
+
+    class AutoLoginMiddleware:
+        def __init__(self, get_response):
+            self.get_response = get_response
+
+        def __call__(self, request):
+            if (
+                not request.user.is_authenticated
+                and not request.META.get('HTTP_AUTHORIZATION')
+                and not request.path.startswith('/api/v1/octo/')
+                and not request.path.startswith('/hc/')
+            ):
+                from django.contrib.auth import get_user_model, login
+                User = get_user_model()
+                user = User.objects.filter(is_superuser=True, is_active=True).order_by('id').first()
+                if user is not None:
+                    login(request, user, backend='app.accounts.SyndicateSpecificBackend')
+            return self.get_response(request)
+
+    _auth_idx = MIDDLEWARE.index('django.contrib.auth.middleware.AuthenticationMiddleware')
+    MIDDLEWARE.insert(_auth_idx + 1, 'config.local_settings.AutoLoginMiddleware')
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -46,6 +76,9 @@ spec:
           claimName: obico-media
       - name: static
         emptyDir: {}
+      - name: local-settings
+        configMap:
+          name: obico-local-settings
       - name: psql-tls-secrets
         secret:
           defaultMode: 416
@@ -80,6 +113,10 @@ spec:
         volumeMounts:
         - name: static
           mountPath: /app/static_build
+        - name: local-settings
+          mountPath: /app/config/local_settings.py
+          subPath: local_settings.py
+          readOnly: true
       - name: migrate
         image: ghcr.io/thespaghettidetective/obico-web:2026.10.2
         securityContext:
@@ -124,6 +161,10 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /data
+        - name: local-settings
+          mountPath: /app/config/local_settings.py
+          subPath: local_settings.py
+          readOnly: true
         - name: psql-tls-secrets
           mountPath: /psql-tls-secrets
           readOnly: true
@@ -182,6 +223,10 @@ spec:
           mountPath: /app/static_build
         - name: media
           mountPath: /app/static_build/media
+        - name: local-settings
+          mountPath: /app/config/local_settings.py
+          subPath: local_settings.py
+          readOnly: true
         - name: psql-tls-secrets
           mountPath: /psql-tls-secrets
           readOnly: true
@@ -232,6 +277,10 @@ spec:
           mountPath: /data
         - name: media
           mountPath: /app/static_build/media
+        - name: local-settings
+          mountPath: /app/config/local_settings.py
+          subPath: local_settings.py
+          readOnly: true
         - name: psql-tls-secrets
           mountPath: /psql-tls-secrets
           readOnly: true

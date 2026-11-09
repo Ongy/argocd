@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: obico
+  labels:
+    ongy.net/keycloak-application: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: obico-proxy
+  name: obico-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: obico-proxy
+  template:
+    metadata:
+      labels:
+        app: obico-proxy
+    spec:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - obico-web
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - image: quay.io/oauth2-proxy/oauth2-proxy
+          args:
+          - --provider=keycloak-oidc
+          - --redirect-url=https://obico.local.ongy.net/oauth2/callback
+          - --oidc-issuer-url=https://keycloak.local.ongy.net/realms/local.ongy.net
+          - --code-challenge-method=S256
+          - --reverse-proxy=true
+          - --http-address=0.0.0.0:8080
+          - --upstream=http://obico-web:3334
+          - --email-domain=*
+          - --skip-provider-button=true
+          - --skip-auth-route=^/api/
+          - --skip-auth-route=^/ws/dev/
+          env:
+          - name: OAUTH2_PROXY_COOKIE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: obico-oauth-cookie
+                key: value
+          - name: OAUTH2_PROXY_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-client-obico
+                key: client_id
+          - name: OAUTH2_PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-client-obico
+                key: client_secret
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 1000
+            privileged: false
+          name: oauth-proxy
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: obico-proxy
+spec:
+  podSelector:
+    matchLabels:
+      app: obico-proxy
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 192.168.128.2/32
+      ports:
+        - protocol: TCP
+          port: 443
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+    - to:
+        - podSelector:
+            matchLabels:
+              app: obico-web
+      ports:
+        - protocol: TCP
+          port: 3334
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: obico-proxy
+spec:
+  endpointSelector:
+    matchLabels:
+      app: obico-proxy
+  ingress:
+    - fromEntities:
+        - ingress
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: obico-proxy
+spec:
+  selector:
+    app: obico-proxy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      name: http

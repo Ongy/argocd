@@ -4,6 +4,7 @@ resources:
 - db.yaml
 - deployments.yaml
 - network.yaml
+- oauth-proxy.yaml
 - route.yaml
 - storage.yaml
 images:
