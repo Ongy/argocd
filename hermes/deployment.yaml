@@ -52,6 +52,9 @@ spec:
               "172.16.0.0/12",
               "192.168.0.0/16",
           ]
+          mcp_servers = cfg.setdefault("mcp_servers", {})
+          mealie_mcp = mcp_servers.setdefault("mealie", {})
+          mealie_mcp["url"] = "http://mealie-mcp.mealie.svc.cluster.local:8000/mcp"
           with open(path, "w", encoding="utf-8") as f:
               ryaml.dump(cfg, f)
           bin_dir = "/opt/data/bin"

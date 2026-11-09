@@ -4,9 +4,11 @@ metadata:
   name: mealie
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: mealie=ghcr.io/mealie-recipes/mealie
+    argocd-image-updater.argoproj.io/image-list: mealie=ghcr.io/mealie-recipes/mealie, mcp=ghcr.io/djwmarcx/better-mealie-mcp
     argocd-image-updater.argoproj.io/mealie.update-strategy: newest-build
     argocd-image-updater.argoproj.io/mealie.allow-tags: regexpv:^[0-9]+\.[0-9]+\.[1-9][0-9]*$
+    argocd-image-updater.argoproj.io/mcp.update-strategy: semver
+    argocd-image-updater.argoproj.io/mcp.allow-tags: regexp:^[0-9]+\.[0-9]+\.[0-9]+$
 
     argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/git-repository: ssh://git@git.local.ongy.net:7022/ongy/argocd.git

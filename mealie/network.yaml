@@ -11,6 +11,19 @@ spec:
       targetPort: http
       name: http
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mealie-mcp
+spec:
+  selector:
+    app: mealie-mcp
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: http
+      name: http
+---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:

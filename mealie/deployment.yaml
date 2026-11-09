@@ -96,3 +96,66 @@ metadata:
     ongy.net/keycloak-application: "true"
 data:
   callback: login
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mealie-mcp
+  name: mealie-mcp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mealie-mcp
+  template:
+    metadata:
+      labels:
+        app: mealie-mcp
+    spec:
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      containers:
+        - name: mealie-mcp
+          image: ghcr.io/djwmarcx/better-mealie-mcp:3.30.0
+          args:
+            - --http
+            - "8000"
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1003
+            runAsGroup: 1003
+            privileged: false
+          env:
+            - name: MEALIE_BASE_URL
+              value: http://mealie:80
+            - name: MEALIE_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: mealie-mcp-token
+                  key: token
+            - name: MEALIE_INCLUDE_TAGS
+              value: recipes,households,organizers,foods,units,parser,explore,comments
+            - name: MCP_HOST
+              value: "0.0.0.0"
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+          resources:
+            limits:
+              memory: "512Mi"
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 8000
+          readinessProbe:
+            tcpSocket:
+              port: http
+
