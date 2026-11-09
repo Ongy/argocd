@@ -59,8 +59,13 @@ spec:
           sitecustomize_path = os.path.join(site_dir, "sitecustomize.py")
           with open(sitecustomize_path, "w", encoding="utf-8") as f:
               f.write(
-                  "import os, sys\n"
-                  "if 'gateway' in sys.argv:\n"
+                  "import os\n"
+                  "try:\n"
+                  "    with open('/proc/self/cmdline', 'rb') as _f:\n"
+                  "        _cmd = _f.read().split(b'\\x00')\n"
+                  "except OSError:\n"
+                  "    _cmd = []\n"
+                  "if b'gateway' in _cmd:\n"
                   "    os.environ['HERMES_DASHBOARD_OIDC_CLIENT_ID'] = os.environ.get('HERMES_WEBAPP_OIDC_CLIENT_ID', '')\n"
                   "    os.environ['HERMES_DASHBOARD_OIDC_CLIENT_SECRET'] = os.environ.get('HERMES_WEBAPP_OIDC_CLIENT_SECRET', '')\n"
               )
