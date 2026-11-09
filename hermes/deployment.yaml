@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hermes
+  labels:
+    app: hermes
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: hermes
+  template:
+    metadata:
+      labels:
+        app: hermes
+    spec:
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: hermes-data
+      initContainers:
+      - name: init-config
+        image: docker.io/nousresearch/hermes-agent:latest
+        command:
+        - /opt/hermes/.venv/bin/python
+        - -c
+        - |
+          import os, pwd, yaml
+          path = "/opt/data/config.yaml"
+          os.makedirs("/opt/data", exist_ok=True)
+          cfg = {}
+          if os.path.exists(path):
+              with open(path, "r") as f:
+                  cfg = yaml.safe_load(f) or {}
+          webapp = cfg.setdefault("webapp", {})
+          webapp["enabled"] = True
+          webapp["host"] = "0.0.0.0"
+          webapp["port"] = 9120
+          webapp["public_url"] = "https://hermes.local.ongy.net"
+          dashboard = cfg.setdefault("dashboard", {})
+          dashboard["public_url"] = "https://hermes-dashboard.local.ongy.net"
+          dashboard["trusted_proxies"] = [
+              "10.0.0.0/8",
+              "172.16.0.0/12",
+              "192.168.0.0/16",
+          ]
+          with open(path, "w") as f:
+              yaml.safe_dump(cfg, f, default_flow_style=False)
+          try:
+              pw = pwd.getpwnam("hermes")
+              os.chown("/opt/data", pw.pw_uid, pw.pw_gid)
+              os.chown(path, pw.pw_uid, pw.pw_gid)
+          except KeyError:
+              pass
+        volumeMounts:
+        - name: data
+          mountPath: /opt/data
+      containers:
+      - name: hermes
+        image: docker.io/nousresearch/hermes-agent:latest
+        args:
+        - gateway
+        - run
+        env:
+        - name: HERMES_HOME
+          value: /opt/data
+        - name: API_SERVER_ENABLED
+          value: "true"
+        - name: API_SERVER_HOST
+          value: "0.0.0.0"
+        - name: API_SERVER_PORT
+          value: "8642"
+        - name: API_SERVER_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hermes-api-key
+              key: value
+        - name: HERMES_DASHBOARD
+          value: "1"
+        - name: HERMES_DASHBOARD_HOST
+          value: "0.0.0.0"
+        - name: HERMES_DASHBOARD_PORT
+          value: "9119"
+        - name: HERMES_DASHBOARD_PUBLIC_URL
+          value: https://hermes-dashboard.local.ongy.net
+        - name: HERMES_DASHBOARD_BASIC_AUTH_USERNAME
+          value: admin
+        - name: HERMES_DASHBOARD_BASIC_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: hermes-basic-auth
+              key: value
+        - name: HERMES_DASHBOARD_BASIC_AUTH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: hermes-auth-secret
+              key: value
+        - name: HERMES_DASHBOARD_SESSION_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: hermes-api-key
+              key: value
+        ports:
+        - name: gateway
+          protocol: TCP
+          containerPort: 8642
+        - name: dashboard
+          protocol: TCP
+          containerPort: 9119
+        - name: webapp
+          protocol: TCP
+          containerPort: 9120
+        readinessProbe:
+          httpGet:
+            path: /api/status
+            port: dashboard
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        volumeMounts:
+        - name: data
+          mountPath: /opt/data

@@ -1,0 +1,153 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hermes
+  labels:
+    ongy.net/keycloak-application: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hermes-webapp-proxy
+  name: hermes-webapp-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hermes-webapp-proxy
+  template:
+    metadata:
+      labels:
+        app: hermes-webapp-proxy
+    spec:
+      containers:
+        - image: quay.io/oauth2-proxy/oauth2-proxy
+          args:
+          - --provider=keycloak-oidc
+          - --redirect-url=https://hermes.local.ongy.net/oauth2/callback
+          - --oidc-issuer-url=https://keycloak.local.ongy.net/realms/local.ongy.net
+          - --code-challenge-method=S256
+          - --reverse-proxy=true
+          - --http-address=0.0.0.0:8080
+          - --upstream=http://hermes-webapp:9120
+          - --email-domain=*
+          - --skip-provider-button=true
+          env:
+          - name: OAUTH2_PROXY_COOKIE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: hermes-oauth-cookie
+                key: value
+          - name: OAUTH2_PROXY_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-client-hermes
+                key: client_id
+          - name: OAUTH2_PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-client-hermes
+                key: client_secret
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 1000
+            privileged: false
+          name: oauth-proxy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hermes-webapp-proxy
+spec:
+  selector:
+    app: hermes-webapp-proxy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      name: http
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hermes-dashboard
+  labels:
+    ongy.net/keycloak-application: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hermes-dashboard-proxy
+  name: hermes-dashboard-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hermes-dashboard-proxy
+  template:
+    metadata:
+      labels:
+        app: hermes-dashboard-proxy
+    spec:
+      containers:
+        - image: quay.io/oauth2-proxy/oauth2-proxy
+          args:
+          - --provider=keycloak-oidc
+          - --redirect-url=https://hermes-dashboard.local.ongy.net/oauth2/callback
+          - --oidc-issuer-url=https://keycloak.local.ongy.net/realms/local.ongy.net
+          - --code-challenge-method=S256
+          - --reverse-proxy=true
+          - --http-address=0.0.0.0:8080
+          - --upstream=http://hermes-dashboard:9119
+          - --email-domain=*
+          - --skip-provider-button=true
+          env:
+          - name: OAUTH2_PROXY_COOKIE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: hermes-dashboard-oauth-cookie
+                key: value
+          - name: OAUTH2_PROXY_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-client-hermes-dashboard
+                key: client_id
+          - name: OAUTH2_PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-client-hermes-dashboard
+                key: client_secret
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 1000
+            privileged: false
+          name: oauth-proxy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hermes-dashboard-proxy
+spec:
+  selector:
+    app: hermes-dashboard-proxy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      name: http

@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hermes
+  namespace: argocd
+  finalizers:
+    # The default behaviour is foreground cascading deletion
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: hermes
+    targetRevision: main
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: main
+    helm:
+      valuesObject:
+        secretName: hermes-oauth-cookie
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: main
+    helm:
+      valuesObject:
+        secretName: hermes-dashboard-oauth-cookie
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: main
+    helm:
+      valuesObject:
+        secretName: hermes-api-key
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: main
+    helm:
+      valuesObject:
+        secretName: hermes-basic-auth
+  - repoURL: https://git.local.ongy.net/ongy/argocd.git
+    path: secret-value
+    targetRevision: main
+    helm:
+      valuesObject:
+        secretName: hermes-auth-secret
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: hermes
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - PruneLast=true
+      - CreateNamespace=true
