@@ -47,6 +47,15 @@ spec:
           if [ ! -f "$HOME/.gemini/config/config.json" ]; then
             printf '{\n  "cliRemoteControlHostname": "k8s-antigravity"\n}\n' > "$HOME/.gemini/config/config.json"
           fi
+          cat <<'EOF' > "$HOME/.gemini/config/mcp_config.json"
+          {
+            "mcpServers": {
+              "mealie": {
+                "serverUrl": "http://mealie-mcp.mealie.svc.cluster.local:8000/mcp"
+              }
+            }
+          }
+          EOF
           if [ ! -x "$HOME/.local/bin/agy" ]; then
             curl -fsSL https://antigravity.google/cli/install.sh | bash
           else
@@ -80,10 +89,7 @@ spec:
             done
             echo "OAuth token detected, starting remote-control daemon..."
           fi
-          exec "$HOME/.local/bin/agy" \
-            --gemini_dir="$HOME/.gemini" \
-            --app_data_dir="$HOME/.gemini/antigravity-cli" \
-            remote-control serve
+          exec "$HOME/.local/bin/agy" remote-control serve
         volumeMounts:
         - name: antigravity-data
           mountPath: /data
