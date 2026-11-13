@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: antigravity
+  labels:
+    app: antigravity
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: antigravity
+  template:
+    metadata:
+      labels:
+        app: antigravity
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
+      volumes:
+      - name: antigravity-data
+        persistentVolumeClaim:
+          claimName: antigravity-data
+      - name: antigravity-home
+        persistentVolumeClaim:
+          claimName: antigravity-home
+      initContainers:
+      - name: install-agy
+        image: docker.io/library/buildpack-deps:noble-scm
+        securityContext:
+          privileged: false
+          runAsNonRoot: true
+        env:
+        - name: HOME
+          value: /home/ubuntu
+        - name: PATH
+          value: /home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        command:
+        - /bin/bash
+        - -ec
+        - |
+          mkdir -p "$HOME/.local/bin" "$HOME/.gemini/config" "$HOME/.gemini/antigravity-cli"
+          if [ ! -f "$HOME/.gemini/config/config.json" ]; then
+            printf '{\n  "cliRemoteControlHostname": "k8s-antigravity"\n}\n' > "$HOME/.gemini/config/config.json"
+          fi
+          if [ ! -x "$HOME/.local/bin/agy" ]; then
+            curl -fsSL https://antigravity.google/cli/install.sh | bash
+          else
+            "$HOME/.local/bin/agy" update || true
+          fi
+        volumeMounts:
+        - name: antigravity-home
+          mountPath: /home/ubuntu
+      containers:
+      - name: antigravity
+        image: docker.io/library/buildpack-deps:noble-scm
+        workingDir: /data
+        securityContext:
+          privileged: false
+          runAsNonRoot: true
+        env:
+        - name: HOME
+          value: /home/ubuntu
+        - name: PATH
+          value: /home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        command:
+        - /bin/bash
+        - -ec
+        - |
+          TOKEN_FILE="$HOME/.gemini/antigravity-cli/antigravity-oauth-token"
+          if [ ! -f "$TOKEN_FILE" ]; then
+            echo "Waiting for initial OAuth sign-in..."
+            echo "Run: kubectl exec -it -n antigravity deploy/antigravity -- agy"
+            while [ ! -f "$TOKEN_FILE" ]; do
+              sleep 5
+            done
+            echo "OAuth token detected, starting remote-control daemon..."
+          fi
+          exec "$HOME/.local/bin/agy" \
+            --gemini_dir="$HOME/.gemini" \
+            --app_data_dir="$HOME/.gemini/antigravity-cli" \
+            remote-control serve
+        volumeMounts:
+        - name: antigravity-data
+          mountPath: /data
+        - name: antigravity-home
+          mountPath: /home/ubuntu
