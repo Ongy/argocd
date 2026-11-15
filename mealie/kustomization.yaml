@@ -11,5 +11,4 @@ images:
 - name: ghcr.io/mealie-recipes/mealie
   newTag: v3.22.0
 - name: ghcr.io/djwmarcx/better-mealie-mcp
-  newTag: 3.30.0
-
+  newTag: 3.31.0
